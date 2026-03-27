@@ -342,7 +342,6 @@ function encodeFunctionCall(fnName, args){
   const iface = new ethers.Interface(CONTRACT_ABI);
   return iface.encodeFunctionData(fnName, args);
 }
-}
 
 function selectQuick(el,text){document.querySelectorAll('.quick-pill').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');selectedQuick=text;document.getElementById('customInput').value='';}
 
