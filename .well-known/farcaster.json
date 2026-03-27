@@ -1,0 +1,28 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "ProveIt",
+    "homeUrl": "https://www.proveit.today/",
+    "iconUrl": "https://www.proveit.today/proveit-poster-simple-v2-final.png",
+    "splashImageUrl": "https://www.proveit.today/proveit-poster-simple-v2-final.png",
+    "splashBackgroundColor": "#0a0a0f",
+    "subtitle": "Proof of discipline, onchain",
+    "description": "ProveIt lets users commit to habits and record each check-in as permanent onchain proof on Base.",
+    "primaryCategory": "productivity",
+    "tags": ["base", "productivity", "habits", "onchain"],
+    "heroImageUrl": "https://www.proveit.today/proveit-poster-simple-v2-final.png",
+    "tagline": "Prove your discipline on Base",
+    "ogTitle": "ProveIt",
+    "ogDescription": "Turn daily commitments into permanent onchain proof on Base.",
+    "ogImageUrl": "https://www.proveit.today/proveit-poster-simple-v2-final.png",
+    "requiredChains": ["eip155:8453"],
+    "screenshotUrls": [
+      "https://www.proveit.today/proveit-poster-simple-v2-final.png"
+    ]
+  }
+}
