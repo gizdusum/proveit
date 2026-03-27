@@ -21,12 +21,12 @@ body::after{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-
 .ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 28px;font-size:12px;font-weight:600;color:var(--base2);font-family:var(--mono);letter-spacing:0.04em;}
 .ticker-sep{color:rgba(0,82,255,0.3);}
 header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-index:10;}
-.header-inner{display:flex;align-items:center;justify-content:space-between;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text);text-decoration:none;}
 .logo-mark{width:38px;height:38px;background:var(--base);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(0,82,255,0.4);}
 .logo-mark svg{width:22px;height:22px;}
 .logo-name em{font-style:normal;color:var(--base2);}
-.header-right{display:flex;align-items:center;gap:10px;position:relative;}
+.header-right{display:flex;align-items:center;gap:10px;position:relative;flex-wrap:wrap;justify-content:flex-end;}
 .base-badge{display:flex;align-items:center;gap:7px;background:var(--base-dim);border:1px solid rgba(0,82,255,0.3);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;color:var(--base2);font-family:var(--mono);}
 .base-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--base2);box-shadow:0 0 6px var(--base);animation:pulse 2s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
@@ -43,11 +43,16 @@ header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-
 .wallet-dropdown-item:hover{background:var(--bg3);}
 .wallet-dropdown-item.disconnect{color:var(--red);}
 .wallet-dropdown-item.disconnect:hover{background:var(--red-dim);}
-.base-activity-card{background:linear-gradient(135deg,rgba(0,82,255,0.1) 0%,rgba(0,82,255,0.04) 100%);border:1px solid rgba(0,82,255,0.25);border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:20px;margin-bottom:28px;position:relative;overflow:hidden;}
+.status-banner{margin-top:16px;padding:11px 14px;border-radius:12px;font-size:13px;display:none;align-items:center;gap:10px;border:1px solid var(--border);}
+.status-banner.show{display:flex;}
+.status-banner.info{background:rgba(0,82,255,0.07);border-color:rgba(0,82,255,0.2);color:var(--base2);}
+.status-banner.error{background:var(--red-dim);border-color:rgba(248,113,113,0.2);color:var(--red);}
+.status-banner.success{background:var(--green-dim);border-color:rgba(34,211,160,0.25);color:var(--green);}
+.base-activity-card{background:linear-gradient(135deg,rgba(0,82,255,0.1) 0%,rgba(0,82,255,0.04) 100%);border:1px solid rgba(0,82,255,0.25);border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:20px;margin-bottom:28px;position:relative;overflow:hidden;flex-wrap:wrap;}
 .base-activity-card::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,82,255,0.12) 0%,transparent 70%);pointer-events:none;}
 .base-act-icon{width:48px;height:48px;border-radius:14px;background:var(--base);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(0,82,255,0.4);}
 .base-act-icon svg{width:26px;height:26px;}
-.base-act-body{flex:1;}
+.base-act-body{flex:1;min-width:240px;}
 .base-act-body h3{font-size:16px;font-weight:700;margin-bottom:4px;}
 .base-act-body p{font-size:13px;color:var(--text2);line-height:1.5;}
 .base-act-body strong{color:var(--base2);}
@@ -63,15 +68,15 @@ header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-
 .hero h1{font-size:clamp(40px,6vw,70px);font-weight:700;line-height:1.05;letter-spacing:-2px;margin-bottom:18px;}
 .hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--base2),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .hero p{font-size:17px;color:var(--text2);max-width:520px;margin:0 auto 28px;line-height:1.6;}
-.built-on-base{display:inline-flex;align-items:center;gap:8px;background:rgba(0,82,255,0.07);border:1px solid rgba(0,82,255,0.2);padding:8px 16px;border-radius:12px;margin-bottom:40px;font-size:13px;color:var(--text2);}
+.built-on-base{display:inline-flex;align-items:center;gap:8px;background:rgba(0,82,255,0.07);border:1px solid rgba(0,82,255,0.2);padding:8px 16px;border-radius:12px;margin-bottom:40px;font-size:13px;color:var(--text2);flex-wrap:wrap;justify-content:center;}
 .base-pill{display:inline-flex;align-items:center;gap:5px;background:var(--base);color:white;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;font-family:var(--mono);}
-.stats-row{display:flex;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--card);overflow:hidden;max-width:680px;margin:0 auto 48px;}
-.stat-item{flex:1;padding:20px;border-right:1px solid var(--border);text-align:center;}
+.stats-row{display:flex;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--card);overflow:hidden;max-width:680px;margin:0 auto 48px;flex-wrap:wrap;}
+.stat-item{flex:1;min-width:160px;padding:20px;border-right:1px solid var(--border);text-align:center;}
 .stat-item:last-child{border-right:none;}
 .stat-num{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--base2);}
 .stat-label{font-size:11px;color:var(--text3);margin-top:4px;letter-spacing:0.04em;}
 .main-grid{display:grid;grid-template-columns:1fr 380px;gap:24px;padding-bottom:40px;}
-@media(max-width:768px){.main-grid{grid-template-columns:1fr;}}
+@media(max-width:768px){.main-grid{grid-template-columns:1fr;}.header-inner{flex-direction:column;align-items:flex-start;}.header-right{width:100%;justify-content:space-between;}.modal-btns{flex-direction:column;}}
 .section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:border-color 0.2s;}
 .card:hover{border-color:var(--border2);}
@@ -88,10 +93,11 @@ header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-
 .quick-pill:hover .pill-arrow{color:var(--base2);}
 .commitments-list{display:flex;flex-direction:column;gap:12px;}
 .commitment-item{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:14px;transition:all 0.2s;}
+@media(max-width:680px){.commitment-item{grid-template-columns:1fr;}}
 .commitment-item:hover{border-color:var(--border2);}
 .commitment-name{font-size:15px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .streak-badge{display:inline-flex;align-items:center;gap:4px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);padding:2px 8px;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--amber);}
-.commitment-meta{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:10px;}
+.commitment-meta{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .check-indicator{width:8px;height:8px;border-radius:50%;background:var(--text3);}
 .check-indicator.done{background:var(--green);box-shadow:0 0 6px rgba(34,211,160,0.4);}
 .progress-wrap{display:flex;align-items:center;gap:10px;min-width:120px;}
@@ -104,7 +110,7 @@ header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-
 .sidebar{display:flex;flex-direction:column;gap:20px;}
 .wallet-card .wallet-addr{font-family:var(--mono);font-size:13px;color:var(--base2);margin-bottom:12px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;word-break:break-all;}
 .wallet-card .wallet-addr.placeholder{color:var(--text3);font-size:12px;}
-.network-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border);font-size:13px;color:var(--text2);}
+.network-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border);font-size:13px;color:var(--text2);gap:12px;}
 .network-status{display:flex;align-items:center;gap:6px;}
 .net-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);}
 .net-dot.active{background:var(--green);box-shadow:0 0 5px rgba(34,211,160,0.5);}
@@ -117,11 +123,11 @@ header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-
 .base-stat{background:rgba(0,82,255,0.06);border:1px solid rgba(0,82,255,0.12);border-radius:10px;padding:12px;}
 .base-stat .val{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--base2);}
 .base-stat .lbl{font-size:11px;color:var(--text3);margin-top:3px;}
-.basescan-link{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;padding:9px;background:transparent;border:1px solid rgba(0,82,255,0.25);border-radius:9px;color:var(--base2);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.basescan-link{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;padding:9px;background:transparent;border:1px solid rgba(0,82,255,0.25);border-radius:9px;color:var(--base2);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;}
 .basescan-link:hover{background:var(--base-dim);}
-.milestones-card h3{font-size:15px;font-weight:600;margin-bottom:16px;}
+.milestones-card h3,.tx-log h3{font-size:15px;font-weight:600;margin-bottom:16px;}
 .milestone-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
-.milestone-item:last-child{border-bottom:none;}
+.milestone-item:last-child,.tx-item:last-child{border-bottom:none;}
 .milestone-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border);}
 .milestone-icon.earned{background:linear-gradient(135deg,rgba(0,82,255,0.15),rgba(79,141,255,0.15));border-color:rgba(0,82,255,0.35);}
 .milestone-info{flex:1;}
@@ -130,24 +136,29 @@ header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-
 .milestone-status{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:5px;}
 .milestone-status.earned{background:rgba(0,82,255,0.12);color:var(--base2);}
 .milestone-status.locked{background:var(--bg3);color:var(--text3);}
-.tx-log h3{font-size:15px;font-weight:600;margin-bottom:14px;}
 .tx-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);}
-.tx-item:last-child{border-bottom:none;}
 .tx-dot{width:6px;height:6px;border-radius:50%;background:var(--base2);flex-shrink:0;}
 .tx-hash{font-family:var(--mono);color:var(--base2);cursor:pointer;}
 .tx-hash:hover{text-decoration:underline;}
 .tx-time{margin-left:auto;color:var(--text3);}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.show{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:32px;max-width:440px;width:90%;text-align:center;animation:slideUp 0.2s ease;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:32px;max-width:460px;width:90%;text-align:center;animation:slideUp 0.2s ease;}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-icon{font-size:48px;margin-bottom:16px;}
 .modal h2{font-size:22px;font-weight:700;margin-bottom:8px;}
 .modal p{font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.6;}
-.tx-preview{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:11px;color:var(--text2);text-align:left;margin-bottom:20px;}
-.tx-preview .row{display:flex;justify-content:space-between;padding:4px 0;}
+.tx-preview{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:11px;color:var(--text2);text-align:left;margin-bottom:16px;}
+.tx-preview .row{display:flex;justify-content:space-between;padding:4px 0;gap:16px;}
 .tx-preview .label{color:var(--text3);}
-.tx-preview .val{color:var(--base2);}
+.tx-preview .val{color:var(--base2);text-align:right;}
+.gas-panel{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;text-align:left;}
+.gas-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:520px){.gas-grid{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;color:var(--text3);}
+.field select,.field input{background:var(--bg);border:1px solid var(--border2);border-radius:9px;padding:11px 12px;color:var(--text);font:inherit;}
+.field small{font-size:11px;color:var(--text3);}
 .modal-btns{display:flex;gap:10px;}
 .modal-btn{flex:1;padding:12px;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .modal-btn.primary{background:var(--base);border:none;color:white;box-shadow:0 2px 12px rgba(0,82,255,0.3);}
@@ -168,15 +179,13 @@ header{padding:18px 0;border-bottom:1px solid var(--border);position:relative;z-
 .chain-banner span{color:var(--red);flex:1;}
 .switch-chain-btn{background:transparent;border:1px solid var(--red);color:var(--red);padding:5px 12px;border-radius:7px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;}
 .switch-chain-btn:hover{background:var(--red-dim);}
-
-/* FOOTER */
 footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;position:relative;z-index:1;}
 .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .footer-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:var(--text);}
 .footer-logo-mark{width:28px;height:28px;background:var(--base);border-radius:7px;display:flex;align-items:center;justify-content:center;}
 .footer-logo-mark svg{width:16px;height:16px;}
 .footer-logo em{font-style:normal;color:var(--base2);}
-.footer-links{display:flex;align-items:center;gap:16px;}
+.footer-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .footer-link{display:flex;align-items:center;gap:6px;color:var(--text2);text-decoration:none;font-size:13px;font-weight:600;padding:7px 14px;border-radius:8px;border:1px solid var(--border);transition:all 0.2s;}
 .footer-link:hover{border-color:var(--border2);color:var(--text);background:var(--bg3);}
 .footer-link.x-link{border-color:rgba(255,255,255,0.1);}
@@ -200,14 +209,15 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
         <div class="wallet-wrap">
           <button id="connectBtn" onclick="handleWalletBtn()">Connect Wallet</button>
           <div class="wallet-dropdown" id="walletDropdown">
-            <div class="wallet-dropdown-addr" id="dropdownAddr">—</div>
-            <div class="wallet-dropdown-item" onclick="copyAddress()">📋 Copy address</div>
-            <div class="wallet-dropdown-item" onclick="openBasescanWallet()">🔍 View on Basescan</div>
-            <div class="wallet-dropdown-item disconnect" onclick="disconnectWallet()">🔌 Disconnect</div>
+            <div class="wallet-dropdown-addr" id="dropdownAddr">-</div>
+            <div class="wallet-dropdown-item" onclick="copyAddress()">Copy address</div>
+            <div class="wallet-dropdown-item" onclick="openBasescanWallet()">View on Basescan</div>
+            <div class="wallet-dropdown-item disconnect" onclick="disconnectWallet()">Disconnect</div>
           </div>
         </div>
       </div>
     </div>
+    <div class="status-banner info" id="statusBanner"></div>
   </div>
 </header>
 
@@ -219,7 +229,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
         Built on Base · Proof of discipline, on-chain
       </div>
       <h1>Do it. <em>Prove it.</em><br>Every day.</h1>
-      <p>Your habits. Your word. Your blockchain. Every check-in is a permanent transaction on Base — no deleting, no lying.</p>
+      <p>Your habits. Your word. Your blockchain. Every check-in is a permanent transaction on Base - no deleting, no lying.</p>
       <div class="built-on-base">
         <span>Each proof is a real transaction on</span>
         <span class="base-pill"><svg width="11" height="11" viewBox="0 0 111 111" fill="none"><path fill="white" d="M54.921 110.034C85.359 110.034 110.034 85.359 110.034 54.921C110.034 24.4828 85.359-0.192 54.921-0.192C26.043-0.192 2.353 21.906 0 50.148H72.847V59.694H0C2.353 87.936 26.043 110.034 54.921 110.034Z"/></svg>Base</span>
@@ -245,7 +255,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
     </div>
 
     <div class="chain-banner" id="chainBanner">
-      <span>⚠ Switch to Base network to record transactions on-chain.</span>
+      <span>Switch to Base network to record transactions on-chain.</span>
       <button class="switch-chain-btn" onclick="switchToBase()">Switch to Base</button>
     </div>
 
@@ -253,7 +263,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
       <div>
         <div class="card create-card">
           <h2>New commitment</h2>
-          <div class="sub">Tap any habit — your wallet opens immediately to prove it on-chain.</div>
+          <div class="sub">Tap any habit - your wallet opens immediately to prove it on-chain.</div>
           <div class="quick-picks">
             <div class="quick-pill" onclick="quickProve('No meme coins','🪙')"><span class="pill-emoji">🪙</span><span class="pill-label">No meme coins</span><span class="pill-arrow">→</span></div>
             <div class="quick-pill" onclick="quickProve('No futures trading','📉')"><span class="pill-emoji">📉</span><span class="pill-label">No futures trading</span><span class="pill-arrow">→</span></div>
@@ -277,8 +287,8 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
         <div class="card wallet-card">
           <div class="section-label">Connected wallet</div>
           <div class="wallet-addr placeholder" id="walletDisplay">Not connected</div>
-          <div class="network-row"><span>Network</span><div class="network-status"><div class="net-dot" id="netDot"></div><span id="netName">—</span></div></div>
-          <div class="network-row"><span>ETH Balance</span><span id="ethBal" style="font-family:var(--mono);font-size:13px;color:var(--text2)">—</span></div>
+          <div class="network-row"><span>Network</span><div class="network-status"><div class="net-dot" id="netDot"></div><span id="netName">-</span></div></div>
+          <div class="network-row"><span>ETH Balance</span><span id="ethBal" style="font-family:var(--mono);font-size:13px;color:var(--text2)">-</span></div>
         </div>
         <div class="base-network-card">
           <div class="base-net-header">
@@ -286,15 +296,15 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
             <div><h3>Base Network</h3><span>Chain ID: 8453 · OP Stack L2</span></div>
           </div>
           <div class="base-stats">
-            <div class="base-stat"><div class="val">~$0.001</div><div class="lbl">Avg gas fee</div></div>
+            <div class="base-stat"><div class="val" id="gasMarketStat">-</div><div class="lbl">Suggested max fee</div></div>
             <div class="base-stat"><div class="val">~2s</div><div class="lbl">Block time</div></div>
-            <div class="base-stat"><div class="val" id="myTxCount">0</div><div class="lbl">My on-chain proofs</div></div>
+            <div class="base-stat"><div class="val" id="myTxCount">0</div><div class="lbl">My proofs</div></div>
             <div class="base-stat"><div class="val">∞</div><div class="lbl">Permanent record</div></div>
           </div>
-          <div class="basescan-link" onclick="window.open('https://basescan.org/address/0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8','_blank')">
+          <a class="basescan-link" href="https://basescan.org/address/0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8" target="_blank" rel="noreferrer">
             <svg width="12" height="12" viewBox="0 0 111 111" fill="none"><path fill="#4f8dff" d="M54.921 110.034C85.359 110.034 110.034 85.359 110.034 54.921C110.034 24.4828 85.359-0.192 54.921-0.192C26.043-0.192 2.353 21.906 0 50.148H72.847V59.694H0C2.353 87.936 26.043 110.034 54.921 110.034Z"/></svg>
             View contract on Basescan ↗
-          </div>
+          </a>
         </div>
         <div class="card milestones-card"><h3>🏆 Milestone badges</h3><div id="milestonesList"></div></div>
         <div class="card tx-log"><h3>📋 On-chain log</h3><div id="txLog"><div style="font-size:13px;color:var(--text3);padding:8px 0">No transactions yet.</div></div></div>
@@ -311,14 +321,8 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
         Prove<em>It</em>
       </div>
       <div class="footer-links">
-        <a class="footer-link x-link" href="https://x.com/gizdusumandnode" target="_blank">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          @gizdusumandnode
-        </a>
-        <a class="footer-link base-link" href="https://basescan.org/address/0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8" target="_blank">
-          <svg width="14" height="14" viewBox="0 0 111 111" fill="none"><path fill="currentColor" d="M54.921 110.034C85.359 110.034 110.034 85.359 110.034 54.921C110.034 24.4828 85.359-0.192 54.921-0.192C26.043-0.192 2.353 21.906 0 50.148H72.847V59.694H0C2.353 87.936 26.043 110.034 54.921 110.034Z"/></svg>
-          Contract on Base ↗
-        </a>
+        <a class="footer-link x-link" href="https://x.com/gizdusumandnode" target="_blank" rel="noreferrer">@gizdusumandnode</a>
+        <a class="footer-link base-link" href="https://basescan.org/address/0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8" target="_blank" rel="noreferrer">Contract on Base ↗</a>
       </div>
       <div class="footer-copy">Built on Base · ProveIt · Every check-in is permanent and verifiable on-chain.</div>
     </div>
@@ -334,9 +338,36 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
       <div class="row"><span class="label">Contract</span><span class="val">0xC0ae...F8bc8</span></div>
       <div class="row"><span class="label">Function</span><span class="val">checkIn(string)</span></div>
       <div class="row"><span class="label">Network</span><span class="val">Base Mainnet (8453)</span></div>
-      <div class="row"><span class="label">Commitment</span><span class="val" id="modalAction">—</span></div>
-      <div class="row"><span class="label">Gas (est.)</span><span class="val">~$0.001 – $0.01</span></div>
-      <div class="row"><span class="label">From</span><span class="val" id="modalFrom">—</span></div>
+      <div class="row"><span class="label">Commitment</span><span class="val" id="modalAction">-</span></div>
+      <div class="row"><span class="label">Gas limit</span><span class="val" id="modalGasLimit">Estimating...</span></div>
+      <div class="row"><span class="label">From</span><span class="val" id="modalFrom">-</span></div>
+    </div>
+    <div class="gas-panel">
+      <div class="gas-grid">
+        <div class="field">
+          <label for="gasPreset">Gas strategy</label>
+          <select id="gasPreset" onchange="handleGasPresetChange()">
+            <option value="wallet">Wallet default</option>
+            <option value="slow">Slow</option>
+            <option value="market" selected>Market</option>
+            <option value="fast">Fast</option>
+            <option value="custom">Custom</option>
+          </select>
+          <small>Wallet default leaves gwei selection to MetaMask or Coinbase Wallet.</small>
+        </div>
+        <div class="field">
+          <label for="maxFeeGwei">Max fee (gwei)</label>
+          <input id="maxFeeGwei" type="number" min="0" step="0.01" placeholder="Auto">
+        </div>
+        <div class="field">
+          <label for="priorityFeeGwei">Priority fee (gwei)</label>
+          <input id="priorityFeeGwei" type="number" min="0" step="0.01" placeholder="Auto">
+        </div>
+        <div class="field">
+          <label>Live fee hint</label>
+          <input id="gasHint" type="text" value="Fetching Base fee data..." readonly>
+        </div>
+      </div>
     </div>
     <div class="modal-btns">
       <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
@@ -353,156 +384,463 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
 <script>
 var wallet = null;
-var commitments = JSON.parse(localStorage.getItem('proveit_commitments') || '[]');
-var txLog = JSON.parse(localStorage.getItem('proveit_txlog') || '[]');
-var earnedBadges = JSON.parse(localStorage.getItem('proveit_badges') || '[]');
-var dailyBase = JSON.parse(localStorage.getItem('proveit_dailybase') || '{"streak":0,"lastPing":null}');
+var provider = null;
 var pendingCheckin = null;
+var pendingPreparedTx = null;
+var feeHints = null;
 
-var BASE_CHAIN_ID = '0x2105';
-var CONTRACT_ADDRESS = '0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8';
+var BASE_CHAIN_ID = "0x2105";
+var CONTRACT_ADDRESS = "0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8";
+var STORAGE_PREFIX = "proveit_v2";
+
+var state = {
+  commitments: [],
+  txLog: [],
+  earnedBadges: [],
+  dailyBase: { streak: 0, lastPing: null }
+};
 
 var MILESTONES = [
-  {id:'first',icon:'🌱',name:'First proof',req:'First check-in on Base',days:1},
-  {id:'week1',icon:'🔥',name:'First week',req:'7-day streak',days:7},
-  {id:'based',icon:'🔵',name:'Based',req:'30-day streak',days:30},
-  {id:'legend',icon:'👑',name:'Legend',req:'100-day streak',days:100}
+  {id:"first",icon:"🌱",name:"First proof",req:"First check-in on Base",days:1},
+  {id:"week1",icon:"🔥",name:"First week",req:"7-day streak",days:7},
+  {id:"based",icon:"🔵",name:"Based",req:"30-day streak",days:30},
+  {id:"legend",icon:"👑",name:"Legend",req:"100-day streak",days:100}
 ];
 
-var TICKER_ITEMS = ['🔵 ProveIt runs on Base','⛓ Every check-in is on-chain','🔵 Base: Fast. Cheap. Permanent.','💎 Your discipline is immutable','🔵 Built on Base L2 · Chain ID 8453','⚡ ~$0.001 gas per proof','🔵 Powered by Coinbase Base','🧱 Block by block. Day by day.','✅ No excuses — verifiable forever'];
+var TICKER_ITEMS = [
+  "🔵 ProveIt runs on Base",
+  "⛓ Every check-in is on-chain",
+  "🔵 Base: Fast. Cheap. Permanent.",
+  "💎 Your discipline is immutable",
+  "🔵 Built on Base L2 · Chain ID 8453",
+  "⚡ ~$0.001 gas per proof",
+  "🔵 Wallet + chain checks enabled",
+  "🧱 Block by block. Day by day.",
+  "✅ No excuses — verifiable forever"
+];
+
+function getStorageScope() {
+  return wallet ? wallet.toLowerCase() : "guest";
+}
+
+function getStorageKey(name) {
+  return STORAGE_PREFIX + ":" + getStorageScope() + ":" + name;
+}
+
+function loadState() {
+  var commitments = JSON.parse(localStorage.getItem(getStorageKey("commitments")) || "[]");
+  var txLog = JSON.parse(localStorage.getItem(getStorageKey("txlog")) || "[]");
+  var earnedBadges = JSON.parse(localStorage.getItem(getStorageKey("badges")) || "[]");
+  var dailyBase = JSON.parse(localStorage.getItem(getStorageKey("dailybase")) || "{\"streak\":0,\"lastPing\":null}");
+  state.commitments = commitments;
+  state.txLog = txLog;
+  state.earnedBadges = earnedBadges;
+  state.dailyBase = dailyBase;
+}
+
+function saveState() {
+  localStorage.setItem(getStorageKey("commitments"), JSON.stringify(state.commitments));
+  localStorage.setItem(getStorageKey("txlog"), JSON.stringify(state.txLog));
+  localStorage.setItem(getStorageKey("badges"), JSON.stringify(state.earnedBadges));
+  localStorage.setItem(getStorageKey("dailybase"), JSON.stringify(state.dailyBase));
+}
 
 function buildTicker() {
   var items = TICKER_ITEMS.concat(TICKER_ITEMS);
-  var html = '';
+  var html = "";
   for (var i = 0; i < items.length; i++) {
     html += '<span class="ticker-item">' + items[i] + '<span class="ticker-sep"> · </span></span>';
   }
-  document.getElementById('ticker').innerHTML = html;
+  document.getElementById("ticker").innerHTML = html;
+}
+
+function setBanner(message, tone) {
+  var el = document.getElementById("statusBanner");
+  if (!message) {
+    el.className = "status-banner info";
+    el.textContent = "";
+    return;
+  }
+  el.className = "status-banner show " + (tone || "info");
+  el.textContent = message;
 }
 
 function handleWalletBtn() {
-  if (!wallet) { connectWallet(); }
-  else { document.getElementById('walletDropdown').classList.toggle('show'); }
+  if (!wallet) {
+    connectWallet();
+    return;
+  }
+  document.getElementById("walletDropdown").classList.toggle("show");
 }
 
-document.addEventListener('click', function(e) {
-  var wrap = document.querySelector('.wallet-wrap');
+document.addEventListener("click", function(e) {
+  var wrap = document.querySelector(".wallet-wrap");
   if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('walletDropdown').classList.remove('show');
+    document.getElementById("walletDropdown").classList.remove("show");
   }
 });
 
 function disconnectWallet() {
   wallet = null;
-  document.getElementById('walletDropdown').classList.remove('show');
-  var btn = document.getElementById('connectBtn');
-  btn.innerHTML = 'Connect Wallet';
-  btn.classList.remove('connected');
-  document.getElementById('walletDisplay').textContent = 'Not connected';
-  document.getElementById('walletDisplay').classList.add('placeholder');
-  document.getElementById('netDot').classList.remove('active');
-  document.getElementById('netName').textContent = '—';
-  document.getElementById('ethBal').textContent = '—';
-  document.getElementById('chainBanner').classList.remove('show');
+  provider = null;
+  pendingCheckin = null;
+  pendingPreparedTx = null;
+  loadState();
+  document.getElementById("walletDropdown").classList.remove("show");
+  var btn = document.getElementById("connectBtn");
+  btn.textContent = "Connect Wallet";
+  btn.classList.remove("connected");
+  document.getElementById("walletDisplay").textContent = "Not connected";
+  document.getElementById("walletDisplay").classList.add("placeholder");
+  document.getElementById("dropdownAddr").textContent = "-";
+  document.getElementById("netDot").classList.remove("active");
+  document.getElementById("netName").textContent = "-";
+  document.getElementById("ethBal").textContent = "-";
+  document.getElementById("chainBanner").classList.remove("show");
+  document.getElementById("myTxCount").textContent = "0";
+  setBanner("Wallet disconnected. Guest data is shown again.", "info");
+  renderAll();
 }
 
 function copyAddress() {
   if (!wallet) return;
   navigator.clipboard.writeText(wallet);
-  document.getElementById('walletDropdown').classList.remove('show');
+  document.getElementById("walletDropdown").classList.remove("show");
+  setBanner("Wallet address copied.", "success");
 }
 
 function openBasescanWallet() {
-  if (wallet) window.open('https://basescan.org/address/' + wallet, '_blank');
-  document.getElementById('walletDropdown').classList.remove('show');
-}
-
-function updateDailyBaseUI() {
-  var pingedToday = dailyBase.lastPing && new Date(dailyBase.lastPing).toDateString() === new Date().toDateString();
-  document.getElementById('baseStreakNum').textContent = dailyBase.streak;
-  document.getElementById('dailyStreakStat').textContent = dailyBase.streak;
-  var btn = document.getElementById('dailyBaseBtn');
-  if (pingedToday) {
-    btn.textContent = '✓ Showed up today';
-    btn.className = 'base-act-btn done';
-    btn.disabled = true;
-    document.getElementById('dailyStreakMsg').textContent = dailyBase.streak + ' days strong. Keep going.';
-  } else {
-    btn.textContent = 'Ping Base today';
-    btn.className = 'base-act-btn';
-    btn.disabled = false;
-    if (dailyBase.streak > 0) {
-      document.getElementById('dailyStreakMsg').textContent = 'Day ' + dailyBase.streak + ' streak at risk!';
-    }
-  }
+  if (wallet) window.open("https://basescan.org/address/" + wallet, "_blank", "noopener");
+  document.getElementById("walletDropdown").classList.remove("show");
 }
 
 function getProvider() {
-  return window._provider || window.ethereum || null;
+  return provider || window._provider || window.ethereum || null;
 }
 
-function getCheckinData(commitment) {
-  if (!window.ethers) throw new Error('ethers.js yüklenemedi.');
-  var iface = new ethers.Interface(['function checkIn(string)']);
-  return iface.encodeFunctionData('checkIn', [commitment]);
+function hasEthereumProvider() {
+  return !!(window.ethereum || window._provider);
+}
+
+function pickInjectedProvider() {
+  if (!window.ethereum) return null;
+  if (window.ethereum.providers && window.ethereum.providers.length) {
+    for (var i = 0; i < window.ethereum.providers.length; i++) {
+      if (window.ethereum.providers[i].isMetaMask) return window.ethereum.providers[i];
+    }
+    for (var j = 0; j < window.ethereum.providers.length; j++) {
+      if (window.ethereum.providers[j].isCoinbaseWallet) return window.ethereum.providers[j];
+    }
+    return window.ethereum.providers[0];
+  }
+  return window.ethereum;
 }
 
 function formatRpcError(err) {
-  if (!err) return 'Bilinmeyen hata';
+  if (!err) return "Unknown error";
+  if (err.code === 4001) return "User rejected the request in the wallet.";
   if (err.shortMessage) return err.shortMessage;
   if (err.reason) return err.reason;
   if (err.data && err.data.message) return err.data.message;
   if (err.error && err.error.message) return err.error.message;
   if (err.message) return err.message;
-  try { return JSON.stringify(err); } catch(_) { return String(err); }
+  try { return JSON.stringify(err); } catch (_) { return String(err); }
+}
+
+function formatAddress(addr) {
+  return addr ? addr.slice(0, 6) + "..." + addr.slice(-4) : "-";
+}
+
+function gweiToHex(value) {
+  if (value === "" || value === null || typeof value === "undefined") return null;
+  var n = Number(value);
+  if (!isFinite(n) || n < 0) return null;
+  return "0x" + BigInt(Math.round(n * 1e9)).toString(16);
+}
+
+function hexToGwei(hexValue) {
+  if (!hexValue) return 0;
+  return Number(parseInt(hexValue, 16) / 1e9);
+}
+
+function timeAgo(ts) {
+  if (!ts) return "Never";
+  var diff = Date.now() - ts;
+  var h = Math.floor(diff / 3600000);
+  if (h < 1) return "Just now";
+  if (h < 24) return h + "h ago";
+  return Math.floor(diff / 86400000) + "d ago";
+}
+
+function getActiveStreak(lastTimestamp, streakValue) {
+  if (!lastTimestamp) return 0;
+  return isMissedSince(lastTimestamp) ? 0 : (streakValue || 0);
+}
+
+function checkedInToday(item) {
+  return !!(item.lastCheckin && new Date(item.lastCheckin).toDateString() === new Date().toDateString());
+}
+
+function isMissedSince(dateValue) {
+  if (!dateValue) return false;
+  var last = new Date(dateValue);
+  var now = new Date();
+  var daysBetween = Math.floor((new Date(now.toDateString()) - new Date(last.toDateString())) / 86400000);
+  return daysBetween > 1;
+}
+
+function getCurrentStreak(item) {
+  if (!item.lastCheckin) return 0;
+  return isMissedSince(item.lastCheckin) ? 0 : item.streak;
+}
+
+async function getChainId() {
+  var activeProvider = getProvider();
+  if (!activeProvider) return null;
+  return activeProvider.request({ method: "eth_chainId" });
+}
+
+async function ensureBaseNetwork() {
+  if (!wallet) throw new Error("Connect your wallet first.");
+  var chainId = await getChainId();
+  if (chainId !== BASE_CHAIN_ID) {
+    document.getElementById("chainBanner").classList.add("show");
+    throw new Error("Switch to Base before sending an on-chain proof.");
+  }
+}
+
+async function switchToBase() {
+  var activeProvider = getProvider();
+  if (!activeProvider) {
+    setBanner("No wallet provider found.", "error");
+    return;
+  }
+
+  try {
+    await activeProvider.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: BASE_CHAIN_ID }]
+    });
+  } catch (e) {
+    if (e.code === 4902) {
+      await activeProvider.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId: BASE_CHAIN_ID,
+          chainName: "Base",
+          nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+          rpcUrls: ["https://mainnet.base.org"],
+          blockExplorerUrls: ["https://basescan.org"]
+        }]
+      });
+    } else {
+      setBanner("Base switch failed: " + formatRpcError(e), "error");
+      return;
+    }
+  }
+
+  await updateWalletUI();
+  setBanner("Switched to Base Mainnet.", "success");
+}
+
+async function connectWallet() {
+  if (!hasEthereumProvider()) {
+    setBanner("No wallet found. Install MetaMask or Coinbase Wallet.", "error");
+    return;
+  }
+
+  provider = pickInjectedProvider();
+  window._provider = provider;
+
+  try {
+    setBanner("Requesting wallet connection...", "info");
+    var accounts = await provider.request({ method: "eth_requestAccounts" });
+    if (!accounts || !accounts.length) {
+      throw new Error("No account returned from wallet.");
+    }
+    wallet = accounts[0];
+    loadState();
+    await updateWalletUI();
+    await refreshGasHints();
+    renderAll();
+    setBanner("Wallet connected: " + formatAddress(wallet), "success");
+  } catch (e) {
+    setBanner("Wallet connection failed: " + formatRpcError(e), "error");
+  }
+}
+
+async function updateWalletUI() {
+  var btn = document.getElementById("connectBtn");
+
+  if (!wallet) {
+    btn.textContent = "Connect Wallet";
+    btn.classList.remove("connected");
+    return;
+  }
+
+  btn.innerHTML = '<span class="wallet-dot"></span>' + wallet.slice(0, 6) + "..." + wallet.slice(-4) + " ▾";
+  btn.classList.add("connected");
+  document.getElementById("walletDisplay").textContent = wallet;
+  document.getElementById("walletDisplay").classList.remove("placeholder");
+  document.getElementById("dropdownAddr").textContent = wallet.slice(0, 10) + "..." + wallet.slice(-8);
+
+  try {
+    var chainId = await getChainId();
+    var isBase = chainId === BASE_CHAIN_ID;
+    document.getElementById("netDot").classList.toggle("active", isBase);
+    document.getElementById("netName").textContent = isBase ? "Base Mainnet" : "Wrong network";
+    document.getElementById("chainBanner").classList.toggle("show", !isBase);
+  } catch (_) {}
+
+  try {
+    var balanceHex = await getProvider().request({ method: "eth_getBalance", params: [wallet, "latest"] });
+    var balanceEth = Number(parseInt(balanceHex, 16) / 1e18).toFixed(5);
+    document.getElementById("ethBal").textContent = balanceEth + " ETH";
+  } catch (_) {
+    document.getElementById("ethBal").textContent = "-";
+  }
+
+  document.getElementById("myTxCount").textContent = String(state.txLog.length);
+}
+
+async function refreshGasHints() {
+  var activeProvider = getProvider();
+  if (!activeProvider) {
+    document.getElementById("gasHint").value = "Connect wallet to fetch fees";
+    document.getElementById("gasMarketStat").textContent = "-";
+    return;
+  }
+
+  try {
+    var gasPriceHex = await activeProvider.request({ method: "eth_gasPrice" });
+    var priorityHex;
+    try {
+      priorityHex = await activeProvider.request({ method: "eth_maxPriorityFeePerGas" });
+    } catch (_) {
+      priorityHex = "0x77359400";
+    }
+    var gasPriceGwei = hexToGwei(gasPriceHex);
+    var priorityGwei = hexToGwei(priorityHex);
+    feeHints = {
+      slow: { maxFee: Math.max(0.01, gasPriceGwei * 0.9), priorityFee: Math.max(0.01, priorityGwei * 0.75) },
+      market: { maxFee: Math.max(0.01, gasPriceGwei), priorityFee: Math.max(0.01, priorityGwei) },
+      fast: { maxFee: Math.max(0.01, gasPriceGwei * 1.2), priorityFee: Math.max(0.01, priorityGwei * 1.4) }
+    };
+    document.getElementById("gasHint").value = "Base fee ~ " + gasPriceGwei.toFixed(2) + " gwei / priority ~ " + priorityGwei.toFixed(2) + " gwei";
+    document.getElementById("gasMarketStat").textContent = feeHints.market.maxFee.toFixed(2) + " gwei";
+    applyGasPresetValues();
+  } catch (e) {
+    feeHints = null;
+    document.getElementById("gasHint").value = "Fee API unavailable: " + formatRpcError(e);
+    document.getElementById("gasMarketStat").textContent = "-";
+  }
+}
+
+function handleGasPresetChange() {
+  applyGasPresetValues();
+}
+
+function applyGasPresetValues() {
+  var preset = document.getElementById("gasPreset").value;
+  var maxFeeInput = document.getElementById("maxFeeGwei");
+  var priorityInput = document.getElementById("priorityFeeGwei");
+  var readonly = preset !== "custom";
+  maxFeeInput.readOnly = readonly;
+  priorityInput.readOnly = readonly;
+
+  if (preset === "wallet") {
+    maxFeeInput.value = "";
+    priorityInput.value = "";
+    return;
+  }
+
+  if (!feeHints) return;
+  var selected = feeHints[preset] || feeHints.market;
+  maxFeeInput.value = selected.maxFee.toFixed(2);
+  priorityInput.value = selected.priorityFee.toFixed(2);
+}
+
+async function getCheckinData(commitment) {
+  if (!window.ethers) throw new Error("ethers.js could not be loaded.");
+  var iface = new ethers.Interface(["function checkIn(string)"]);
+  return iface.encodeFunctionData("checkIn", [commitment]);
 }
 
 async function estimateCheckinTx(commitment) {
-  var provider = getProvider();
-  if (!provider) throw new Error('Wallet provider bulunamadı.');
-  if (!wallet) throw new Error('Önce wallet bağlanmalı.');
+  await ensureBaseNetwork();
+  var activeProvider = getProvider();
+  if (!activeProvider) throw new Error("Wallet provider not found.");
+  if (!wallet) throw new Error("Connect your wallet first.");
 
-  var data = getCheckinData(commitment);
+  var data = await getCheckinData(commitment);
   var tx = {
     from: wallet,
     to: CONTRACT_ADDRESS,
-    value: '0x0',
+    value: "0x0",
     data: data
   };
 
-  var gas = await provider.request({
-    method: 'eth_estimateGas',
+  var gas = await activeProvider.request({
+    method: "eth_estimateGas",
     params: [tx]
   });
+
+  tx.gas = gas;
+
+  var preset = document.getElementById("gasPreset").value;
+  if (preset !== "wallet") {
+    var maxFeeHex = gweiToHex(document.getElementById("maxFeeGwei").value);
+    var priorityHex = gweiToHex(document.getElementById("priorityFeeGwei").value);
+    if (maxFeeHex) tx.maxFeePerGas = maxFeeHex;
+    if (priorityHex) tx.maxPriorityFeePerGas = priorityHex;
+  }
 
   return { tx: tx, gas: gas, data: data };
 }
 
+async function waitForReceipt(txHash, timeoutMs) {
+  var activeProvider = getProvider();
+  var started = Date.now();
+
+  while (Date.now() - started < timeoutMs) {
+    var receipt = await activeProvider.request({
+      method: "eth_getTransactionReceipt",
+      params: [txHash]
+    });
+    if (receipt) return receipt;
+    await new Promise(function(resolve) { setTimeout(resolve, 2500); });
+  }
+
+  throw new Error("Transaction was submitted but no receipt was found yet.");
+}
+
 async function pingBase() {
-  if (!wallet) { alert('Connect your wallet first.'); return; }
-  var pingedToday = dailyBase.lastPing && new Date(dailyBase.lastPing).toDateString() === new Date().toDateString();
+  if (!wallet) {
+    await connectWallet();
+    if (!wallet) return;
+  }
+
+  var pingedToday = state.dailyBase.lastPing && new Date(state.dailyBase.lastPing).toDateString() === new Date().toDateString();
   if (pingedToday) return;
 
-  var btn = document.getElementById('dailyBaseBtn');
+  var btn = document.getElementById("dailyBaseBtn");
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
 
   try {
-    var prepared = await estimateCheckinTx('Daily Base ping');
-    prepared.tx.gas = prepared.gas;
-
+    var prepared = await estimateCheckinTx("Daily Base ping");
     var txHash = await getProvider().request({
-      method: 'eth_sendTransaction',
+      method: "eth_sendTransaction",
       params: [prepared.tx]
     });
-
+    setBanner("Transaction sent. Waiting for Base confirmation...", "info");
+    var receipt = await waitForReceipt(txHash, 120000);
+    if (!receipt.status || receipt.status === "0x0") throw new Error("Transaction reverted on Base.");
     recordDailyPing(txHash);
+    setBanner("Daily Base ping confirmed on-chain.", "success");
   } catch (e) {
-    console.log('Daily ping error:', e);
-    alert('İşlem gönderilemedi.
-
-' + formatRpcError(e));
-    btn.innerHTML = 'Ping Base today';
+    setBanner("Daily ping failed: " + formatRpcError(e), "error");
+    btn.textContent = "Ping Base today";
     btn.disabled = false;
     return;
   }
@@ -510,148 +848,131 @@ async function pingBase() {
 
 function recordDailyPing(txHash) {
   var now = Date.now();
-  var prevDate = dailyBase.lastPing ? new Date(dailyBase.lastPing).toDateString() : null;
+  var prevDate = state.dailyBase.lastPing ? new Date(state.dailyBase.lastPing).toDateString() : null;
   var yesterdayDate = new Date(now - 86400000).toDateString();
-  if (prevDate === yesterdayDate) { dailyBase.streak += 1; }
-  else if (!prevDate || prevDate !== new Date(now).toDateString()) { dailyBase.streak = 1; }
-  dailyBase.lastPing = now;
-  localStorage.setItem('proveit_dailybase', JSON.stringify(dailyBase));
-  txLog.unshift({ hash: txHash, name: '🔵 Daily Base ping', time: now, streak: dailyBase.streak });
-  localStorage.setItem('proveit_txlog', JSON.stringify(txLog));
-  updateDailyBaseUI(); renderTxLog(); updateStats();
-  showNftToast({ icon: '🔵', name: 'Showed up!', req: 'Day ' + dailyBase.streak + ' on Base.' });
+  if (prevDate === yesterdayDate) state.dailyBase.streak += 1;
+  else if (prevDate !== new Date(now).toDateString()) state.dailyBase.streak = 1;
+  state.dailyBase.lastPing = now;
+  state.txLog.unshift({ hash: txHash, name: "🔵 Daily Base ping", time: now, streak: state.dailyBase.streak });
+  state.txLog = state.txLog.slice(0, 20);
+  saveState();
+  updateDailyBaseUI();
+  renderTxLog();
+  updateStats();
+  showNftToast({ icon: "🔵", name: "Showed up!", req: "Day " + state.dailyBase.streak + " on Base." });
 }
 
-async function connectWallet() {
-  var provider = null;
-
-  if (window.ethereum) {
-    if (window.ethereum.providers && window.ethereum.providers.length) {
-      for (var i = 0; i < window.ethereum.providers.length; i++) {
-        if (window.ethereum.providers[i].isMetaMask) {
-          provider = window.ethereum.providers[i];
-          break;
-        }
-      }
-    }
-    if (!provider) provider = window.ethereum;
+function updateDailyBaseUI() {
+  var streak = getActiveStreak(state.dailyBase.lastPing, state.dailyBase.streak);
+  var pingedToday = !!(state.dailyBase.lastPing && new Date(state.dailyBase.lastPing).toDateString() === new Date().toDateString());
+  document.getElementById("baseStreakNum").textContent = streak;
+  document.getElementById("dailyStreakStat").textContent = streak;
+  var btn = document.getElementById("dailyBaseBtn");
+  if (pingedToday) {
+    btn.textContent = "✓ Showed up today";
+    btn.className = "base-act-btn done";
+    btn.disabled = true;
+    document.getElementById("dailyStreakMsg").textContent = streak + " days strong. Keep going.";
+  } else {
+    btn.textContent = "Ping Base today";
+    btn.className = "base-act-btn";
+    btn.disabled = false;
+    document.getElementById("dailyStreakMsg").textContent = streak > 0 ? "Day " + streak + " streak at risk!" : "Start your streak today.";
   }
-
-  if (!provider) { alert('No wallet found. Install MetaMask or Coinbase Wallet.'); return; }
-
-  try {
-    var accounts = await provider.request({ method: 'eth_requestAccounts' });
-    wallet = accounts[0];
-    window._provider = provider;
-    await updateWalletUI();
-    render();
-  } catch(e) {
-    console.log('Wallet connect error:', e);
-    alert('Wallet bağlanamadı.
-
-' + formatRpcError(e));
-  }
-}
-
-async function updateWalletUI() {
-  if (!wallet) return;
-  var btn = document.getElementById('connectBtn');
-  btn.innerHTML = '<span class="wallet-dot"></span>' + wallet.slice(0,6) + '...' + wallet.slice(-4) + ' ▾';
-  btn.classList.add('connected');
-  document.getElementById('walletDisplay').textContent = wallet;
-  document.getElementById('walletDisplay').classList.remove('placeholder');
-  document.getElementById('dropdownAddr').textContent = wallet.slice(0,10) + '...' + wallet.slice(-8);
-  try {
-    var chainId = await getProvider().request({ method: 'eth_chainId' });
-    var isBase = chainId === BASE_CHAIN_ID;
-    document.getElementById('netDot').classList.toggle('active', isBase);
-    document.getElementById('netName').textContent = isBase ? 'Base Mainnet' : 'Wrong network';
-    document.getElementById('chainBanner').classList.toggle('show', !isBase);
-  } catch(e) {}
-  try {
-    var b = await getProvider().request({ method: 'eth_getBalance', params: [wallet, 'latest'] });
-    document.getElementById('ethBal').textContent = (parseInt(b, 16) / 1e18).toFixed(5) + ' ETH';
-  } catch(e) {}
-  document.getElementById('myTxCount').textContent = txLog.length;
-}
-
-async function switchToBase() {
-  try { await getProvider().request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BASE_CHAIN_ID }] }); }
-  catch(e) {
-    if (e.code === 4902) {
-      await getProvider().request({ method: 'wallet_addEthereumChain', params: [{ chainId: BASE_CHAIN_ID, chainName: 'Base', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://mainnet.base.org'], blockExplorerUrls: ['https://basescan.org'] }] });
-    }
-  }
-  await updateWalletUI();
 }
 
 function quickProve(name, emoji) {
-  var fullName = name + ' ' + emoji;
+  var fullName = name + " " + emoji;
   var exists = false;
-  for (var i = 0; i < commitments.length; i++) {
-    if (commitments[i].name === fullName) { exists = true; break; }
+  for (var i = 0; i < state.commitments.length; i++) {
+    if (state.commitments[i].name === fullName) {
+      exists = true;
+      break;
+    }
   }
+
   if (!exists) {
-    commitments.unshift({ id: Date.now(), name: fullName, createdAt: Date.now(), streak: 0, totalCheckins: 0, lastCheckin: null });
-    save(); render();
+    state.commitments.unshift({ id: Date.now(), name: fullName, createdAt: Date.now(), streak: 0, totalCheckins: 0, lastCheckin: null });
+    saveState();
+    render();
   }
-  var c = null;
-  for (var j = 0; j < commitments.length; j++) {
-    if (commitments[j].name === fullName) { c = commitments[j]; break; }
+
+  for (var j = 0; j < state.commitments.length; j++) {
+    if (state.commitments[j].name === fullName) {
+      if (checkedInToday(state.commitments[j])) {
+        setBanner("Already proved today. Come back tomorrow.", "info");
+        return;
+      }
+      openCheckinModal(state.commitments[j].id);
+      return;
+    }
   }
-  if (!c) return;
-  if (checkedInToday(c)) { alert('Already proved today! Come back tomorrow.'); return; }
-  openCheckinModal(c.id);
 }
 
-function openCheckinModal(id) {
-  if (!wallet) { connectWallet(); return; }
-  var c = null;
-  for (var i = 0; i < commitments.length; i++) {
-    if (commitments[i].id === id) { c = commitments[i]; break; }
+function findCommitmentById(id) {
+  for (var i = 0; i < state.commitments.length; i++) {
+    if (state.commitments[i].id === id) return state.commitments[i];
   }
+  return null;
+}
+
+async function openCheckinModal(id) {
+  if (!wallet) {
+    await connectWallet();
+    if (!wallet) return;
+  }
+
+  var c = findCommitmentById(id);
   if (!c || checkedInToday(c)) return;
+
+  try {
+    await refreshGasHints();
+    pendingPreparedTx = await estimateCheckinTx(c.name);
+  } catch (e) {
+    setBanner(formatRpcError(e), "error");
+    return;
+  }
+
   pendingCheckin = id;
-  document.getElementById('modalTitle').textContent = 'Prove: ' + c.name;
-  document.getElementById('modalAction').textContent = c.name;
-  document.getElementById('modalFrom').textContent = wallet ? wallet.slice(0,8) + '...' + wallet.slice(-6) : '—';
-  document.getElementById('checkinModal').classList.add('show');
+  document.getElementById("modalTitle").textContent = "Prove: " + c.name;
+  document.getElementById("modalAction").textContent = c.name;
+  document.getElementById("modalFrom").textContent = wallet ? wallet.slice(0, 8) + "..." + wallet.slice(-6) : "-";
+  document.getElementById("modalGasLimit").textContent = String(parseInt(pendingPreparedTx.gas, 16));
+  document.getElementById("checkinModal").classList.add("show");
 }
 
-function closeModal() { document.getElementById('checkinModal').classList.remove('show'); pendingCheckin = null; }
+function closeModal() {
+  document.getElementById("checkinModal").classList.remove("show");
+  pendingCheckin = null;
+  pendingPreparedTx = null;
+}
 
 async function confirmCheckin() {
   if (!pendingCheckin) return;
-
-  var c = null;
-  for (var i = 0; i < commitments.length; i++) {
-    if (commitments[i].id === pendingCheckin) { c = commitments[i]; break; }
-  }
+  var c = findCommitmentById(pendingCheckin);
   if (!c) return;
 
-  var btn = document.getElementById('confirmCheckinBtn');
+  var btn = document.getElementById("confirmCheckinBtn");
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
 
   try {
-    var prepared = await estimateCheckinTx(c.name);
-    prepared.tx.gas = prepared.gas;
-
+    pendingPreparedTx = await estimateCheckinTx(c.name);
     var txHash = await getProvider().request({
-      method: 'eth_sendTransaction',
-      params: [prepared.tx]
+      method: "eth_sendTransaction",
+      params: [pendingPreparedTx.tx]
     });
-
+    setBanner("Transaction sent. Waiting for Base confirmation...", "info");
+    var receipt = await waitForReceipt(txHash, 120000);
+    if (!receipt.status || receipt.status === "0x0") throw new Error("Transaction reverted on Base.");
     applyCheckin(c, txHash);
-  } catch (e) {
-    console.log('tx error or rejected:', e);
-    alert('İşlem gönderilemedi.
-
-' + formatRpcError(e));
     closeModal();
+    setBanner("Proof confirmed on-chain.", "success");
+  } catch (e) {
+    setBanner("Proof failed: " + formatRpcError(e), "error");
   }
 
-  btn.innerHTML = 'Sign & Prove It';
+  btn.textContent = "Sign & Prove It";
   btn.disabled = false;
 }
 
@@ -659,107 +980,159 @@ function applyCheckin(c, txHash) {
   var now = Date.now();
   var prevDate = c.lastCheckin ? new Date(c.lastCheckin).toDateString() : null;
   var yesterdayDate = new Date(now - 86400000).toDateString();
-  if (prevDate === yesterdayDate) { c.streak += 1; }
-  else if (prevDate !== new Date(now).toDateString()) { c.streak = 1; }
-  c.totalCheckins += 1; c.lastCheckin = now;
-  txLog.unshift({ hash: txHash, name: c.name, time: now, streak: c.streak });
-  if (txLog.length > 20) txLog = txLog.slice(0, 20);
-  save(); updateStats(); checkMilestones(c); closeModal(); render(); renderTxLog();
-  if (wallet) document.getElementById('myTxCount').textContent = txLog.length;
+  if (prevDate === yesterdayDate) c.streak += 1;
+  else if (prevDate !== new Date(now).toDateString()) c.streak = 1;
+  c.totalCheckins += 1;
+  c.lastCheckin = now;
+  state.txLog.unshift({ hash: txHash, name: c.name, time: now, streak: c.streak });
+  state.txLog = state.txLog.slice(0, 20);
+  saveState();
+  updateStats();
+  checkMilestones(c);
+  render();
+  renderTxLog();
 }
 
 function checkMilestones(c) {
   for (var i = 0; i < MILESTONES.length; i++) {
-    var m = MILESTONES[i]; var found = false;
-    for (var j = 0; j < earnedBadges.length; j++) { if (earnedBadges[j] === m.id) { found = true; break; } }
-    if (!found && c.streak >= m.days) { earnedBadges.push(m.id); save(); renderMilestones(); showNftToast(m); }
+    var m = MILESTONES[i];
+    if (state.earnedBadges.indexOf(m.id) === -1 && c.streak >= m.days) {
+      state.earnedBadges.push(m.id);
+      saveState();
+      renderMilestones();
+      showNftToast(m);
+    }
   }
 }
 
 function showNftToast(m) {
-  document.getElementById('toastIcon').textContent = m.icon;
-  document.getElementById('toastTitle').textContent = '🎉 ' + m.name;
-  document.getElementById('toastSub').textContent = m.req;
-  var t = document.getElementById('nftToast'); t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 4000);
+  document.getElementById("toastIcon").textContent = m.icon;
+  document.getElementById("toastTitle").textContent = "🎉 " + m.name;
+  document.getElementById("toastSub").textContent = m.req;
+  var t = document.getElementById("nftToast");
+  t.classList.add("show");
+  setTimeout(function() { t.classList.remove("show"); }, 4000);
 }
 
 function renderMilestones() {
-  var html = '';
+  var html = "";
   for (var i = 0; i < MILESTONES.length; i++) {
-    var m = MILESTONES[i]; var earned = false;
-    for (var j = 0; j < earnedBadges.length; j++) { if (earnedBadges[j] === m.id) { earned = true; break; } }
-    html += '<div class="milestone-item"><div class="milestone-icon '+(earned?'earned':'')+'">' + m.icon + '</div><div class="milestone-info"><div class="milestone-name">' + m.name + '</div><div class="milestone-req">' + m.req + '</div></div><div class="milestone-status '+(earned?'earned':'locked')+'">'+(earned?'✓ Earned':m.days+'d')+'</div></div>';
+    var m = MILESTONES[i];
+    var earned = state.earnedBadges.indexOf(m.id) !== -1;
+    html += '<div class="milestone-item"><div class="milestone-icon ' + (earned ? "earned" : "") + '">' + m.icon + '</div><div class="milestone-info"><div class="milestone-name">' + m.name + '</div><div class="milestone-req">' + m.req + '</div></div><div class="milestone-status ' + (earned ? "earned" : "locked") + '">' + (earned ? "✓ Earned" : m.days + "d") + "</div></div>";
   }
-  document.getElementById('milestonesList').innerHTML = html;
+  document.getElementById("milestonesList").innerHTML = html;
 }
 
-function checkedInToday(c) { return c.lastCheckin && new Date(c.lastCheckin).toDateString() === new Date().toDateString(); }
-function timeAgo(ts) { if (!ts) return 'Never'; var diff = Date.now()-ts, h = Math.floor(diff/3600000); if (h<1) return 'Just now'; if (h<24) return h+'h ago'; return Math.floor(diff/86400000)+'d ago'; }
-
 function render() {
-  updateStats(); renderMilestones();
-  if (!commitments.length) {
-    document.getElementById('commitmentsList').innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>No commitments yet.<br>Tap any habit above to start.</p></div>';
+  updateStats();
+  renderMilestones();
+  if (!state.commitments.length) {
+    document.getElementById("commitmentsList").innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>No commitments yet.<br>Tap any habit above to start.</p></div>';
     return;
   }
-  var html = '';
-  for (var i = 0; i < commitments.length; i++) {
-    var c = commitments[i]; var done = checkedInToday(c); var pct = Math.min(100, Math.round((c.streak/30)*100));
-    html += '<div class="commitment-item"><div class="commitment-info"><div class="commitment-name"><span>'+c.name+'</span>'+(c.streak>=2?'<span class="streak-badge">🔥 '+c.streak+' days</span>':'')+  '</div><div class="commitment-meta"><div style="display:flex;align-items:center;gap:4px"><div class="check-indicator '+(done?'done':'')+  '"></div>'+(done?'Proved today':'Last: '+timeAgo(c.lastCheckin))+'</div><span>·</span><span>'+c.totalCheckins+' proofs</span></div></div><div class="progress-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:'+pct+'%"></div></div><div class="progress-label">'+c.streak+'d</div></div><button class="checkin-btn '+(done?'done-today':'')+'" '+(done?'disabled':'')+' onclick="openCheckinModal('+c.id+')">'+(done?'✓ Proved':'Prove it')+'</button></div>';
+
+  var html = "";
+  for (var i = 0; i < state.commitments.length; i++) {
+    var c = state.commitments[i];
+    var done = checkedInToday(c);
+    var currentStreak = getCurrentStreak(c);
+    var pct = Math.min(100, Math.round((currentStreak / 30) * 100));
+    html += '<div class="commitment-item"><div class="commitment-info"><div class="commitment-name"><span>' + c.name + "</span>" + (currentStreak >= 2 ? '<span class="streak-badge">🔥 ' + currentStreak + " days</span>" : "") + '</div><div class="commitment-meta"><div style="display:flex;align-items:center;gap:4px"><div class="check-indicator ' + (done ? "done" : "") + '"></div>' + (done ? "Proved today" : "Last: " + timeAgo(c.lastCheckin)) + "</div><span>·</span><span>" + c.totalCheckins + ' proofs</span></div></div><div class="progress-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-label">' + currentStreak + 'd</div></div><button class="checkin-btn ' + (done ? "done-today" : "") + '" ' + (done ? "disabled" : "") + ' onclick="openCheckinModal(' + c.id + ')">' + (done ? "✓ Proved" : "Prove it") + "</button></div>";
   }
-  document.getElementById('commitmentsList').innerHTML = html;
+
+  document.getElementById("commitmentsList").innerHTML = html;
 }
 
 function updateStats() {
-  var total = 0; for (var i = 0; i < commitments.length; i++) total += commitments[i].totalCheckins;
-  var pingCount = 0; for (var j = 0; j < txLog.length; j++) { if (txLog[j].name && txLog[j].name.indexOf('ping') !== -1) pingCount++; }
-  document.getElementById('globalCheckins').textContent = total + pingCount;
-  var longest = 0; for (var k = 0; k < commitments.length; k++) { if ((commitments[k].streak||0) > longest) longest = commitments[k].streak; }
-  document.getElementById('longestStreak').textContent = longest;
-  document.getElementById('totalCommitments').textContent = commitments.length;
-  document.getElementById('dailyStreakStat').textContent = dailyBase.streak;
-  if (wallet) document.getElementById('myTxCount').textContent = txLog.length;
+  var total = 0;
+  var longest = 0;
+  for (var i = 0; i < state.commitments.length; i++) {
+    total += state.commitments[i].totalCheckins;
+    longest = Math.max(longest, getCurrentStreak(state.commitments[i]));
+  }
+
+  var pingCount = 0;
+  for (var j = 0; j < state.txLog.length; j++) {
+    if (state.txLog[j].name && state.txLog[j].name.indexOf("ping") !== -1) pingCount++;
+  }
+
+  document.getElementById("globalCheckins").textContent = String(total + pingCount);
+  document.getElementById("longestStreak").textContent = String(longest);
+  document.getElementById("totalCommitments").textContent = String(state.commitments.length);
+  document.getElementById("dailyStreakStat").textContent = String(getActiveStreak(state.dailyBase.lastPing, state.dailyBase.streak));
+  document.getElementById("myTxCount").textContent = String(state.txLog.length);
 }
 
 function renderTxLog() {
-  if (!txLog.length) return;
-  var html = ''; var limit = Math.min(8, txLog.length);
+  if (!state.txLog.length) {
+    document.getElementById("txLog").innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0">No transactions yet.</div>';
+    return;
+  }
+
+  var html = "";
+  var limit = Math.min(8, state.txLog.length);
   for (var i = 0; i < limit; i++) {
-    var tx = txLog[i];
-    html += '<div class="tx-item"><div class="tx-dot"></div><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">'+tx.name+'</span><span class="tx-hash" onclick="window.open(\'https://basescan.org/tx/'+tx.hash+'\',\'_blank\')">'+tx.hash.slice(0,8)+'...</span><span class="tx-time">'+timeAgo(tx.time)+'</span></div>';
+    var tx = state.txLog[i];
+    html += '<div class="tx-item"><div class="tx-dot"></div><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">' + tx.name + '</span><span class="tx-hash" onclick="window.open(\'https://basescan.org/tx/' + tx.hash + '\',\'_blank\',\'noopener\')">' + tx.hash.slice(0, 8) + "...</span><span class=\"tx-time\">" + timeAgo(tx.time) + "</span></div>";
   }
-  document.getElementById('txLog').innerHTML = html;
+  document.getElementById("txLog").innerHTML = html;
 }
 
-function save() {
-  localStorage.setItem('proveit_commitments', JSON.stringify(commitments));
-  localStorage.setItem('proveit_txlog', JSON.stringify(txLog));
-  localStorage.setItem('proveit_badges', JSON.stringify(earnedBadges));
+function renderAll() {
+  updateDailyBaseUI();
+  render();
+  renderTxLog();
 }
 
-if (window.ethereum) {
-  window.ethereum.on('accountsChanged', function(accs) {
-    wallet = accs[0] || null;
-    if (!wallet) disconnectWallet();
-    else updateWalletUI();
+async function bootWallet() {
+  provider = pickInjectedProvider();
+  if (!provider) return;
+  window._provider = provider;
+
+  try {
+    var accounts = await provider.request({ method: "eth_accounts" });
+    if (accounts && accounts.length) {
+      wallet = accounts[0];
+      loadState();
+      await updateWalletUI();
+      await refreshGasHints();
+      setBanner("Reconnected to " + formatAddress(wallet), "info");
+    }
+  } catch (err) {
+    console.log("Boot account read error:", err);
+  }
+}
+
+function bindWalletEvents() {
+  if (!window.ethereum || window.__proveItEventsBound) return;
+  window.__proveItEventsBound = true;
+
+  window.ethereum.on("accountsChanged", async function(accs) {
+    wallet = accs && accs[0] ? accs[0] : null;
+    if (!wallet) {
+      disconnectWallet();
+      return;
+    }
+    loadState();
+    await updateWalletUI();
+    await refreshGasHints();
+    renderAll();
+    setBanner("Active account changed to " + formatAddress(wallet), "info");
   });
-  window.ethereum.on('chainChanged', function() { updateWalletUI(); });
-  var bootProvider = getProvider() || window.ethereum;
-  if (bootProvider) {
-    bootProvider.request({ method: 'eth_accounts' }).then(function(accs) {
-      if (accs.length) {
-        wallet = accs[0];
-        window._provider = bootProvider;
-        updateWalletUI();
-      }
-    }).catch(function(err) {
-      console.log('Boot account read error:', err);
-    });
-  }
+
+  window.ethereum.on("chainChanged", async function() {
+    await updateWalletUI();
+    await refreshGasHints();
+    renderAll();
+  });
 }
 
-buildTicker(); updateDailyBaseUI(); render(); renderTxLog();
+buildTicker();
+loadState();
+renderAll();
+bindWalletEvents();
+bootWallet();
 </script>
 </body>
 </html>
