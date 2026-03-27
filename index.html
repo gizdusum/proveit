@@ -4,22 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProveIt — Prove it on Base</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--card:#16161f;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
-  --accent:#7c6cfc;--accent2:#a78bfa;--accent-glow:rgba(124,108,252,0.25);
-  --base:#0052ff;--base2:#4f8dff;--base-dim:rgba(0,82,255,0.1);--base-glow:rgba(0,82,255,0.3);
-  --green:#22d3a0;--green-dim:rgba(34,211,160,0.15);
-  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.15);
-  --red:#f87171;--red-dim:rgba(248,113,113,0.12);
-  --text:#f1f0ff;--text2:#9390a8;--text3:#5a5870;
-  --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
-}
+:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--card:#16161f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--base:#0052ff;--base2:#4f8dff;--base-dim:rgba(0,82,255,0.1);--base-glow:rgba(0,82,255,0.3);--green:#22d3a0;--green-dim:rgba(34,211,160,0.15);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.15);--red:#f87171;--red-dim:rgba(248,113,113,0.12);--text:#f1f0ff;--text2:#9390a8;--text3:#5a5870;--mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;}
@@ -122,7 +112,7 @@ header{padding:18px 0;border-bottom:1px solid var(--border);}
 .base-stat{background:rgba(0,82,255,0.06);border:1px solid rgba(0,82,255,0.12);border-radius:10px;padding:12px;}
 .base-stat .val{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--base2);}
 .base-stat .lbl{font-size:11px;color:var(--text3);margin-top:3px;}
-.basescan-link{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;padding:9px;background:transparent;border:1px solid rgba(0,82,255,0.25);border-radius:9px;color:var(--base2);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;transition:all 0.2s;}
+.basescan-link{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;padding:9px;background:transparent;border:1px solid rgba(0,82,255,0.25);border-radius:9px;color:var(--base2);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .basescan-link:hover{background:var(--base-dim);}
 .milestones-card h3{font-size:15px;font-weight:600;margin-bottom:16px;}
 .milestone-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
@@ -196,7 +186,7 @@ header{padding:18px 0;border-bottom:1px solid var(--border);}
     <div class="hero">
       <div class="hero-eyebrow"><svg width="13" height="13" viewBox="0 0 111 111" fill="none"><path fill="#4f8dff" d="M54.921 110.034C85.359 110.034 110.034 85.359 110.034 54.921C110.034 24.4828 85.359-0.192 54.921-0.192C26.043-0.192 2.353 21.906 0 50.148H72.847V59.694H0C2.353 87.936 26.043 110.034 54.921 110.034Z"/></svg>Built on Base · Proof of discipline, on-chain</div>
       <h1>Do it. <em>Prove it.</em><br>Every day.</h1>
-      <p>Your habits. Your word. Your blockchain. Every check-in is a permanent transaction on Base — no deleting, no lying.</p>
+      <p>Your habits. Your word. Your blockchain. Every check-in is a permanent transaction on Base.</p>
       <div class="built-on-base"><span>Each proof is a real transaction on</span><span class="base-pill"><svg width="11" height="11" viewBox="0 0 111 111" fill="none"><path fill="white" d="M54.921 110.034C85.359 110.034 110.034 85.359 110.034 54.921C110.034 24.4828 85.359-0.192 54.921-0.192C26.043-0.192 2.353 21.906 0 50.148H72.847V59.694H0C2.353 87.936 26.043 110.034 54.921 110.034Z"/></svg>Base</span><span>— verifiable forever.</span></div>
     </div>
     <div class="stats-row">
@@ -301,94 +291,401 @@ header{padding:18px 0;border-bottom:1px solid var(--border);}
   <div class="nft-badge-info"><div class="title" id="toastTitle">Badge Unlocked!</div><div class="sub" id="toastSub">7-day streak</div></div>
 </div>
 <script>
-let wallet=null,commitments=JSON.parse(localStorage.getItem('proveit_commitments')||'[]'),txLog=JSON.parse(localStorage.getItem('proveit_txlog')||'[]'),earnedBadges=JSON.parse(localStorage.getItem('proveit_badges')||'[]'),dailyBase=JSON.parse(localStorage.getItem('proveit_dailybase')||'{"streak":0,"lastPing":null}'),pendingCheckin=null,selectedQuick=null;
+var wallet = null;
+var commitments = JSON.parse(localStorage.getItem('proveit_commitments') || '[]');
+var txLog = JSON.parse(localStorage.getItem('proveit_txlog') || '[]');
+var earnedBadges = JSON.parse(localStorage.getItem('proveit_badges') || '[]');
+var dailyBase = JSON.parse(localStorage.getItem('proveit_dailybase') || '{"streak":0,"lastPing":null}');
+var pendingCheckin = null;
+var selectedQuick = null;
 
-const BASE_CHAIN_ID='0x2105';
-const CONTRACT_ADDRESS='0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8';
-const CONTRACT_ABI=[{"inputs":[{"internalType":"string","name":"commitment","type":"string"}],"name":"checkIn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"internalType":"string","name":"commitment","type":"string"},{"internalType":"uint256","name":"streak","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"Proved","type":"event"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getCheckInCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"string","name":"commitment","type":"string"}],"name":"getStreak","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalCheckIns","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
+var BASE_CHAIN_ID = '0x2105';
+var CONTRACT_ADDRESS = '0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8';
+var CONTRACT_ABI = [{"inputs":[{"internalType":"string","name":"commitment","type":"string"}],"name":"checkIn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"internalType":"string","name":"commitment","type":"string"},{"internalType":"uint256","name":"streak","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"Proved","type":"event"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getCheckInCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"string","name":"commitment","type":"string"}],"name":"getStreak","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalCheckIns","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
 
-const MILESTONES=[{id:'first',icon:'🌱',name:'First proof',req:'First check-in on Base',days:1},{id:'week1',icon:'🔥',name:'First week',req:'7-day streak',days:7},{id:'based',icon:'🔵',name:'Based',req:'30-day streak',days:30},{id:'legend',icon:'👑',name:'Legend',req:'100-day streak',days:100}];
-const TICKER_ITEMS=['🔵 ProveIt runs on Base','⛓ Every check-in is on-chain','🔵 Base: Fast. Cheap. Permanent.','💎 Your discipline is immutable','🔵 Built on Base L2 · Chain ID 8453','⚡ ~$0.001 gas per proof','🔵 Powered by Coinbase\'s Base','🧱 Block by block. Day by day.','🔵 Your streak lives on-chain forever','✅ No excuses — it\'s verifiable'];
+var MILESTONES = [
+  {id:'first',icon:'🌱',name:'First proof',req:'First check-in on Base',days:1},
+  {id:'week1',icon:'🔥',name:'First week',req:'7-day streak',days:7},
+  {id:'based',icon:'🔵',name:'Based',req:'30-day streak',days:30},
+  {id:'legend',icon:'👑',name:'Legend',req:'100-day streak',days:100}
+];
 
-function buildTicker(){const items=[...TICKER_ITEMS,...TICKER_ITEMS];document.getElementById('ticker').innerHTML=items.map(t=>`<span class="ticker-item">${t}<span class="ticker-sep"> · </span></span>`).join('');}
+var TICKER_ITEMS = [
+  '🔵 ProveIt runs on Base',
+  '⛓ Every check-in is on-chain',
+  '🔵 Base: Fast. Cheap. Permanent.',
+  '💎 Your discipline is immutable',
+  '🔵 Built on Base L2 · Chain ID 8453',
+  '⚡ ~$0.001 gas per proof',
+  '🔵 Powered by Coinbase Base',
+  '🧱 Block by block. Day by day.',
+  '🔵 Your streak lives on-chain forever',
+  '✅ No excuses — it is verifiable'
+];
 
-function updateDailyBaseUI(){const pingedToday=dailyBase.lastPing&&new Date(dailyBase.lastPing).toDateString()===new Date().toDateString();document.getElementById('baseStreakNum').textContent=dailyBase.streak;document.getElementById('dailyStreakStat').textContent=dailyBase.streak;const btn=document.getElementById('dailyBaseBtn');if(pingedToday){btn.textContent='✓ Showed up today';btn.className='base-act-btn done';btn.disabled=true;document.getElementById('dailyStreakMsg').textContent=dailyBase.streak+' day'+(dailyBase.streak!==1?'s':'')+' strong. Keep going.';}else{btn.textContent='Ping Base today';btn.className='base-act-btn';btn.disabled=false;if(dailyBase.streak>0)document.getElementById('dailyStreakMsg').textContent='Day '+dailyBase.streak+' streak at risk — don\'t break it now.';}}
+function buildTicker() {
+  var items = TICKER_ITEMS.concat(TICKER_ITEMS);
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    html += '<span class="ticker-item">' + items[i] + '<span class="ticker-sep"> · </span></span>';
+  }
+  document.getElementById('ticker').innerHTML = html;
+}
 
-async function pingBase(){
-  if(!wallet){alert('Connect your wallet first.');return;}
-  const pingedToday=dailyBase.lastPing&&new Date(dailyBase.lastPing).toDateString()===new Date().toDateString();
-  if(pingedToday)return;
-  const btn=document.getElementById('dailyBaseBtn');
-  btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
-  try{
-    const data=encodeFunctionCall('checkIn',['Daily Base ping 🔵']);
-    const txHash=await window.ethereum.request({method:'eth_sendTransaction',params:[{from:wallet,to:CONTRACT_ADDRESS,value:'0x0',data:data,chainId:BASE_CHAIN_ID}]});
-    recordDailyPing(txHash);
-  }catch(e){
-    recordDailyPing('0x'+Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join(''));
+function updateDailyBaseUI() {
+  var pingedToday = dailyBase.lastPing && new Date(dailyBase.lastPing).toDateString() === new Date().toDateString();
+  document.getElementById('baseStreakNum').textContent = dailyBase.streak;
+  document.getElementById('dailyStreakStat').textContent = dailyBase.streak;
+  var btn = document.getElementById('dailyBaseBtn');
+  if (pingedToday) {
+    btn.textContent = '✓ Showed up today';
+    btn.className = 'base-act-btn done';
+    btn.disabled = true;
+    document.getElementById('dailyStreakMsg').textContent = dailyBase.streak + ' days strong. Keep going.';
+  } else {
+    btn.textContent = 'Ping Base today';
+    btn.className = 'base-act-btn';
+    btn.disabled = false;
+    if (dailyBase.streak > 0) {
+      document.getElementById('dailyStreakMsg').textContent = 'Day ' + dailyBase.streak + ' streak at risk!';
+    }
   }
 }
 
-function recordDailyPing(txHash){const now=Date.now(),prevDate=dailyBase.lastPing?new Date(dailyBase.lastPing).toDateString():null,yesterdayDate=new Date(now-86400000).toDateString();if(prevDate===yesterdayDate)dailyBase.streak+=1;else if(!prevDate||prevDate!==new Date(now).toDateString())dailyBase.streak=1;dailyBase.lastPing=now;localStorage.setItem('proveit_dailybase',JSON.stringify(dailyBase));txLog.unshift({hash:txHash,name:'🔵 Daily Base ping',time:now,streak:dailyBase.streak});localStorage.setItem('proveit_txlog',JSON.stringify(txLog));updateDailyBaseUI();renderTxLog();updateStats();showNftToast({icon:'🔵',name:'Showed up!',req:'Day '+dailyBase.streak+' on Base — keep the streak alive.'});}
-
-async function connectWallet(){if(!window.ethereum){alert('No wallet found.\n\nInstall MetaMask or Coinbase Wallet.');return;}try{const accounts=await window.ethereum.request({method:'eth_requestAccounts'});wallet=accounts[0];await updateWalletUI();render();}catch(e){}}
-
-async function updateWalletUI(){if(!wallet)return;const btn=document.getElementById('connectBtn');btn.textContent=wallet.slice(0,6)+'...'+wallet.slice(-4);btn.classList.add('connected');document.getElementById('walletDisplay').textContent=wallet;document.getElementById('walletDisplay').classList.remove('placeholder');const chainId=await window.ethereum.request({method:'eth_chainId'});const isBase=chainId===BASE_CHAIN_ID;document.getElementById('netDot').classList.toggle('active',isBase);document.getElementById('netName').textContent=isBase?'Base Mainnet':'Wrong network';document.getElementById('chainBanner').classList.toggle('show',!isBase);try{const b=await window.ethereum.request({method:'eth_getBalance',params:[wallet,'latest']});document.getElementById('ethBal').textContent=(parseInt(b,16)/1e18).toFixed(5)+' ETH';}catch(e){}document.getElementById('myTxCount').textContent=txLog.length;}
-
-async function switchToBase(){try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});}catch(e){if(e.code===4902){await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:BASE_CHAIN_ID,chainName:'Base',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:['https://mainnet.base.org'],blockExplorerUrls:['https://basescan.org']}]});}}await updateWalletUI();}
-
-// ABI encode helper — checkIn(string) fonksiyonunu manuel encode eder
-function encodeFunctionCall(fnName, args){
-  const iface = new ethers.Interface(CONTRACT_ABI);
-  return iface.encodeFunctionData(fnName, args);
+function encodeTx(commitment) {
+  var selector = '3e2d99c3';
+  var strBytes = [];
+  for (var i = 0; i < commitment.length; i++) {
+    strBytes.push(commitment.charCodeAt(i));
+  }
+  function pad64(hex) {
+    while (hex.length < 64) hex = '0' + hex;
+    return hex;
+  }
+  var offset = pad64('20');
+  var length = pad64(strBytes.length.toString(16));
+  var dataHex = '';
+  for (var j = 0; j < strBytes.length; j++) {
+    dataHex += ('0' + strBytes[j].toString(16)).slice(-2);
+  }
+  while (dataHex.length % 64 !== 0) dataHex += '0';
+  return '0x' + selector + offset + length + dataHex;
 }
 
-function selectQuick(el,text){document.querySelectorAll('.quick-pill').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');selectedQuick=text;document.getElementById('customInput').value='';}
-
-function addCommitment(){const input=document.getElementById('customInput');const text=input.value.trim()||selectedQuick;if(!text){alert('Choose or write a commitment first.');return;}if(commitments.find(c=>c.name.toLowerCase()===text.toLowerCase())){alert('Already tracking this one!');return;}commitments.unshift({id:Date.now(),name:text,createdAt:Date.now(),streak:0,totalCheckins:0,lastCheckin:null});save();render();input.value='';selectedQuick=null;document.querySelectorAll('.quick-pill').forEach(p=>p.classList.remove('selected'));}
-
-function openCheckinModal(id){if(!wallet){alert('Connect your wallet first.');return;}const c=commitments.find(x=>x.id===id);if(!c||checkedInToday(c))return;pendingCheckin=id;document.getElementById('modalTitle').textContent='Prove: '+stripEmoji(c.name).trim();document.getElementById('modalAction').textContent=c.name;document.getElementById('modalFrom').textContent=wallet.slice(0,8)+'...'+wallet.slice(-6);document.getElementById('checkinModal').classList.add('show');}
-
-function closeModal(){document.getElementById('checkinModal').classList.remove('show');pendingCheckin=null;}
-
-async function confirmCheckin(){
-  if(!pendingCheckin)return;
-  const c=commitments.find(x=>x.id===pendingCheckin);if(!c)return;
-  const btn=document.getElementById('confirmCheckinBtn');
-  btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
-  try{
-    const data=encodeFunctionCall('checkIn',[c.name]);
-    const txHash=await window.ethereum.request({method:'eth_sendTransaction',params:[{from:wallet,to:CONTRACT_ADDRESS,value:'0x0',data:data,chainId:BASE_CHAIN_ID}]});
-    applyCheckin(c,txHash);
-  }catch(e){
-    if(e.code===4001){closeModal();}
-    else{applyCheckin(c,'0x'+Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join(''));}
-  }finally{btn.innerHTML='Sign & Prove It';btn.disabled=false;}
+async function pingBase() {
+  if (!wallet) { alert('Connect your wallet first.'); return; }
+  var pingedToday = dailyBase.lastPing && new Date(dailyBase.lastPing).toDateString() === new Date().toDateString();
+  if (pingedToday) return;
+  var btn = document.getElementById('dailyBaseBtn');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+  try {
+    var data = encodeTx('Daily Base ping');
+    var txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{ from: wallet, to: CONTRACT_ADDRESS, value: '0x0', data: data, chainId: BASE_CHAIN_ID }]
+    });
+    recordDailyPing(txHash);
+  } catch(e) {
+    var fakeHash = '0x';
+    for (var i = 0; i < 64; i++) fakeHash += Math.floor(Math.random()*16).toString(16);
+    recordDailyPing(fakeHash);
+  }
 }
 
-function applyCheckin(c,txHash){const now=Date.now(),prevDate=c.lastCheckin?new Date(c.lastCheckin).toDateString():null,yesterdayDate=new Date(now-86400000).toDateString();if(prevDate===yesterdayDate)c.streak+=1;else if(prevDate!==new Date(now).toDateString())c.streak=1;c.totalCheckins+=1;c.lastCheckin=now;txLog.unshift({hash:txHash,name:c.name,time:now,streak:c.streak});if(txLog.length>20)txLog=txLog.slice(0,20);save();updateStats();checkMilestones(c);closeModal();render();renderTxLog();if(wallet)document.getElementById('myTxCount').textContent=txLog.length;}
+function recordDailyPing(txHash) {
+  var now = Date.now();
+  var prevDate = dailyBase.lastPing ? new Date(dailyBase.lastPing).toDateString() : null;
+  var yesterdayDate = new Date(now - 86400000).toDateString();
+  if (prevDate === yesterdayDate) {
+    dailyBase.streak += 1;
+  } else if (!prevDate || prevDate !== new Date(now).toDateString()) {
+    dailyBase.streak = 1;
+  }
+  dailyBase.lastPing = now;
+  localStorage.setItem('proveit_dailybase', JSON.stringify(dailyBase));
+  txLog.unshift({ hash: txHash, name: '🔵 Daily Base ping', time: now, streak: dailyBase.streak });
+  localStorage.setItem('proveit_txlog', JSON.stringify(txLog));
+  updateDailyBaseUI();
+  renderTxLog();
+  updateStats();
+  showNftToast({ icon: '🔵', name: 'Showed up!', req: 'Day ' + dailyBase.streak + ' on Base.' });
+}
 
-function checkMilestones(c){MILESTONES.forEach(m=>{if(earnedBadges.includes(m.id))return;if(c.streak>=m.days){earnedBadges.push(m.id);save();renderMilestones();showNftToast(m);}});}
+async function connectWallet() {
+  if (!window.ethereum) {
+    alert('No wallet found. Install MetaMask or Coinbase Wallet.');
+    return;
+  }
+  try {
+    var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    wallet = accounts[0];
+    await updateWalletUI();
+    render();
+  } catch(e) {
+    console.log('Wallet connect error:', e);
+  }
+}
 
-function showNftToast(m){document.getElementById('toastIcon').textContent=m.icon;document.getElementById('toastTitle').textContent='🎉 '+m.name;document.getElementById('toastSub').textContent=m.req;const t=document.getElementById('nftToast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000);}
+async function updateWalletUI() {
+  if (!wallet) return;
+  var btn = document.getElementById('connectBtn');
+  btn.textContent = wallet.slice(0,6) + '...' + wallet.slice(-4);
+  btn.classList.add('connected');
+  document.getElementById('walletDisplay').textContent = wallet;
+  document.getElementById('walletDisplay').classList.remove('placeholder');
+  try {
+    var chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    var isBase = chainId === BASE_CHAIN_ID;
+    document.getElementById('netDot').classList.toggle('active', isBase);
+    document.getElementById('netName').textContent = isBase ? 'Base Mainnet' : 'Wrong network';
+    document.getElementById('chainBanner').classList.toggle('show', !isBase);
+  } catch(e) {}
+  try {
+    var b = await window.ethereum.request({ method: 'eth_getBalance', params: [wallet, 'latest'] });
+    document.getElementById('ethBal').textContent = (parseInt(b, 16) / 1e18).toFixed(5) + ' ETH';
+  } catch(e) {}
+  document.getElementById('myTxCount').textContent = txLog.length;
+}
 
-function renderMilestones(){document.getElementById('milestonesList').innerHTML=MILESTONES.map(m=>{const earned=earnedBadges.includes(m.id);return`<div class="milestone-item"><div class="milestone-icon ${earned?'earned':''}">${m.icon}</div><div class="milestone-info"><div class="milestone-name">${m.name}</div><div class="milestone-req">${m.req}</div></div><div class="milestone-status ${earned?'earned':'locked'}">${earned?'✓ Earned':m.days+'d'}</div></div>`;}).join('');}
+async function switchToBase() {
+  try {
+    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BASE_CHAIN_ID }] });
+  } catch(e) {
+    if (e.code === 4902) {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [{ chainId: BASE_CHAIN_ID, chainName: 'Base', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://mainnet.base.org'], blockExplorerUrls: ['https://basescan.org'] }]
+      });
+    }
+  }
+  await updateWalletUI();
+}
 
-function checkedInToday(c){return c.lastCheckin&&new Date(c.lastCheckin).toDateString()===new Date().toDateString();}
-function stripEmoji(s){return s.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu,'');}
-function timeAgo(ts){if(!ts)return'Never';const diff=Date.now()-ts,h=Math.floor(diff/3600000);if(h<1)return'Just now';if(h<24)return h+'h ago';return Math.floor(diff/86400000)+'d ago';}
+function selectQuick(el, text) {
+  var pills = document.querySelectorAll('.quick-pill');
+  for (var i = 0; i < pills.length; i++) pills[i].classList.remove('selected');
+  el.classList.add('selected');
+  selectedQuick = text;
+  document.getElementById('customInput').value = '';
+}
 
-function render(){updateStats();renderMilestones();if(!commitments.length){document.getElementById('commitmentsList').innerHTML=`<div class="empty-state"><div class="icon">🎯</div><p>No commitments yet.<br>The blockchain is patiently waiting for your proof.</p></div>`;return;}document.getElementById('commitmentsList').innerHTML=commitments.map(c=>{const done=checkedInToday(c),pct=Math.min(100,Math.round((c.streak/30)*100));return`<div class="commitment-item"><div class="commitment-info"><div class="commitment-name"><span>${c.name}</span>${c.streak>=2?`<span class="streak-badge">🔥 ${c.streak} days</span>`:''}</div><div class="commitment-meta"><div style="display:flex;align-items:center;gap:4px"><div class="check-indicator ${done?'done':''}"></div>${done?'Proved today':'Last: '+timeAgo(c.lastCheckin)}</div><span>·</span><span>${c.totalCheckins} proofs</span></div></div><div class="progress-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div><div class="progress-label">${c.streak}d</div></div><button class="checkin-btn ${done?'done-today':''}" ${done?'disabled':''} onclick="openCheckinModal(${c.id})">${done?'✓ Proved':'Prove it'}</button></div>`;}).join('');}
+function addCommitment() {
+  var input = document.getElementById('customInput');
+  var text = input.value.trim() || selectedQuick;
+  if (!text) { alert('Choose or write a commitment first.'); return; }
+  for (var i = 0; i < commitments.length; i++) {
+    if (commitments[i].name.toLowerCase() === text.toLowerCase()) { alert('Already tracking this one!'); return; }
+  }
+  commitments.unshift({ id: Date.now(), name: text, createdAt: Date.now(), streak: 0, totalCheckins: 0, lastCheckin: null });
+  save();
+  render();
+  input.value = '';
+  selectedQuick = null;
+  var pills = document.querySelectorAll('.quick-pill');
+  for (var j = 0; j < pills.length; j++) pills[j].classList.remove('selected');
+}
 
-function updateStats(){document.getElementById('globalCheckins').textContent=commitments.reduce((s,c)=>s+c.totalCheckins,0)+txLog.filter(t=>t.name.includes('ping')).length;document.getElementById('longestStreak').textContent=commitments.reduce((m,c)=>Math.max(m,c.streak||0),0);document.getElementById('totalCommitments').textContent=commitments.length;document.getElementById('dailyStreakStat').textContent=dailyBase.streak;if(wallet)document.getElementById('myTxCount').textContent=txLog.length;}
+function openCheckinModal(id) {
+  if (!wallet) { alert('Connect your wallet first.'); return; }
+  var c = null;
+  for (var i = 0; i < commitments.length; i++) {
+    if (commitments[i].id === id) { c = commitments[i]; break; }
+  }
+  if (!c || checkedInToday(c)) return;
+  pendingCheckin = id;
+  document.getElementById('modalTitle').textContent = 'Prove: ' + c.name.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+  document.getElementById('modalAction').textContent = c.name;
+  document.getElementById('modalFrom').textContent = wallet.slice(0,8) + '...' + wallet.slice(-6);
+  document.getElementById('checkinModal').classList.add('show');
+}
 
-function renderTxLog(){if(!txLog.length)return;document.getElementById('txLog').innerHTML=txLog.slice(0,8).map(tx=>`<div class="tx-item"><div class="tx-dot"></div><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">${tx.name}</span><span class="tx-hash" onclick="window.open('https://basescan.org/tx/${tx.hash}','_blank')">${tx.hash.slice(0,8)}...</span><span class="tx-time">${timeAgo(tx.time)}</span></div>`).join('');}
+function closeModal() {
+  document.getElementById('checkinModal').classList.remove('show');
+  pendingCheckin = null;
+}
 
-function save(){localStorage.setItem('proveit_commitments',JSON.stringify(commitments));localStorage.setItem('proveit_txlog',JSON.stringify(txLog));localStorage.setItem('proveit_badges',JSON.stringify(earnedBadges));}
+async function confirmCheckin() {
+  if (!pendingCheckin) return;
+  var c = null;
+  for (var i = 0; i < commitments.length; i++) {
+    if (commitments[i].id === pendingCheckin) { c = commitments[i]; break; }
+  }
+  if (!c) return;
+  var btn = document.getElementById('confirmCheckinBtn');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+  try {
+    var data = encodeTx(c.name);
+    var txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{ from: wallet, to: CONTRACT_ADDRESS, value: '0x0', data: data, chainId: BASE_CHAIN_ID }]
+    });
+    applyCheckin(c, txHash);
+  } catch(e) {
+    if (e.code === 4001) {
+      closeModal();
+    } else {
+      var fakeHash = '0x';
+      for (var j = 0; j < 64; j++) fakeHash += Math.floor(Math.random()*16).toString(16);
+      applyCheckin(c, fakeHash);
+    }
+  }
+  btn.innerHTML = 'Sign & Prove It';
+  btn.disabled = false;
+}
 
-if(window.ethereum){window.ethereum.on('accountsChanged',accs=>{wallet=accs[0]||null;updateWalletUI();});window.ethereum.on('chainChanged',()=>updateWalletUI());window.ethereum.request({method:'eth_accounts'}).then(accs=>{if(accs.length){wallet=accs[0];updateWalletUI();}});}
+function applyCheckin(c, txHash) {
+  var now = Date.now();
+  var prevDate = c.lastCheckin ? new Date(c.lastCheckin).toDateString() : null;
+  var yesterdayDate = new Date(now - 86400000).toDateString();
+  if (prevDate === yesterdayDate) {
+    c.streak += 1;
+  } else if (prevDate !== new Date(now).toDateString()) {
+    c.streak = 1;
+  }
+  c.totalCheckins += 1;
+  c.lastCheckin = now;
+  txLog.unshift({ hash: txHash, name: c.name, time: now, streak: c.streak });
+  if (txLog.length > 20) txLog = txLog.slice(0, 20);
+  save();
+  updateStats();
+  checkMilestones(c);
+  closeModal();
+  render();
+  renderTxLog();
+  if (wallet) document.getElementById('myTxCount').textContent = txLog.length;
+}
 
-buildTicker();updateDailyBaseUI();render();renderTxLog();
+function checkMilestones(c) {
+  for (var i = 0; i < MILESTONES.length; i++) {
+    var m = MILESTONES[i];
+    var found = false;
+    for (var j = 0; j < earnedBadges.length; j++) {
+      if (earnedBadges[j] === m.id) { found = true; break; }
+    }
+    if (!found && c.streak >= m.days) {
+      earnedBadges.push(m.id);
+      save();
+      renderMilestones();
+      showNftToast(m);
+    }
+  }
+}
+
+function showNftToast(m) {
+  document.getElementById('toastIcon').textContent = m.icon;
+  document.getElementById('toastTitle').textContent = '🎉 ' + m.name;
+  document.getElementById('toastSub').textContent = m.req;
+  var t = document.getElementById('nftToast');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 4000);
+}
+
+function renderMilestones() {
+  var html = '';
+  for (var i = 0; i < MILESTONES.length; i++) {
+    var m = MILESTONES[i];
+    var earned = false;
+    for (var j = 0; j < earnedBadges.length; j++) {
+      if (earnedBadges[j] === m.id) { earned = true; break; }
+    }
+    html += '<div class="milestone-item">';
+    html += '<div class="milestone-icon ' + (earned ? 'earned' : '') + '">' + m.icon + '</div>';
+    html += '<div class="milestone-info"><div class="milestone-name">' + m.name + '</div><div class="milestone-req">' + m.req + '</div></div>';
+    html += '<div class="milestone-status ' + (earned ? 'earned' : 'locked') + '">' + (earned ? '✓ Earned' : m.days + 'd') + '</div>';
+    html += '</div>';
+  }
+  document.getElementById('milestonesList').innerHTML = html;
+}
+
+function checkedInToday(c) {
+  return c.lastCheckin && new Date(c.lastCheckin).toDateString() === new Date().toDateString();
+}
+
+function timeAgo(ts) {
+  if (!ts) return 'Never';
+  var diff = Date.now() - ts;
+  var h = Math.floor(diff / 3600000);
+  if (h < 1) return 'Just now';
+  if (h < 24) return h + 'h ago';
+  return Math.floor(diff / 86400000) + 'd ago';
+}
+
+function render() {
+  updateStats();
+  renderMilestones();
+  if (!commitments.length) {
+    document.getElementById('commitmentsList').innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>No commitments yet.<br>The blockchain is patiently waiting.</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < commitments.length; i++) {
+    var c = commitments[i];
+    var done = checkedInToday(c);
+    var pct = Math.min(100, Math.round((c.streak / 30) * 100));
+    html += '<div class="commitment-item">';
+    html += '<div class="commitment-info">';
+    html += '<div class="commitment-name"><span>' + c.name + '</span>';
+    if (c.streak >= 2) html += '<span class="streak-badge">🔥 ' + c.streak + ' days</span>';
+    html += '</div>';
+    html += '<div class="commitment-meta"><div style="display:flex;align-items:center;gap:4px"><div class="check-indicator ' + (done ? 'done' : '') + '"></div>' + (done ? 'Proved today' : 'Last: ' + timeAgo(c.lastCheckin)) + '</div><span>·</span><span>' + c.totalCheckins + ' proofs</span></div>';
+    html += '</div>';
+    html += '<div class="progress-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-label">' + c.streak + 'd</div></div>';
+    html += '<button class="checkin-btn ' + (done ? 'done-today' : '') + '" ' + (done ? 'disabled' : '') + ' onclick="openCheckinModal(' + c.id + ')">' + (done ? '✓ Proved' : 'Prove it') + '</button>';
+    html += '</div>';
+  }
+  document.getElementById('commitmentsList').innerHTML = html;
+}
+
+function updateStats() {
+  var total = 0;
+  for (var i = 0; i < commitments.length; i++) total += commitments[i].totalCheckins;
+  var pingCount = 0;
+  for (var j = 0; j < txLog.length; j++) { if (txLog[j].name && txLog[j].name.indexOf('ping') !== -1) pingCount++; }
+  document.getElementById('globalCheckins').textContent = total + pingCount;
+  var longest = 0;
+  for (var k = 0; k < commitments.length; k++) { if ((commitments[k].streak || 0) > longest) longest = commitments[k].streak; }
+  document.getElementById('longestStreak').textContent = longest;
+  document.getElementById('totalCommitments').textContent = commitments.length;
+  document.getElementById('dailyStreakStat').textContent = dailyBase.streak;
+  if (wallet) document.getElementById('myTxCount').textContent = txLog.length;
+}
+
+function renderTxLog() {
+  if (!txLog.length) return;
+  var html = '';
+  var limit = Math.min(8, txLog.length);
+  for (var i = 0; i < limit; i++) {
+    var tx = txLog[i];
+    html += '<div class="tx-item">';
+    html += '<div class="tx-dot"></div>';
+    html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">' + tx.name + '</span>';
+    html += '<span class="tx-hash" onclick="window.open(\'https://basescan.org/tx/' + tx.hash + '\',\'_blank\')">' + tx.hash.slice(0,8) + '...</span>';
+    html += '<span class="tx-time">' + timeAgo(tx.time) + '</span>';
+    html += '</div>';
+  }
+  document.getElementById('txLog').innerHTML = html;
+}
+
+function save() {
+  localStorage.setItem('proveit_commitments', JSON.stringify(commitments));
+  localStorage.setItem('proveit_txlog', JSON.stringify(txLog));
+  localStorage.setItem('proveit_badges', JSON.stringify(earnedBadges));
+}
+
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', function(accs) { wallet = accs[0] || null; updateWalletUI(); });
+  window.ethereum.on('chainChanged', function() { updateWalletUI(); });
+  window.ethereum.request({ method: 'eth_accounts' }).then(function(accs) {
+    if (accs.length) { wallet = accs[0]; updateWalletUI(); }
+  });
+}
+
+buildTicker();
+updateDailyBaseUI();
+render();
+renderTxLog();
 </script>
 </body>
 </html>
