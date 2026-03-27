@@ -350,6 +350,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:20px;positio
   <div class="nft-badge-info"><div class="title" id="toastTitle">Badge Unlocked!</div><div class="sub" id="toastSub">7-day streak</div></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
 <script>
 var wallet = null;
 var commitments = JSON.parse(localStorage.getItem('proveit_commitments') || '[]');
@@ -436,51 +437,74 @@ function updateDailyBaseUI() {
   }
 }
 
-function encodeTx(commitment) {
-  // keccak256("checkIn(string)") ilk 4 byte = f9e08285
-  var selector = 'f9e08285';
-  var strBytes = [];
-  for (var i = 0; i < commitment.length; i++) {
-    var code = commitment.charCodeAt(i);
-    if (code < 128) {
-      strBytes.push(code);
-    } else if (code < 2048) {
-      strBytes.push((code >> 6) | 192);
-      strBytes.push((code & 63) | 128);
-    } else {
-      strBytes.push((code >> 12) | 224);
-      strBytes.push(((code >> 6) & 63) | 128);
-      strBytes.push((code & 63) | 128);
-    }
-  }
-  function pad64(hex) { while (hex.length < 64) hex = '0' + hex; return hex; }
-  var offset = pad64('20');
-  var length = pad64(strBytes.length.toString(16));
-  var dataHex = '';
-  for (var j = 0; j < strBytes.length; j++) {
-    dataHex += ('0' + strBytes[j].toString(16)).slice(-2);
-  }
-  while (dataHex.length % 64 !== 0) dataHex += '0';
-  return '0x' + selector + offset + length + dataHex;
+function getProvider() {
+  return window._provider || window.ethereum || null;
+}
+
+function getCheckinData(commitment) {
+  if (!window.ethers) throw new Error('ethers.js yüklenemedi.');
+  var iface = new ethers.Interface(['function checkIn(string)']);
+  return iface.encodeFunctionData('checkIn', [commitment]);
+}
+
+function formatRpcError(err) {
+  if (!err) return 'Bilinmeyen hata';
+  if (err.shortMessage) return err.shortMessage;
+  if (err.reason) return err.reason;
+  if (err.data && err.data.message) return err.data.message;
+  if (err.error && err.error.message) return err.error.message;
+  if (err.message) return err.message;
+  try { return JSON.stringify(err); } catch(_) { return String(err); }
+}
+
+async function estimateCheckinTx(commitment) {
+  var provider = getProvider();
+  if (!provider) throw new Error('Wallet provider bulunamadı.');
+  if (!wallet) throw new Error('Önce wallet bağlanmalı.');
+
+  var data = getCheckinData(commitment);
+  var tx = {
+    from: wallet,
+    to: CONTRACT_ADDRESS,
+    value: '0x0',
+    data: data
+  };
+
+  var gas = await provider.request({
+    method: 'eth_estimateGas',
+    params: [tx]
+  });
+
+  return { tx: tx, gas: gas, data: data };
 }
 
 async function pingBase() {
   if (!wallet) { alert('Connect your wallet first.'); return; }
   var pingedToday = dailyBase.lastPing && new Date(dailyBase.lastPing).toDateString() === new Date().toDateString();
   if (pingedToday) return;
+
   var btn = document.getElementById('dailyBaseBtn');
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
+
   try {
-    var data = encodeTx('Daily Base ping');
-    var txHash = await (window._provider || window.ethereum).request({
+    var prepared = await estimateCheckinTx('Daily Base ping');
+    prepared.tx.gas = prepared.gas;
+
+    var txHash = await getProvider().request({
       method: 'eth_sendTransaction',
-      params: [{ from: wallet, to: CONTRACT_ADDRESS, value: '0x0', data: data, chainId: BASE_CHAIN_ID }]
+      params: [prepared.tx]
     });
+
     recordDailyPing(txHash);
-  } catch(e) {
+  } catch (e) {
+    console.log('Daily ping error:', e);
+    alert('İşlem gönderilemedi.
+
+' + formatRpcError(e));
     btn.innerHTML = 'Ping Base today';
     btn.disabled = false;
+    return;
   }
 }
 
@@ -500,6 +524,7 @@ function recordDailyPing(txHash) {
 
 async function connectWallet() {
   var provider = null;
+
   if (window.ethereum) {
     if (window.ethereum.providers && window.ethereum.providers.length) {
       for (var i = 0; i < window.ethereum.providers.length; i++) {
@@ -511,14 +536,21 @@ async function connectWallet() {
     }
     if (!provider) provider = window.ethereum;
   }
+
   if (!provider) { alert('No wallet found. Install MetaMask or Coinbase Wallet.'); return; }
+
   try {
     var accounts = await provider.request({ method: 'eth_requestAccounts' });
     wallet = accounts[0];
     window._provider = provider;
     await updateWalletUI();
     render();
-  } catch(e) { console.log('Wallet connect error:', e); }
+  } catch(e) {
+    console.log('Wallet connect error:', e);
+    alert('Wallet bağlanamadı.
+
+' + formatRpcError(e));
+  }
 }
 
 async function updateWalletUI() {
@@ -530,24 +562,24 @@ async function updateWalletUI() {
   document.getElementById('walletDisplay').classList.remove('placeholder');
   document.getElementById('dropdownAddr').textContent = wallet.slice(0,10) + '...' + wallet.slice(-8);
   try {
-    var chainId = await (window._provider || window.ethereum).request({ method: 'eth_chainId' });
+    var chainId = await getProvider().request({ method: 'eth_chainId' });
     var isBase = chainId === BASE_CHAIN_ID;
     document.getElementById('netDot').classList.toggle('active', isBase);
     document.getElementById('netName').textContent = isBase ? 'Base Mainnet' : 'Wrong network';
     document.getElementById('chainBanner').classList.toggle('show', !isBase);
   } catch(e) {}
   try {
-    var b = await (window._provider || window.ethereum).request({ method: 'eth_getBalance', params: [wallet, 'latest'] });
+    var b = await getProvider().request({ method: 'eth_getBalance', params: [wallet, 'latest'] });
     document.getElementById('ethBal').textContent = (parseInt(b, 16) / 1e18).toFixed(5) + ' ETH';
   } catch(e) {}
   document.getElementById('myTxCount').textContent = txLog.length;
 }
 
 async function switchToBase() {
-  try { await (window._provider || window.ethereum).request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BASE_CHAIN_ID }] }); }
+  try { await getProvider().request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BASE_CHAIN_ID }] }); }
   catch(e) {
     if (e.code === 4902) {
-      await (window._provider || window.ethereum).request({ method: 'wallet_addEthereumChain', params: [{ chainId: BASE_CHAIN_ID, chainName: 'Base', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://mainnet.base.org'], blockExplorerUrls: ['https://basescan.org'] }] });
+      await getProvider().request({ method: 'wallet_addEthereumChain', params: [{ chainId: BASE_CHAIN_ID, chainName: 'Base', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://mainnet.base.org'], blockExplorerUrls: ['https://basescan.org'] }] });
     }
   }
   await updateWalletUI();
@@ -590,23 +622,37 @@ function closeModal() { document.getElementById('checkinModal').classList.remove
 
 async function confirmCheckin() {
   if (!pendingCheckin) return;
+
   var c = null;
-  for (var i = 0; i < commitments.length; i++) { if (commitments[i].id === pendingCheckin) { c = commitments[i]; break; } }
-  if (!c) return;
-  var btn = document.getElementById('confirmCheckinBtn');
-  btn.innerHTML = '<span class="spinner"></span>'; btn.disabled = true;
-  try {
-    var data = encodeTx(c.name);
-    var txHash = await (window._provider || window.ethereum).request({
-      method: 'eth_sendTransaction',
-      params: [{ from: wallet, to: CONTRACT_ADDRESS, value: '0x0', data: data, chainId: BASE_CHAIN_ID }]
-    });
-    applyCheckin(c, txHash);
-  } catch(e) {
-    closeModal();
-    console.log('tx error or rejected:', e);
+  for (var i = 0; i < commitments.length; i++) {
+    if (commitments[i].id === pendingCheckin) { c = commitments[i]; break; }
   }
-  btn.innerHTML = 'Sign & Prove It'; btn.disabled = false;
+  if (!c) return;
+
+  var btn = document.getElementById('confirmCheckinBtn');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    var prepared = await estimateCheckinTx(c.name);
+    prepared.tx.gas = prepared.gas;
+
+    var txHash = await getProvider().request({
+      method: 'eth_sendTransaction',
+      params: [prepared.tx]
+    });
+
+    applyCheckin(c, txHash);
+  } catch (e) {
+    console.log('tx error or rejected:', e);
+    alert('İşlem gönderilemedi.
+
+' + formatRpcError(e));
+    closeModal();
+  }
+
+  btn.innerHTML = 'Sign & Prove It';
+  btn.disabled = false;
 }
 
 function applyCheckin(c, txHash) {
@@ -693,9 +739,24 @@ function save() {
 }
 
 if (window.ethereum) {
-  window.ethereum.on('accountsChanged', function(accs) { wallet = accs[0] || null; if (!wallet) disconnectWallet(); else updateWalletUI(); });
+  window.ethereum.on('accountsChanged', function(accs) {
+    wallet = accs[0] || null;
+    if (!wallet) disconnectWallet();
+    else updateWalletUI();
+  });
   window.ethereum.on('chainChanged', function() { updateWalletUI(); });
-  (window._provider || window.ethereum).request({ method: 'eth_accounts' }).then(function(accs) { if (accs.length) { wallet = accs[0]; updateWalletUI(); } });
+  var bootProvider = getProvider() || window.ethereum;
+  if (bootProvider) {
+    bootProvider.request({ method: 'eth_accounts' }).then(function(accs) {
+      if (accs.length) {
+        wallet = accs[0];
+        window._provider = bootProvider;
+        updateWalletUI();
+      }
+    }).catch(function(err) {
+      console.log('Boot account read error:', err);
+    });
+  }
 }
 
 buildTicker(); updateDailyBaseUI(); render(); renderTxLog();
