@@ -11,10 +11,11 @@
     "onchain",
     "miniapp"
   ],
-  "iconUrl": "https://www.proveit.today/basescore/icon.svg",
+  "iconUrl": "https://www.proveit.today/basescore/icon.png",
   "coverImageUrl": "https://www.proveit.today/basescore/cover.svg",
   "screenshots": [
-    "https://www.proveit.today/basescore/cover.svg"
+    "https://www.proveit.today/basescore/cover.svg",
+    "https://www.proveit.today/basescore/cover-preview.png"
   ],
   "publisher": {
     "basename": "gizdusum.base.eth",
@@ -23,6 +24,7 @@
   "notes": [
     "Register this project on Base.dev after deploy.",
     "Use the same primary URL and media assets listed here.",
-    "Bind ownership with the publisher's Base App account."
+    "Current production path is /basescore/ under proveit.today, so domain-level manifest ownership remains attached to the root domain.",
+    "Move BaseScore to a dedicated subdomain or domain before generating a separate accountAssociation for this app."
   ]
 }

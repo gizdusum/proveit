@@ -1,44 +1,74 @@
 # BaseScore Publish Flow
 
-This is the minimum-friction path to get BaseScore live as your app.
+Updated for the current Base.dev flow on April 1, 2026.
 
-## What I can do for you
+## Current recommendation
 
-1. Prepare the files and commit them.
-2. Push the branch to your GitHub repo.
-3. Move the app into the production path you want.
-4. Update share metadata and app assets.
+Publish BaseScore at `https://www.proveit.today/basescore/` first, then register that URL on Base.dev.
 
-## What still requires you
+Why this is still the best next move:
 
-1. Sign in to Base.dev with your Base App account.
-2. Create or select the BaseScore project.
+- it does not disturb the existing `ProveIt` app at the root domain
+- it gives BaseScore a real production URL immediately
+- it lets you test Base App discovery, sharing, and retention before moving to a separate domain
+
+## Repo assets already prepared
+
+- publish metadata lives in `base.dev.project.json`
+- a dedicated-domain manifest template lives in `.well-known.farcaster.template.json`
+- a publish-safe icon export now exists at `icon.png`
+- the current launch URL is `https://www.proveit.today/basescore/`
+
+## What you still need to do in Base.dev
+
+1. Sign in to [Base.dev](https://base.dev) with the Base account that should own the project.
+2. Create or select the `BaseScore` project.
 3. Set the primary URL to `https://www.proveit.today/basescore/`.
-4. Upload or confirm the metadata from `base.dev.project.json`.
-5. If you decide to use a manifest flow, generate the `accountAssociation` values and place them into `/.well-known/farcaster.json` on the final app domain.
+4. Copy the values from `base.dev.project.json` into the Base.dev project fields if the UI does not import them automatically.
+5. Open the project preview and confirm the icon, preview, category, tags, and launch URL render correctly.
+6. Publish and then open/share the production URL inside Base App once so indexing can catch it.
 
-## Recommended publishing model
+## Ownership constraint on the current URL
 
-Use `https://www.proveit.today/basescore/` first.
+This is the key thing to keep straight:
 
-Why:
+- `proveit.today` already has a root manifest at `https://www.proveit.today/.well-known/farcaster.json`
+- manifest ownership is domain-level, not path-level
+- that means `https://www.proveit.today/basescore/` cannot safely claim a separate signed manifest while `ProveIt` owns the root domain manifest
 
-- It does not overwrite the current ProveIt root app.
-- It gives you a real public URL quickly.
-- It lets us test Base App sharing and discovery before changing the main site.
+So for the current deployment model:
 
-## Important note about manifests
+- keep the root manifest pointed at `ProveIt`
+- publish BaseScore on Base.dev using the `/basescore/` URL
+- do not overwrite `/.well-known/farcaster.json` just to force BaseScore ownership on the same root domain
 
-The root domain already has a `/.well-known/farcaster.json` for `ProveIt`.
+## When to do separate ownership
 
-That means:
+If you want BaseScore to have its own domain-level identity, move it to a dedicated host first, for example:
 
-- do not overwrite the root manifest unless you want BaseScore to replace ProveIt as the main registered mini app for that domain
-- if you want BaseScore to have its own manifest-based identity later, use a dedicated domain or subdomain
+- `https://basescore.proveit.today/`
+- or a separate standalone domain
 
-## Suggested next production steps
+Then:
 
-1. Publish `basescore/` to the repo so it is available at `/basescore/`.
-2. Register the URL on Base.dev.
-3. Share the URL once inside Base App to trigger indexing.
-4. Later, move BaseScore to a dedicated domain if you want separate manifest ownership.
+1. Copy `.well-known.farcaster.template.json` to `/.well-known/farcaster.json` on that dedicated host.
+2. Replace the placeholder domain values with the real production domain.
+3. In Base.dev, open `Preview -> Account Association`.
+4. Enter the dedicated domain, click `Verify`, and sign with the owning wallet.
+5. Paste the generated `accountAssociation.header`, `payload`, and `signature` into the live manifest.
+6. Redeploy and re-share the app URL so discovery re-indexes the updated ownership.
+
+## Important date note
+
+Base docs currently show a transition to the standard Base App web model on **April 9, 2026**.
+
+As of **April 1, 2026**:
+
+- the manifest and `accountAssociation` flow is still valid for ownership
+- Base.dev project metadata is already the safer source of truth for publish setup
+
+That means the lowest-risk path today is:
+
+1. keep BaseScore live at `/basescore/`
+2. register it on Base.dev now
+3. move to a dedicated subdomain only when you are ready to claim separate ownership cleanly
