@@ -7,7 +7,7 @@
   "miniapp": {
     "version": "1",
     "name": "BaseScore",
-    "homeUrl": "https://www.proveit.today/basescore/",
+    "homeUrl": "https://basescore.proveit.today/",
     "iconUrl": "https://basescore.proveit.today/icon.png",
     "splashImageUrl": "https://basescore.proveit.today/icon.png",
     "splashBackgroundColor": "#f5f0e6",

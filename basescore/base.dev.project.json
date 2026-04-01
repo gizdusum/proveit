@@ -1,6 +1,6 @@
 {
   "name": "BaseScore",
-  "primaryUrl": "https://www.proveit.today/basescore/",
+  "primaryUrl": "https://basescore.proveit.today/",
   "tagline": "Look less like a farmer. Score more like a local.",
   "description": "BaseScore is a reputation-style mini app for Base users who care about airdrops, status, and clean onchain behavior. It helps hunters understand whether their wallet activity looks organic, sticky, and worth rewarding.",
   "category": "finance",
@@ -11,11 +11,11 @@
     "onchain",
     "miniapp"
   ],
-  "iconUrl": "https://www.proveit.today/basescore/icon.png",
-  "coverImageUrl": "https://www.proveit.today/basescore/cover.svg",
+  "iconUrl": "https://basescore.proveit.today/icon.png",
+  "coverImageUrl": "https://basescore.proveit.today/cover.svg",
   "screenshots": [
-    "https://www.proveit.today/basescore/cover.svg",
-    "https://www.proveit.today/basescore/cover-preview.png"
+    "https://basescore.proveit.today/cover.svg",
+    "https://basescore.proveit.today/cover-preview.png"
   ],
   "publisher": {
     "basename": "gizdusum.base.eth",
@@ -24,7 +24,7 @@
   "notes": [
     "Register this project on Base.dev after deploy.",
     "Use the same primary URL and media assets listed here.",
-    "Current production path is /basescore/ under proveit.today, so domain-level manifest ownership remains attached to the root domain.",
-    "Move BaseScore to a dedicated subdomain or domain before generating a separate accountAssociation for this app."
+    "Target production domain is https://basescore.proveit.today/.",
+    "Deploy BaseScore as a standalone site before generating the final accountAssociation values."
   ]
 }
