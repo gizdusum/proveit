@@ -309,6 +309,17 @@ body {
   margin-bottom: 18px;
 }
 
+.mode-note {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(112, 146, 218, 0.18);
+  background: rgba(6, 17, 31, 0.74);
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 0.94rem;
+}
+
 .preset-card {
   text-align: left;
   display: grid;

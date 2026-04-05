@@ -4,10 +4,11 @@ module.exports = function handler(_req, res) {
     JSON.stringify({
       ok: true,
       task: {
-        title: "Analyze governance risk for a new Etherlink dApp launch",
+        title: "Produce governance intel for a new Etherlink dApp launch",
         brief:
-          "Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations.",
-        focus: "governance, treasury controls, and upgrade risk"
+          "Read the launch proposal, identify treasury and upgrade risks, summarize the governance tradeoffs, and end with a clear recommendation.",
+        focus: "proposal intent, treasury controls, upgrade risk, and execution recommendation",
+        mode: "governance"
       }
     })
   );

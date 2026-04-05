@@ -2,14 +2,41 @@ function buildFallbackReport(payload = {}) {
   const taskTitle = String(payload.title || "Untitled task").trim();
   const brief = String(payload.brief || "").trim();
   const focus = String(payload.focus || "risk, execution, and recommendation").trim();
+  const mode = String(payload.mode || "governance").trim();
+
+  const modeSections = {
+    governance: {
+      findings: [
+        "The proposal should be evaluated for treasury authority, upgrade permissions, and concentration of operational power.",
+        "The most useful output is a recommendation that explains whether execution risk is acceptable at launch.",
+        "This task is a strong fit for onchain settlement because the client can review the final governance recommendation."
+      ],
+      recommendation: `Deliver governance intel focused on ${focus}. End with a recommendation of proceed, revise, or avoid.`,
+      heading: "Governance Read"
+    },
+    token: {
+      findings: [
+        "The market-signals view should separate token fundamentals from crowd conviction and event-driven narrative.",
+        "Prediction-market style framing is useful when it is treated as sentiment input, not a source of truth.",
+        "The final output should highlight where crowd expectations may diverge from structural token risk."
+      ],
+      recommendation: `Deliver a market signals brief focused on ${focus}. Include one section on crowd expectations versus fundamentals.`,
+      heading: "Market Signals"
+    },
+    nft: {
+      findings: [
+        "The identity graph should focus on suspicious wallet clustering, artificial volume, and reputation-sensitive behavior.",
+        "The best output distinguishes organic collector activity from coordinated or manipulative flow.",
+        "A short identity risk summary is well suited for hash-anchored onchain settlement."
+      ],
+      recommendation: `Deliver an identity graph summary focused on ${focus}. End with a trust assessment for the collection or wallet cluster.`,
+      heading: "Identity Graph"
+    }
+  };
+
+  const selected = modeSections[mode] || modeSections.governance;
 
   const summary = `AgentBond prepared a structured AI task report for "${taskTitle}".`;
-  const findings = [
-    "The task is scoped tightly enough for a single AI operator to complete in one pass.",
-    "The deliverable should emphasize verifiable evidence, clear reasoning, and a final recommendation.",
-    "Onchain settlement is appropriate because the result can be reviewed and accepted by the client."
-  ];
-  const recommendation = `Deliver a concise report focused on ${focus}. Use a hash-anchored submission so the client can verify the exact output that was reviewed.`;
 
   return {
     mode: "fallback",
@@ -17,17 +44,17 @@ function buildFallbackReport(payload = {}) {
     reportMarkdown: [
       `# ${taskTitle}`,
       "",
-      "## Task Summary",
+      `## ${selected.heading}`,
       summary,
       "",
       "## Brief",
       brief || "No extra brief provided.",
       "",
       "## Key Findings",
-      ...findings.map((item) => `- ${item}`),
+      ...selected.findings.map((item) => `- ${item}`),
       "",
       "## Recommendation",
-      recommendation
+      selected.recommendation
     ].join("\n")
   };
 }
@@ -42,6 +69,14 @@ async function buildOpenAIReport(payload = {}) {
   const title = String(payload.title || "Untitled task").trim();
   const brief = String(payload.brief || "").trim();
   const focus = String(payload.focus || "risk, execution, and recommendation").trim();
+  const mode = String(payload.mode || "governance").trim();
+
+  const modeInstruction =
+    mode === "token"
+      ? "You are writing a Market Signals brief. Include sections: Market Frame, Fundamental Risks, Crowd Expectations, Divergence, Recommendation."
+      : mode === "nft"
+        ? "You are writing an Identity Graph brief. Include sections: Activity Pattern, Suspicious Clusters, Reputation Risk, Recommendation."
+        : "You are writing Governance Intel. Include sections: Proposal Summary, Governance Risks, Treasury/Upgrade Risk, Recommendation.";
 
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -68,7 +103,7 @@ async function buildOpenAIReport(payload = {}) {
             content: [
               {
                 type: "input_text",
-                text: `Task title: ${title}\nTask brief: ${brief}\nFocus: ${focus}\n\nReturn markdown with sections: Task Summary, Evidence Plan, Findings, Recommendation.`
+                text: `Task mode: ${mode}\nTask title: ${title}\nTask brief: ${brief}\nFocus: ${focus}\n\n${modeInstruction}`
               }
             ]
           }

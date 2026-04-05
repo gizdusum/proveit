@@ -10,22 +10,22 @@ const state = {
 
 const TASK_PRESETS = {
   governance: {
-    title: "Analyze governance risk for a new Etherlink dApp launch",
-    focus: "governance, treasury controls, and upgrade risk",
+    title: "Produce governance intel for a new Etherlink dApp launch",
+    focus: "proposal intent, treasury controls, upgrade risk, and execution recommendation",
     brief:
-      "Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations."
+      "Read the launch proposal, identify treasury and upgrade risks, summarize the governance tradeoffs, and end with a clear recommendation."
   },
   token: {
-    title: "Produce a token launch risk report for an Etherlink DeFi app",
-    focus: "token utility, emissions, admin controls, and liquidity risk",
+    title: "Produce a market signals brief for a token launch",
+    focus: "token utility, narrative momentum, event expectations, liquidity risk, and crowd conviction",
     brief:
-      "Analyze the token structure, supply schedule, admin permissions, and launch mechanics. Return a concise risk report with a final recommendation."
+      "Analyze the token structure, supply schedule, admin permissions, launch mechanics, and market narrative. Include what a prediction-market style crowd signal would imply and where crowd conviction may diverge from fundamentals."
   },
   nft: {
-    title: "Audit suspicious activity in an NFT collection",
-    focus: "wash trading, wallet clustering, and suspicious volume",
+    title: "Map identity risk in an NFT collection",
+    focus: "wash trading, wallet clustering, suspicious volume, and reputation risk",
     brief:
-      "Inspect the collection activity, identify wallet clusters that may indicate wash trading, and summarize whether the activity appears organic or manipulated."
+      "Inspect the collection activity, identify wallet clusters that may indicate wash trading, and summarize whether the activity appears organic, coordinated, or reputation-sensitive."
   }
 };
 
@@ -210,6 +210,7 @@ async function generateReport() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      mode: state.selectedTemplate,
       title: els.titleInput.value.trim(),
       brief: els.briefInput.value.trim(),
       focus: els.focusInput.value.trim()
