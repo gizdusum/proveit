@@ -177,6 +177,23 @@
               </select>
             </label>
           </div>
+
+          <div class="advanced-grid">
+            <label>
+              <span data-i18n="assetName">Asset or proposal name</span>
+              <input id="assetNameInput" type="text" maxlength="80" placeholder="MON" />
+            </label>
+
+            <label>
+              <span data-i18n="sourceGuide">Evidence URLs</span>
+              <input
+                id="sourceUrlsInput"
+                type="text"
+                data-i18n-placeholder="sourcePlaceholder"
+                placeholder="https://project.site/docs, https://docs.project.site/tokenomics"
+              />
+            </label>
+          </div>
         </details>
       </section>
 
@@ -210,6 +227,16 @@
           <article class="result-block">
             <span data-i18n="recommendationLabel">Recommendation</span>
             <p id="resultRecommendation"></p>
+          </article>
+
+          <article class="result-block">
+            <span data-i18n="evidenceUsedLabel">Evidence used</span>
+            <ul id="resultEvidenceList" class="result-list"></ul>
+          </article>
+
+          <article class="result-block">
+            <span data-i18n="knownUnknownsLabel">Known unknowns</span>
+            <ul id="resultUnknownsList" class="result-list"></ul>
           </article>
         </div>
 

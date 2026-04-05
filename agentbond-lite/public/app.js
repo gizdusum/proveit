@@ -88,10 +88,15 @@ const TEXT = {
     reviewMode: "Review mode",
     settlementAmount: "Settlement amount (XTZ)",
     disputeTimeout: "Dispute timeout",
+    assetName: "Asset or proposal name",
+    sourceGuide: "Evidence URLs",
+    sourcePlaceholder: "https://project.site/docs, https://docs.project.site/tokenomics",
     resultCardTitle: "Current result",
     summaryLabel: "Summary",
     nextStepHint: "Generate a report first. Then you can anchor its verdict on Etherlink.",
     keyFindingsLabel: "Key findings",
+    evidenceUsedLabel: "Evidence used",
+    knownUnknownsLabel: "Known unknowns",
     recommendationLabel: "Recommendation",
     fullReportLabel: "Full report",
     settlementTitle: "Accountable settlement",
@@ -188,10 +193,15 @@ const TEXT = {
     reviewMode: "İnceleme modu",
     settlementAmount: "Settlement tutarı (XTZ)",
     disputeTimeout: "İtiraz süresi",
+    assetName: "Varlık veya teklif adı",
+    sourceGuide: "Kanıt URL'leri",
+    sourcePlaceholder: "https://project.site/docs, https://docs.project.site/tokenomics",
     resultCardTitle: "Güncel sonuç",
     summaryLabel: "Özet",
     nextStepHint: "Önce raporu üret. Sonra verdict'i Etherlink üzerinde anchor edebilirsin.",
     keyFindingsLabel: "Temel bulgular",
+    evidenceUsedLabel: "Kullanılan kanıtlar",
+    knownUnknownsLabel: "Bilinen boşluklar",
     recommendationLabel: "Öneri",
     fullReportLabel: "Tam rapor",
     settlementTitle: "Hesap verebilir settlement",
@@ -411,6 +421,8 @@ function bindElements() {
     "reviewModeSelect",
     "rewardInput",
     "timeoutSelect",
+    "assetNameInput",
+    "sourceUrlsInput",
     "resultPanel",
     "resultModeLabel",
     "resultLanguageLabel",
@@ -418,6 +430,8 @@ function bindElements() {
     "resultSummary",
     "resultNextStepHint",
     "resultFindingsList",
+    "resultEvidenceList",
+    "resultUnknownsList",
     "resultRecommendation",
     "reportOutput",
     "settlementStatusBadge",
@@ -549,6 +563,7 @@ function renderTaskState(extra = {}) {
           title: state.currentReport.title,
           recommendation: state.currentReport.recommendation,
           confidence_bps: state.currentReport.confidence_bps,
+          source_count: state.currentReport.source_count,
           verdict_hash: state.currentReport.verdict_hash,
           content_uri: state.currentReport.content_uri
         }
@@ -609,11 +624,33 @@ function renderReport(report) {
   els.resultRecommendation.textContent = getRecommendationText(report.recommendation);
   els.reportOutput.textContent = report.full_report_markdown;
   els.resultFindingsList.innerHTML = "";
+  els.resultEvidenceList.innerHTML = "";
+  els.resultUnknownsList.innerHTML = "";
   report.key_findings.forEach((finding) => {
     const li = document.createElement("li");
     li.textContent = finding;
     els.resultFindingsList.appendChild(li);
   });
+  (report.evidence_used || []).forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    els.resultEvidenceList.appendChild(li);
+  });
+  (report.known_unknowns || []).forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    els.resultUnknownsList.appendChild(li);
+  });
+  if (!report.evidence_used?.length) {
+    const li = document.createElement("li");
+    li.textContent = state.lang === "tr" ? "Doğrudan kaynak kullanılmadı." : "No direct source was used.";
+    els.resultEvidenceList.appendChild(li);
+  }
+  if (!report.known_unknowns?.length) {
+    const li = document.createElement("li");
+    li.textContent = state.lang === "tr" ? "Kritik boşluk bildirilmedi." : "No critical unknowns reported.";
+    els.resultUnknownsList.appendChild(li);
+  }
 
   els.titleInput.value = report.title || els.titleInput.value;
   els.briefInput.value = report.prompt || els.briefInput.value;
@@ -621,6 +658,12 @@ function renderReport(report) {
   els.reportIdInput.value = "";
   setExplorerTx(null);
   renderSettlementState();
+  if (report.source_count === 0) {
+    els.resultNextStepHint.textContent =
+      state.lang === "tr"
+        ? "Bu rapor güçlü kanıt olmadan üretildi. Daha derin analiz için resmi docs veya website URL'leri ekle."
+        : "This report was generated without strong evidence. Add official docs or website URLs for deeper analysis.";
+  }
   renderTaskState();
   window.scrollTo({ top: els.resultPanel.offsetTop - 24, behavior: "smooth" });
 }
@@ -652,6 +695,9 @@ async function generateReport() {
     prompt,
     title: els.titleInput.value.trim() || template.title[state.lang] || template.title.en,
     brief: els.briefInput.value.trim() || prompt,
+    focus: els.focusInput.value.trim() || template.focus[state.lang] || template.focus.en,
+    asset_name: els.assetNameInput.value.trim(),
+    sources_text: els.sourceUrlsInput.value.trim(),
     requester_address: state.account || null
   };
 
@@ -1050,6 +1096,8 @@ function resetDemo() {
   els.resultPanel.hidden = true;
   els.reportOutput.textContent = "";
   els.resultFindingsList.innerHTML = "";
+  els.resultEvidenceList.innerHTML = "";
+  els.resultUnknownsList.innerHTML = "";
   els.reportIdInput.value = "";
   els.contentUriInput.value = "ipfs://agentbond-lite/report-1";
   els.disputeReasonInput.value = "ipfs://agentbond-lite/disputes/reason-1";
