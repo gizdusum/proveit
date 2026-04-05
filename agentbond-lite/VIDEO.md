@@ -1,74 +1,101 @@
 # AgentBond Lite Demo Script
 
-Target length: 2.5 to 3 minutes
+Target length: `~3 minutes`
 
 ## Opening
 
-AgentBond Lite is an Etherlink-native AI task marketplace where AI work is settled onchain with escrow, stake, and hash-verifiable submissions.
+`A DAO member needs to evaluate a proposal.`
 
-## Problem
+They can use AI to get a quick opinion, but that creates a trust problem:
 
-Most AI apps generate output, but there is no clear economic accountability around the work. Clients still rely on trust.
+- what exactly did the AI say?
+- can anyone verify the output later?
+- was the result accepted or challenged?
 
-## Solution
+AgentBond Lite solves that by turning an AI report into an accountable onchain record on Etherlink.
 
-With AgentBond Lite:
+## Scene 1: Show the product
 
-1. a client creates a task and escrows a reward on Etherlink
-2. an AI agent stakes capital to claim the task
-3. the agent generates a report and submits a hash-linked result
-4. the client accepts or rejects the result onchain
+Open the landing page.
 
-If the work is accepted, the agent gets paid and their stake is returned. If the work is rejected, the reward is refunded and the stake is slashed.
+Say:
 
-## Demo Flow
+`AgentBond Lite is an accountable AI research rail on Etherlink.`
 
-### Scene 1
+`You ask one governance question, get one structured report, and then anchor that verdict onchain.`
 
-Show the landing page and explain:
+Point out:
 
+- simple prompt input
+- Governance Intelligence mode
 - Etherlink network
-- AI generation flow
-- onchain settlement model
 
-### Scene 2
+## Scene 2: Generate the report
 
-Create a task:
+Use this prompt:
 
-- enter title and brief
-- choose reward and stake
-- submit the transaction
+`Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations.`
 
-Explain that the reward is now escrowed in the contract.
+Click `Generate report`.
 
-### Scene 3
+While the countdown runs, say:
 
-Generate the AI report.
+`The AI generates a short summary, key findings, a recommendation, a confidence score, and a machine-readable verdict.`
 
-Explain that the output becomes the basis for a verifiable submission.
+## Scene 3: Show the output
 
-### Scene 4
+When the report appears, highlight:
 
-Claim the task with an agent wallet and lock stake.
+- summary
+- key findings
+- recommendation
+- confidence
 
-### Scene 5
+Say:
 
-Submit the report hash and URI onchain.
+`This is not just free-form text. The output is normalized into a stable verdict payload that can be hashed and anchored onchain.`
 
-Explain that the exact reviewed output is now anchored to the contract.
+## Scene 4: Anchor onchain
 
-### Scene 6
+Click `Anchor verdict`.
 
-Accept the task.
+After wallet confirmation, show:
 
-Explain:
+- report ID
+- verdict hash
+- explorer link
 
-- reward released
-- stake returned
-- agent profile updated
+Say:
 
-If you want, also show a rejection path quickly afterward with a second task.
+`Now the report has a verifiable commitment on Etherlink.`
 
-## Close
+`We are not storing the full report onchain. We store a compact commitment that proves what verdict was produced.`
 
-AgentBond Lite shows a simple but powerful onchain primitive for AI work: stake-backed execution with Etherlink settlement.
+## Scene 5: Fund and accept
+
+Click `Fund settlement`.
+
+Say:
+
+`Funding settlement makes the report economically accountable.`
+
+`The requester can now record whether this report was accepted or disputed.`
+
+Then click `Accept report`.
+
+Show the updated onchain state.
+
+## Closing
+
+Say:
+
+`This creates an accountable AI decision layer onchain.`
+
+`AgentBond Lite starts with governance and risk review, but the same primitive can expand into multi-agent research, staking, reputation, and richer dispute flows.`
+
+## Recording Tips
+
+- Keep the pace calm and direct.
+- Spend most of the time on the report and the onchain anchor.
+- Do not over-explain the backend.
+- Say clearly what is offchain and what is onchain.

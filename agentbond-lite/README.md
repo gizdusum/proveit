@@ -1,83 +1,253 @@
 # AgentBond Lite
 
-AgentBond Lite is an English-only AI x blockchain MVP built for the Tezos EVM (Etherlink) AI Hackathon.
+**AgentBond Lite is an accountable AI research rail on Etherlink.**
 
-It shows a simple but real onchain labor flow:
+AgentBond Lite helps a user ask one governance or token-risk question, get one structured AI report, and then anchor that verdict onchain with a lightweight settlement flow.
 
-- a client opens a task and escrows a reward in XTZ
-- an AI agent stakes capital to claim the task
-- the agent generates a report and anchors its hash onchain
-- the client accepts or rejects the result
-- the contract releases the reward or slashes the stake
+Instead of trusting an AI output as an isolated block of text, AgentBond Lite turns the result into:
 
-This is intentionally a compact hackathon scope. The goal is to prove that AI work can be settled on Etherlink with visible economic rules instead of trust alone.
+- a verifiable report commitment
+- an Etherlink record
+- a transparent accept / dispute trail
 
-## Why this fits the hackathon
+This project is built for the Tezos EVM (Etherlink) AI Hackathon.
 
-The submission requirements call for:
+## The Problem
 
-- deployment on Tezos EVM (Etherlink)
-- AI as a meaningful part of the product
-- open-source code
-- a deployed contract address
-- a working demo flow
+Web3 teams regularly make decisions using AI-generated summaries, proposal reviews, token analyses, and governance notes.
 
-AgentBond Lite fits those requirements by combining:
+The problem is that these outputs are usually:
 
-- an Etherlink-native Solidity contract
-- an AI report generation flow
-- onchain escrow
-- onchain agent staking
-- onchain task resolution and reputation
+- offchain only
+- easy to edit after the fact
+- hard to audit
+- impossible to settle against
 
-## Product thesis
+That creates a trust gap. If an AI report influences a launch, treasury action, upgrade, or governance vote, there should be a way to prove what was produced and how that output was handled.
 
-Most AI apps stop at output generation.
+## The Solution
 
-AgentBond Lite asks a stronger question:
+AgentBond Lite generates a structured AI report, reduces it into a deterministic machine-readable verdict, hashes that verdict, and anchors the commitment on Etherlink.
 
-> What if an AI agent had to post stake before it could get paid?
+Then the requester can fund a small settlement amount and either:
 
-That creates a more legible marketplace for AI work:
+- accept the report onchain
+- dispute the report onchain
 
-- tasks become explicit onchain requests
-- rewards are escrowed
-- submissions are hash-verifiable
-- quality is resolved through acceptance or rejection
-- successful agents build a basic onchain record
+This creates a compact but meaningful accountability primitive:
 
-## Core contract
+- AI creates the report
+- Etherlink stores the report commitment
+- settlement records whether that report was accepted or disputed
 
-`contracts/AgentBondLite.sol`
+## Why AI Is Required
 
-The contract handles:
+The product is not just storing arbitrary user text onchain.
 
-- task creation with reward escrow
-- task claiming with stake lock
-- report hash submission
-- client acceptance
-- client rejection with stake slash
-- basic agent reputation counters
+AI is responsible for producing the research output itself:
 
-## Stack
+- reading a prompt
+- generating a concise research summary
+- extracting key findings
+- issuing a recommendation
+- assigning a confidence score
+- producing a structured verdict payload that can be anchored onchain
 
-- Solidity `0.8.24`
-- Hardhat
-- Ethers.js
-- vanilla HTML/CSS/JS frontend
-- Node.js server for static hosting and AI API proxy
+Without AI, the core product does not exist.
 
-## Etherlink network
+## Why Etherlink Is Required
 
-The project is configured for:
+AgentBond Lite needs a low-cost, fast, EVM-compatible chain for a clean demoable flow.
 
-- `Etherlink Shadownet Testnet`
+Etherlink is the right fit because it gives us:
+
+- low-cost writes for compact report commitments
+- fast enough finality for a live demo
+- Solidity + Hardhat compatibility
+- a familiar EVM development surface
+
+This lets us focus on product clarity instead of custom chain infrastructure.
+
+## Why This Matters for Web3
+
+Web3 increasingly relies on AI for:
+
+- governance analysis
+- treasury review
+- token-risk assessment
+- protocol launch preparation
+
+But AI outputs that influence real onchain decisions should not remain invisible and unauditable.
+
+AgentBond Lite introduces a simple rule:
+
+**if an AI report matters, it should be commit-able, reviewable, and settle-able onchain.**
+
+That makes AI usage in Web3 more legible, more accountable, and easier to reason about.
+
+## What Happens Onchain
+
+AgentBond Lite is explicit about the boundary between offchain and onchain.
+
+### Offchain
+
+- the report is generated
+- the full markdown report is assembled
+- the canonical verdict JSON is created
+- the verdict hash and report hash are computed
+
+### Onchain
+
+- the verdict commitment is registered in `ReportRegistry`
+- the requester can fund a small settlement in `SettlementEscrow`
+- the requester can accept or dispute the report
+- the chain records the accountability trail
+
+We do **not** claim decentralized inference in this Lite version.
+
+## Product Flow
+
+1. User connects wallet.
+2. User selects a research mode, with Governance Intelligence as the main path.
+3. User submits a prompt.
+4. Backend generates a structured report:
+   - short summary
+   - key findings
+   - recommendation: `GO / REVISE / AVOID`
+   - confidence score
+   - full report
+   - canonical verdict JSON
+5. User reviews the report in the UI.
+6. User anchors the verdict on Etherlink.
+7. User optionally funds settlement.
+8. User accepts or disputes the report onchain.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    A["User Prompt"] --> B["AI Report Engine"]
+    B --> C["Structured Report"]
+    C --> D["Canonical Verdict JSON"]
+    D --> E["Keccak Verdict Hash"]
+    C --> F["Full Report Hash"]
+    E --> G["ReportRegistry.sol"]
+    F --> G
+    G --> H["Onchain Report Record"]
+    H --> I["SettlementEscrow.sol"]
+    I --> J["Fund"]
+    I --> K["Accept"]
+    I --> L["Dispute"]
+```
+
+## Smart Contracts
+
+### `contracts/ReportRegistry.sol`
+
+Stores the compact commitment to a report.
+
+It records:
+
+- requester
+- operator
+- mode
+- recommendation
+- confidence
+- verdict hash
+- report hash
+- content URI
+- title
+
+Why it matters:
+
+- proves what verdict was anchored
+- emits events for indexing
+- creates a durable onchain record for the report
+
+### `contracts/SettlementEscrow.sol`
+
+Adds a lightweight accountability layer.
+
+It supports:
+
+- funding a report settlement
+- accepting the report
+- disputing the report
+- timeout-based refund path
+- simple operator stats
+
+Why it matters:
+
+- makes the onchain step economically meaningful
+- adds a transparent review trail
+- shows whether the report outcome was trusted or challenged
+
+## AI + Onchain Integration
+
+This is the core design.
+
+The backend generates a structured result with fields like:
+
+- `summary`
+- `key_findings`
+- `recommendation`
+- `confidence_bps`
+
+That result is normalized into canonical JSON with stable field ordering. We then compute:
+
+- `verdict_hash = keccak256(canonical_verdict_json)`
+- `report_hash = keccak256(full_report_markdown)`
+
+Only the compact commitment is written onchain. The long-form report remains offchain.
+
+This gives us:
+
+- auditability without bloating chain storage
+- deterministic payloads
+- a clean proof of what was reviewed
+
+## Repo Structure
+
+```text
+contracts/
+  ReportRegistry.sol
+  SettlementEscrow.sol
+api/
+  ai-report.js
+  anchor-payload.js
+lib/
+  report-engine.js
+public/
+  index.html
+  app.js
+  styles.css
+scripts/
+  deploy.js
+  export-abi.js
+deployments/
+  etherlinkTestnet.json
+```
+
+## Network
+
+- Network: `Etherlink Shadownet Testnet`
 - Chain ID: `127823`
 - RPC: `https://node.shadownet.etherlink.com`
 - Explorer: `https://shadownet.explorer.etherlink.com`
 - Native token: `XTZ`
 
-## Local setup
+## Deployed Contracts
+
+Current Shadownet deployment:
+
+- `ReportRegistry`: `0x93763CA47CEF242F1f64C942e5ebeDC503f7438c`
+- `SettlementEscrow`: `0x8DD158865844bBd9c0Fb066F7837F0B0611Feb71`
+
+Deployment metadata:
+
+- [deployments/etherlinkTestnet.json](/Users/denizalagoz/Documents/New%20project/agentbond-lite/deployments/etherlinkTestnet.json)
+
+## Setup
 
 ### 1. Install dependencies
 
@@ -94,9 +264,10 @@ cp .env.example .env
 Set:
 
 - `PRIVATE_KEY` for deployment
-- `OPENAI_API_KEY` if you want live AI report generation
+- `OPENAI_API_KEY` for live AI generation
+- `ETHERLINK_RPC_URL` if you want to override the default RPC
 
-### 3. Compile
+### 3. Compile contracts
 
 ```bash
 npm run compile
@@ -115,55 +286,74 @@ Open:
 http://127.0.0.1:8788
 ```
 
-## Deploy to Etherlink testnet
+## Deployment
 
-1. Fund your EVM wallet with Etherlink testnet XTZ.
-2. Put the wallet private key in `.env`.
-3. Deploy:
+Deploy to Etherlink Shadownet:
 
 ```bash
 npm run deploy:etherlink:testnet
-```
-
-4. Export the ABI:
-
-```bash
 npm run export:abi
 ```
 
-The deployment metadata is written to:
+This writes deployment data to:
 
-`deployments/etherlinkTestnet.json`
+- [deployments/etherlinkTestnet.json](/Users/denizalagoz/Documents/New%20project/agentbond-lite/deployments/etherlinkTestnet.json)
 
-## Optional web deployment
+## Demo Flow
 
-The project can also be deployed to Vercel:
+1. Connect wallet.
+2. Use the Governance Intelligence mode.
+3. Enter a prompt such as:
+   - `Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations.`
+4. Generate the report.
+5. Show:
+   - summary
+   - key findings
+   - recommendation
+   - confidence
+6. Click `Anchor verdict`.
+7. Show the report record and explorer link.
+8. Click `Fund settlement`.
+9. Click `Accept report` or `Dispute report`.
 
-- static UI is served from `public/`
-- API endpoints are served from `api/`
-- set `OPENAI_API_KEY` in the Vercel project if you want live AI output
+## Why This Fits Tezos EVM AI Hackathon
 
-## Demo flow
+AgentBond Lite maps directly to the hackathon goals:
 
-1. Connect wallet and switch to Etherlink.
-2. Create a task with reward escrow.
-3. Generate an AI report.
-4. Claim the task with agent stake.
-5. Submit the report hash and URI.
-6. Accept or reject the task.
-7. Show the task state and explorer link.
+- **Meaningful AI integration**
+  - AI generates the report and structured verdict that drives the product.
+- **AI agents interacting with smart contracts**
+  - the AI output becomes an onchain report commitment and a settlement object.
+- **On-chain AI governance**
+  - the main use case is governance, treasury, and upgrade-risk review.
+- **Tezos EVM deployment**
+  - contracts are deployed on Etherlink Shadownet.
+- **Ecosystem impact**
+  - this can become a reusable primitive for governance review, treasury operations, and launch readiness checks across the ecosystem.
 
-## Hackathon submission checklist
+## Future of AgentBond
 
-- [ ] Contract deployed on Etherlink
-- [ ] Repo pushed publicly
-- [ ] README completed
-- [ ] Demo video recorded
-- [ ] Contract address pasted into the form
-- [ ] Wallet address pasted into the form
+Lite is intentionally small and honest.
 
-## Notes
+The full AgentBond roadmap extends this primitive into:
 
-- This MVP uses client acceptance instead of decentralized dispute resolution.
-- The AI report can run in live mode with an API key or fallback mode without one.
-- The first version optimizes for a professional, demoable hackathon submission rather than full protocol depth.
+- multi-agent competition
+- explicit operator staking
+- richer report reputation
+- dispute windows and third-party review
+- specialized data connectors
+- stronger settlement markets for AI work
+
+## Team
+
+- Team member 1: `TBD`
+- Team member 2: `TBD`
+
+## Submission Checklist
+
+- [x] Etherlink deployment
+- [x] Open-source repo
+- [x] README
+- [ ] Demo video
+- [x] Contract addresses
+- [ ] Final hackathon form submission

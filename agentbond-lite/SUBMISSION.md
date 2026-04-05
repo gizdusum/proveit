@@ -6,57 +6,55 @@ AgentBond Lite
 
 ## One-line Description
 
-AgentBond Lite is an Etherlink-native AI task marketplace where clients escrow rewards, agents post stake, and smart contracts settle outcomes onchain.
+AgentBond Lite is an accountable AI research rail on Etherlink.
 
 ## Full Description
 
-AgentBond Lite turns AI work into a visible onchain labor flow.
+AgentBond Lite turns governance and token-risk review into a verifiable onchain accountability flow.
 
-A client creates a task on Etherlink and escrows a reward in XTZ. An AI agent claims the task by posting stake, generates a structured report, and anchors the report hash onchain. The client then reviews the result and either accepts the submission, releasing the reward and returning the stake, or rejects it, which refunds the reward and slashes the agent stake.
+A user submits a research prompt, receives a structured AI report with a summary, findings, recommendation, and confidence score, and then anchors the verdict on Etherlink. The requester can optionally fund a lightweight settlement and mark the report as accepted or disputed onchain.
 
-The goal is to move beyond AI apps that stop at text output. AgentBond Lite gives AI work economic accountability:
+The goal is to move beyond AI apps that stop at text output. AgentBond Lite gives Web3 decision-making a verifiable AI layer:
 
-- rewards are escrowed onchain
-- agents must commit stake before they can earn
-- submissions are hash-verifiable
-- resolution is settled by smart contract
-- successful agents build an onchain track record
+- report verdicts are hash-verifiable
+- the exact reviewed result gets an onchain commitment
+- settlement creates an accept / dispute trail
+- Etherlink provides a low-cost EVM environment for live usage and demos
 
-This MVP is intentionally compact and demoable. It focuses on a single task flow, a single staking path, and a single resolution path so the product can be clearly understood in a short demo.
+This MVP is intentionally compact and demoable. It focuses on one polished accountable AI flow instead of a large protocol surface.
 
 ## How It Uses AI
 
-The product includes an AI report-generation layer that converts a client brief into a structured submission with:
+The product includes an AI report-generation layer that converts a prompt into:
 
-- task summary
-- evidence plan
+- short summary
 - findings
-- recommendation
+- recommendation: `GO / REVISE / AVOID`
+- confidence score
+- deterministic structured verdict JSON
 
-The report output is then hashed and submitted to the contract so the reviewed output can be tied back to a precise onchain record.
+That verdict is canonicalized and hashed before being anchored onchain.
 
 ## How It Uses Etherlink
 
-AgentBond Lite is deployed on Etherlink and uses an onchain contract for:
+AgentBond Lite is deployed on Etherlink and uses smart contracts for:
 
-- task creation
-- reward escrow
-- agent staking
-- report hash submission
-- acceptance and rejection settlement
-- basic agent reputation counters
+- report commitment storage
+- settlement funding
+- accept / dispute recording
+- transparent accountability events
 
 ## Why It Matters
 
-AI agents need better market structure than trust alone.
+AI outputs are increasingly shaping governance and launch decisions in Web3, but those outputs are usually unverifiable after the fact.
 
-AgentBond Lite explores a simple but important primitive: stake-backed AI work with onchain settlement.
+AgentBond Lite explores a simple but important primitive: accountable AI reports with onchain commitments and settlement history.
 
 ## Suggested Categories
 
-- AI Agents
+- On-chain AI Governance
+- AI Agents / Accountable AI Workflows
 - AI-powered DeFi
-- Developer Tooling
 - Wild Card
 
 ## Submission Fields
@@ -67,7 +65,10 @@ Use the wallet that deployed the contract or represents the team.
 
 ### Contract Address (Etherlink)
 
-Paste the deployed `AgentBondLite` contract address from `deployments/etherlinkTestnet.json`.
+Paste:
+
+- `ReportRegistry`: `0x93763CA47CEF242F1f64C942e5ebeDC503f7438c`
+- `SettlementEscrow`: `0x8DD158865844bBd9c0Fb066F7837F0B0611Feb71`
 
 ### Project Link
 
