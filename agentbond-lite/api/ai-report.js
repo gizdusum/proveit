@@ -13,25 +13,25 @@ function buildFallbackReport(payload = {}) {
       recommendationHeading: "Recommendation"
     },
     tr: {
-      summary: `AgentBond "${taskTitle}" icin yapilandirilmis bir AI gorev raporu hazirladi.`,
-      briefHeading: "Ozet",
+      summary: `AgentBond "${taskTitle}" için yapılandırılmış bir yapay zekâ görev raporu hazırladı.`,
+      briefHeading: "Özet",
       findingsHeading: "Temel Bulgular",
-      recommendationHeading: "Oneri"
+      recommendationHeading: "Öneri"
     },
     es: {
       summary: `AgentBond preparo un informe estructurado de IA para "${taskTitle}".`,
       briefHeading: "Resumen",
       findingsHeading: "Hallazgos clave",
-      recommendationHeading: "Recomendacion"
+      recommendationHeading: "Recomendación"
     },
     fr: {
-      summary: `AgentBond a prepare un rapport IA structure pour "${taskTitle}".`,
+      summary: `AgentBond a préparé un rapport IA structuré pour "${taskTitle}".`,
       briefHeading: "Brief",
-      findingsHeading: "Points cles",
+      findingsHeading: "Points clés",
       recommendationHeading: "Recommendation"
     },
     de: {
-      summary: `AgentBond hat einen strukturierten KI-Bericht fur "${taskTitle}" erstellt.`,
+      summary: `AgentBond hat einen strukturierten KI-Bericht für "${taskTitle}" erstellt.`,
       briefHeading: "Kurzbrief",
       findingsHeading: "Wichtige Erkenntnisse",
       recommendationHeading: "Empfehlung"
@@ -53,16 +53,16 @@ function buildFallbackReport(payload = {}) {
         "This task is a strong fit for onchain settlement because the client can review the final governance recommendation."
         ],
         tr: [
-          "Teklif treasury yetkisi, upgrade izinleri ve operasyonel gucun yogunlasmasi acisindan degerlendirilmelidir.",
-          "En yararli cikti, uygulama riskinin kabul edilebilir olup olmadigini aciklayan net bir tavsiyedir.",
-          "Musteri nihai governance tavsiyesini gozden gecirebildigi icin bu gorev onchain settlement icin uygundur."
+          "Teklif treasury yetkisi, upgrade izinleri ve operasyonel gücün yoğunlaşması açısından değerlendirilmelidir.",
+          "En yararlı çıktı, uygulama riskinin kabul edilebilir olup olmadığını açıklayan net bir tavsiyedir.",
+          "Müşteri nihai yönetişim tavsiyesini gözden geçirebildiği için bu görev onchain settlement için uygundur."
         ]
       },
       recommendation: {
         en: `Deliver governance intel focused on ${focus}. End with a recommendation of proceed, revise, or avoid.`,
-        tr: `${focus} odakli bir governance intel raporu uret. Sonunda devam et, revize et veya kacın tavsiyesi ver.`
+        tr: `${focus} odaklı bir yönetişim istihbaratı raporu üret. Sonunda devam et, revize et veya kaçın tavsiyesi ver.`
       },
-      heading: { en: "Governance Read", tr: "Governance Ozeti" }
+      heading: { en: "Governance Read", tr: "Yönetişim Özeti" }
     },
     token: {
       findings: {
@@ -72,18 +72,18 @@ function buildFallbackReport(payload = {}) {
         "The final output should highlight where crowd expectations may diverge from structural token risk."
         ],
         tr: [
-          "Market signals bakisi token temellerini kalabalik inanci ve event kaynakli anlati dinamiklerinden ayirmalidir.",
-          "Prediction-market benzeri cerceve, dogrudan gercek kabul edilmeden sentiment girdisi olarak kullanildiginda faydalidir.",
-          "Nihai cikti, kalabalik beklentilerinin yapisal token riskinden nerede ayrildigini gostermelidir."
+          "Piyasa sinyalleri bakışı token temellerini kalabalık inancı ve olay kaynaklı anlatı dinamiklerinden ayırmalıdır.",
+          "Prediction-market benzeri çerçeve, doğrudan gerçek kabul edilmeden duygu girdisi olarak kullanıldığında faydalıdır.",
+          "Nihai çıktı, kalabalık beklentilerinin yapısal token riskinden nerede ayrıldığını göstermelidir."
         ]
       },
       recommendation: {
         en: `Deliver a market signals brief focused on ${focus}. Include one section on crowd expectations versus fundamentals.`,
-        tr: `${focus} odakli bir market signals ozeti uret. Kalabalik beklentileri ile temeller arasindaki farklara ayri bir bolum ekle.`
+        tr: `${focus} odaklı bir piyasa sinyalleri özeti üret. Kalabalık beklentileri ile temeller arasındaki farklara ayrı bir bölüm ekle.`
       },
       heading: { en: "Market Signals", tr: "Piyasa Sinyalleri" }
     },
-    nft: {
+    identity: {
       findings: {
         en: [
         "The identity graph should focus on suspicious wallet clustering, artificial volume, and reputation-sensitive behavior.",
@@ -91,16 +91,16 @@ function buildFallbackReport(payload = {}) {
         "A short identity risk summary is well suited for hash-anchored onchain settlement."
         ],
         tr: [
-          "Identity graph supheli wallet cluster'lari, yapay hacim ve itibar hassas davranislara odaklanmalidir.",
-          "En iyi cikti organik koleksiyoncu aktivitesi ile koordineli veya manipule akis arasindaki farki gosterir.",
-          "Kisa bir kimlik riski ozeti hash-anchored onchain settlement icin uygundur."
+          "Kimlik grafiği şüpheli cüzdan kümelerine, yapay hacme ve itibara hassas davranışlara odaklanmalıdır.",
+          "En iyi çıktı organik koleksiyoncu aktivitesi ile koordineli veya manipüle akış arasındaki farkı gösterir.",
+          "Kısa bir kimlik riski özeti hash-anchored onchain settlement için uygundur."
         ]
       },
       recommendation: {
         en: `Deliver an identity graph summary focused on ${focus}. End with a trust assessment for the collection or wallet cluster.`,
-        tr: `${focus} odakli bir identity graph ozeti uret. Sonunda koleksiyon veya wallet cluster icin bir guven degerlendirmesi ver.`
+        tr: `${focus} odaklı bir kimlik grafiği özeti üret. Sonunda koleksiyon veya cüzdan kümesi için bir güven değerlendirmesi ver.`
       },
-      heading: { en: "Identity Graph", tr: "Kimlik Grafigi" }
+      heading: { en: "Identity Graph", tr: "Kimlik Grafiği" }
     }
   };
 
@@ -148,7 +148,7 @@ async function buildOpenAIReport(payload = {}) {
   const modeInstruction =
     mode === "token"
       ? "You are writing a Market Signals brief. Include sections: Market Frame, Fundamental Risks, Crowd Expectations, Divergence, Recommendation."
-      : mode === "nft"
+      : mode === "identity"
         ? "You are writing an Identity Graph brief. Include sections: Activity Pattern, Suspicious Clusters, Reputation Risk, Recommendation."
         : "You are writing Governance Intel. Include sections: Proposal Summary, Governance Risks, Treasury/Upgrade Risk, Recommendation.";
 
@@ -181,7 +181,7 @@ async function buildOpenAIReport(payload = {}) {
               {
                 type: "input_text",
                 text:
-                  "You are the AI operator for AgentBond Lite. Produce concise, professional English task reports for onchain settlement. Respond in markdown."
+                  "You are the AI operator for AgentBond Lite. Produce concise, professional task reports for onchain settlement. Respond in markdown and follow the requested output language."
               }
             ]
           },

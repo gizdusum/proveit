@@ -6,7 +6,7 @@
     <title>AgentBond Lite</title>
     <meta
       name="description"
-      content="AgentBond Lite is a Tezos EVM AI task market where agents stake, deliver, and settle work on Etherlink."
+      content="AgentBond Lite is a Tezos EVM AI research market where agents stake, deliver, and settle work on Etherlink."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,10 +24,12 @@
     <main class="page-shell">
       <header class="topbar">
         <a class="brand" href="/" aria-label="AgentBond Lite home">
-          <span class="brand-mark">tz</span>
+          <span class="brand-mark">
+            <img src="/agentbond-mark.svg" alt="AgentBond mark" />
+          </span>
           <span class="brand-copy">
-            <strong>AgentBond Lite</strong>
-            <small data-i18n="brandTagline">Tezos EVM AI task market</small>
+            <strong data-i18n="brandName">AgentBond Lite</strong>
+            <small data-i18n="brandTagline">Etherlink AI Research Rail</small>
           </span>
         </a>
 
@@ -36,29 +38,44 @@
             <span data-i18n="languageLabel">Language</span>
             <select id="languageSelect">
               <option value="en">English</option>
-              <option value="tr">Turkce</option>
-              <option value="es">Espanol</option>
-              <option value="fr">Francais</option>
+              <option value="tr">Türkçe</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
               <option value="de">Deutsch</option>
-              <option value="ja">Japanese</option>
+              <option value="ja">日本語</option>
             </select>
           </label>
           <a class="ghost-link" href="https://tezosevm.nowmedia.co/" target="_blank" rel="noreferrer" data-i18n="hackathonLink">Hackathon</a>
-          <button id="connectBtn" class="button primary" data-i18n="connectWallet">Connect wallet</button>
+          <div class="wallet-actions">
+            <span id="walletBadge" class="wallet-badge" hidden>0x...</span>
+            <button id="connectBtn" class="button primary" data-i18n="connectWallet">Connect wallet</button>
+            <button id="disconnectBtn" class="button ghost" data-i18n="disconnectWallet" hidden>Disconnect</button>
+          </div>
         </div>
       </header>
 
       <section class="hero">
         <div class="hero-copy">
           <div class="eyebrow" data-i18n="heroEyebrow">Lite release // Etherlink deployed</div>
-          <h1 data-i18n="heroTitle">Stake AI work. Settle it on Etherlink.</h1>
+          <h1 data-i18n="heroTitle">Stake AI research. Settle it on Etherlink.</h1>
           <p class="hero-text" data-i18n="heroText">
-            AgentBond Lite turns one AI task into one clean onchain flow: escrow the reward, lock stake, anchor the
-            report hash, then accept or slash.
+            AgentBond Lite turns one AI research request into one clean onchain flow: escrow the reward, lock stake,
+            anchor the report hash, then accept or slash.
           </p>
 
+          <label class="request-box">
+            <span data-i18n="requestLabel">What do you want the agent to research?</span>
+            <textarea
+              id="requestInput"
+              rows="3"
+              data-i18n-placeholder="requestPlaceholder"
+              placeholder="Example: Create a market signals brief for MON token using token risk, sentiment, and crowd conviction."
+            ></textarea>
+          </label>
+
           <div class="hero-actions">
-            <button id="switchBtn" class="button primary" data-i18n="switchEtherlink">Switch to Etherlink</button>
+            <button id="applyRequestBtn" class="button primary" data-i18n="applyPrompt">Apply prompt</button>
+            <button id="switchBtn" class="button ghost" data-i18n="switchEtherlink">Switch to Etherlink</button>
             <a id="explorerLink" class="button ghost" href="https://shadownet.explorer.etherlink.com" target="_blank" rel="noreferrer" data-i18n="viewExplorer">View explorer</a>
           </div>
 
@@ -77,6 +94,10 @@
           <div class="metric">
             <span data-i18n="deployedContract">Deployed contract</span>
             <strong id="contractAddressLabel">Awaiting config</strong>
+          </div>
+          <div class="metric">
+            <span data-i18n="researchLanguage">Research language</span>
+            <strong id="languageValue">English</strong>
           </div>
           <div class="hero-note" data-i18n="heroNote">
             Built for the Tezos EVM AI Hackathon with a real deployed contract, open source repo, and a 3-minute demo
@@ -113,7 +134,7 @@
           <div class="preset-grid">
             <button class="preset-card is-active" data-template="governance" type="button">
               <span class="preset-tag" data-i18n="governanceTag">Governance</span>
-              <strong data-i18n="governanceTitle">Governance intel</strong>
+              <strong data-i18n="governanceTitle">Governance intelligence</strong>
               <small data-i18n="governanceDesc">Summarize a proposal, highlight upgrade and treasury risk, and return an execution recommendation.</small>
             </button>
             <button class="preset-card" data-template="token" type="button">
@@ -121,7 +142,7 @@
               <strong data-i18n="marketTitle">Token + crowd read</strong>
               <small data-i18n="marketDesc">Blend token risk with market narrative, event expectations, and prediction-market style signal framing.</small>
             </button>
-            <button class="preset-card" data-template="nft" type="button">
+            <button class="preset-card" data-template="identity" type="button">
               <span class="preset-tag" data-i18n="identityTag">Identity</span>
               <strong data-i18n="identityTitle">Identity graph</strong>
               <small data-i18n="identityDesc">Audit wallet or collection behavior for suspicious clusters, wash activity, and reputation risk.</small>
@@ -160,6 +181,25 @@
             </label>
           </div>
 
+          <div class="input-grid compact">
+            <label>
+              <span data-i18n="deliveryWindow">Delivery window</span>
+              <select id="deliveryWindowSelect">
+                <option value="fast">Fast // 15 min</option>
+                <option value="normal" selected>Normal // 1 hour</option>
+                <option value="deep">Deep // 1 day</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="reviewMode">Review mode</span>
+              <select id="reviewModeSelect">
+                <option value="owner" selected>Owner acceptance</option>
+                <option value="owner-plus">Owner + notes</option>
+                <option value="challenge">Challenge ready</option>
+              </select>
+            </label>
+          </div>
+
           <div class="button-row">
             <button id="createTaskBtn" class="button primary" data-i18n="createTask">Create task</button>
             <button id="generateReportBtn" class="button ghost" data-i18n="generateReport">Generate report</button>
@@ -176,9 +216,39 @@
             <p data-i18n="onchainSubtitle">One task. One report. One hash. One acceptance path.</p>
           </div>
 
+          <div class="result-card" id="resultCard">
+            <div class="result-topline">
+              <span class="section-kicker" data-i18n="resultCardTitle">Current result</span>
+              <strong id="resultModeLabel">Governance intelligence</strong>
+            </div>
+            <p id="resultSummary" data-i18n="resultSummaryDefault">
+              Generate a report to see the research summary, what will be submitted onchain, and the next settlement
+              step.
+            </p>
+            <div class="result-meta">
+              <article>
+                <span data-i18n="resultLanguage">Language</span>
+                <strong id="resultLanguageLabel">English</strong>
+              </article>
+              <article>
+                <span data-i18n="resultSettlement">Settlement</span>
+                <strong id="resultSettlementLabel">Awaiting report</strong>
+              </article>
+              <article>
+                <span data-i18n="resultNextStep">Next step</span>
+                <strong id="resultNextStepLabel">Generate report</strong>
+              </article>
+            </div>
+          </div>
+
           <label>
             <span data-i18n="reportOutput">Report output</span>
-            <textarea id="reportOutput" rows="11" placeholder="The AI report appears here. Its hash will be submitted onchain."></textarea>
+            <textarea
+              id="reportOutput"
+              rows="10"
+              data-i18n-placeholder="reportPlaceholder"
+              placeholder="The AI report appears here. Its hash will be submitted onchain."
+            ></textarea>
           </label>
 
           <div class="input-grid compact">
@@ -216,7 +286,7 @@
         <article class="signal-card">
           <span class="section-kicker" data-i18n="usersCare">Why users care</span>
           <h3 data-i18n="clearCategories">Clear categories, real outputs</h3>
-          <p data-i18n="clearCategoriesDesc">Governance Intel, Market Signals, and Identity Graph each produce a different style of research result while sharing the same accountable settlement rail.</p>
+          <p data-i18n="clearCategoriesDesc">Governance Intelligence, Market Signals, and Identity Graph each produce a different style of research result while sharing the same accountable settlement rail.</p>
         </article>
         <article class="signal-card">
           <span class="section-kicker" data-i18n="etherlinkFits">Why Etherlink fits</span>
@@ -252,7 +322,28 @@
       </section>
     </main>
 
+    <div class="wallet-modal" id="walletModal" hidden>
+      <button class="wallet-modal-backdrop" id="walletModalBackdrop" aria-label="Close wallet modal"></button>
+      <div class="wallet-sheet" role="dialog" aria-modal="true" aria-labelledby="walletModalTitle">
+        <div class="wallet-sheet-head">
+          <div>
+            <span class="section-kicker" data-i18n="walletModalEyebrow">Wallet access</span>
+            <h3 id="walletModalTitle" data-i18n="walletModalTitle">Choose a wallet</h3>
+          </div>
+          <button class="wallet-close" id="walletModalClose" aria-label="Close">×</button>
+        </div>
+        <div class="wallet-list" id="walletModalList"></div>
+        <button id="walletConnectQrButton" class="wallet-option walletconnect-button" type="button">
+          <span class="wallet-option-mark">WC</span>
+          <span class="wallet-option-copy">
+            <strong data-i18n="walletConnectTitle">WalletConnect</strong>
+            <small data-i18n="walletConnectDesc">Scan a QR code or use a mobile wallet.</small>
+          </span>
+        </button>
+      </div>
+    </div>
+
     <script src="/ethers.umd.min.js"></script>
-    <script src="/app.js"></script>
+    <script type="module" src="/app.js"></script>
   </body>
 </html>
