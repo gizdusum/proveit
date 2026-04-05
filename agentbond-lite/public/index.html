@@ -164,13 +164,17 @@
             </label>
 
             <label>
-              <span data-i18n="reward">Reward (XTZ)</span>
+              <span data-i18n="settlementAmount">Settlement amount (XTZ)</span>
               <input id="rewardInput" type="number" min="0.001" step="0.001" value="0.03" />
             </label>
 
             <label>
-              <span data-i18n="agentStake">Agent stake (XTZ)</span>
-              <input id="stakeInput" type="number" min="0.001" step="0.001" value="0.01" />
+              <span data-i18n="disputeTimeout">Dispute timeout</span>
+              <select id="timeoutSelect">
+                <option value="300">5 min</option>
+                <option value="900" selected>15 min</option>
+                <option value="3600">1 hour</option>
+              </select>
             </label>
           </div>
         </details>
@@ -213,13 +217,51 @@
           <summary data-i18n="fullReportLabel">Full report</summary>
           <pre id="reportOutput" class="report-output"></pre>
         </details>
+
+        <article class="settlement-card">
+          <div class="settlement-head">
+            <div>
+              <span class="section-kicker" data-i18n="settlementTitle">Accountable settlement</span>
+              <h3 data-i18n="settlementHeading">Anchor the verdict. Accept or dispute it onchain.</h3>
+            </div>
+            <span class="result-badge" id="settlementStatusBadge" data-i18n="awaitingAnchor">Awaiting anchor</span>
+          </div>
+
+          <p class="settlement-copy" data-i18n="settlementExplain">
+            Anchoring stores a compact commitment to the report on Etherlink. Funding settlement creates a transparent
+            accept / dispute trail for this specific verdict.
+          </p>
+
+          <div class="settlement-meta">
+            <article>
+              <span data-i18n="onchainRecord">Onchain record</span>
+              <strong id="reportIdValue">-</strong>
+            </article>
+            <article>
+              <span data-i18n="verdictHash">Verdict hash</span>
+              <strong id="verdictHashValue">-</strong>
+            </article>
+            <article>
+              <span data-i18n="confidenceScore">Confidence</span>
+              <strong id="confidenceValue">-</strong>
+            </article>
+          </div>
+
+          <div class="settlement-actions">
+            <button id="anchorReportBtn" class="button primary" data-i18n="anchorVerdict">Anchor verdict</button>
+            <button id="fundSettlementBtn" class="button ghost" data-i18n="fundSettlement">Fund settlement</button>
+            <button id="acceptSettlementBtn" class="button primary" data-i18n="acceptReport">Accept report</button>
+            <button id="disputeSettlementBtn" class="button danger" data-i18n="disputeReport">Dispute report</button>
+            <button id="refreshSettlementBtn" class="button ghost" data-i18n="refreshOnchain">Refresh onchain</button>
+          </div>
+        </article>
       </section>
 
       <details class="onchain-panel">
         <summary data-i18n="onchainPanelTitle">Onchain settlement</summary>
 
         <div class="onchain-copy" data-i18n="onchainSubtitle">
-          One task. One report. One hash. One acceptance path.
+          Turn the report into a task, lock stake, submit the hash, then accept or reject the result.
         </div>
 
         <div class="advanced-grid">
@@ -241,23 +283,34 @@
 
         <div class="advanced-grid">
           <label>
-            <span data-i18n="taskId">Task ID</span>
-            <input id="taskIdInput" type="number" min="1" value="1" />
+            <span data-i18n="reportId">Report ID</span>
+            <input id="reportIdInput" type="number" min="1" />
           </label>
 
           <label>
-            <span data-i18n="submissionUri">Submission URI</span>
-            <input id="submissionUriInput" type="text" value="ipfs://agentbond-lite/report-1" />
+            <span data-i18n="contentUri">Content URI</span>
+            <input id="contentUriInput" type="text" value="ipfs://agentbond-lite/report-1" />
+          </label>
+        </div>
+
+        <div class="advanced-grid">
+          <label>
+            <span data-i18n="disputeReasonUri">Dispute reason URI</span>
+            <input id="disputeReasonInput" type="text" value="ipfs://agentbond-lite/disputes/reason-1" />
+          </label>
+
+          <label>
+            <span data-i18n="txExplorer">Latest explorer link</span>
+            <a id="txExplorerLink" class="button ghost full-width" href="https://shadownet.explorer.etherlink.com" target="_blank" rel="noreferrer" data-i18n="viewExplorer">View explorer</a>
           </label>
         </div>
 
         <div class="button-row">
           <button id="switchBtn" class="button ghost" data-i18n="switchEtherlink">Switch to Etherlink</button>
-          <button id="createTaskBtn" class="button primary" data-i18n="createTask">Create task</button>
-          <button id="claimTaskBtn" class="button ghost" data-i18n="stakeClaim">Stake + claim</button>
-          <button id="submitTaskBtn" class="button primary" data-i18n="submitHash">Submit hash</button>
-          <button id="acceptTaskBtn" class="button primary" data-i18n="accept">Accept</button>
-          <button id="rejectTaskBtn" class="button danger" data-i18n="reject">Reject</button>
+          <button id="anchorReportBtnSecondary" class="button primary" data-i18n="anchorVerdict">Anchor verdict</button>
+          <button id="fundSettlementBtnSecondary" class="button ghost" data-i18n="fundSettlement">Fund settlement</button>
+          <button id="acceptSettlementBtnSecondary" class="button primary" data-i18n="acceptReport">Accept report</button>
+          <button id="disputeSettlementBtnSecondary" class="button danger" data-i18n="disputeReport">Dispute report</button>
           <button id="refreshBtn" class="button ghost" data-i18n="refresh">Refresh</button>
         </div>
 

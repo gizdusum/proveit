@@ -146,7 +146,9 @@ body {
 .advanced-grid,
 .button-row,
 .result-grid,
-.result-badges {
+.result-badges,
+.settlement-meta,
+.settlement-actions {
   display: grid;
   gap: 14px;
 }
@@ -404,7 +406,8 @@ select:focus {
 .result-summary-card,
 .result-block,
 .advanced-panel,
-.report-details {
+.report-details,
+.settlement-card {
   width: min(860px, 100%);
   border-radius: 24px;
   border: 1px solid rgba(113, 147, 218, 0.14);
@@ -538,6 +541,55 @@ label {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.settlement-card {
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.settlement-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.settlement-head h3 {
+  margin: 6px 0 0;
+  font-size: 1.2rem;
+  letter-spacing: -0.03em;
+}
+
+.settlement-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.settlement-meta {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.settlement-meta article {
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(118, 150, 218, 0.12);
+}
+
+.settlement-meta span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.settlement-actions {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .result-block {
   padding: 20px;
 }
@@ -582,8 +634,12 @@ label {
 }
 
 .button-row {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   margin-top: 16px;
+}
+
+.full-width {
+  width: 100%;
 }
 
 .roadmap-inline {
@@ -726,12 +782,15 @@ label {
   .live-row,
   .advanced-grid,
   .result-grid,
-  .button-row {
+  .button-row,
+  .settlement-meta,
+  .settlement-actions {
     grid-template-columns: 1fr;
   }
 
   .countdown-card,
-  .result-head {
+  .result-head,
+  .settlement-head {
     flex-direction: column;
     align-items: stretch;
   }

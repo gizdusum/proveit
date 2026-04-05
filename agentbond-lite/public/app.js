@@ -1,81 +1,63 @@
-import EthereumProvider from "https://esm.sh/@walletconnect/ethereum-provider@2.21.1";
-
 const { ethers } = window;
 
+const APP_LANG_KEY = "agentbond-lite-language";
+const APP_MODE_KEY = "agentbond-lite-mode";
 const REOWN_PROJECT_ID = "2c7675603bcfd9904aa52c32e6ce9a34";
+const CHAIN_ID = 127823;
+const CHAIN_HEX = "0x1f34f";
 
-const state = {
-  provider: null,
-  signer: null,
-  account: null,
-  contract: null,
-  config: null,
-  abi: null,
-  selectedTemplate: "governance",
-  language: "en",
-  currentProviderType: null,
-  walletConnectProvider: null,
-  discoveredWallets: new Map(),
-  countdownInterval: null,
-  countdownEndAt: 0,
-  lastReport: ""
-};
-
-const TASK_PRESETS = {
+const TEMPLATES = {
   governance: {
-    en: {
-      request: "Summarize this governance proposal, surface treasury risk, and finish with a clear go / revise / avoid recommendation.",
-      title: "Produce governance intelligence for a new Etherlink launch",
-      focus: "proposal intent, treasury controls, upgrade risk, execution recommendation",
-      brief:
-        "Read the governance proposal, identify treasury and upgrade risks, summarize the tradeoffs, and end with a clear execution recommendation."
+    mode: "governance",
+    title: {
+      en: "Governance intelligence review",
+      tr: "Yönetişim istihbaratı incelemesi"
     },
-    tr: {
-      request: "Bu yönetişim teklifini özetle, treasury riskini çıkar ve net bir devam et / revize et / kaçın tavsiyesi ver.",
-      title: "Yeni bir Etherlink lansmanı için yönetişim istihbaratı üret",
-      focus: "teklif amacı, treasury kontrolleri, upgrade riski, uygulama tavsiyesi",
-      brief:
-        "Yönetişim teklifini oku, treasury ve upgrade risklerini tespit et, ödünleşimleri özetle ve net bir uygulama tavsiyesiyle bitir."
+    focus: {
+      en: "token design, treasury controls, upgrade path",
+      tr: "token tasarımı, hazine kontrolleri, yükseltme yolu"
+    },
+    prompt: {
+      en: "Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations.",
+      tr: "Token tasarımını, hazine kontrollerini ve yükseltme risklerini incele. Somut öneriler içeren kısa bir rapor üret."
     }
   },
   token: {
-    en: {
-      request: "Create a market signals brief for MON token using token risk, narrative momentum, event expectations, and crowd conviction.",
-      title: "Produce a market signals brief for MON token",
-      focus: "token utility, narrative momentum, event expectations, liquidity risk, crowd conviction",
-      brief:
-        "Analyze the token structure, supply schedule, admin permissions, launch mechanics, market narrative, and crowd expectations. Highlight where crowd conviction diverges from fundamentals."
+    mode: "token_risk",
+    title: {
+      en: "Token and market signals review",
+      tr: "Token ve piyasa sinyalleri incelemesi"
     },
-    tr: {
-      request: "MON token için token riski, anlatı momentumu, olay beklentileri ve kalabalık inancını kullanan bir piyasa sinyalleri özeti hazırla.",
-      title: "MON token için piyasa sinyalleri özeti üret",
-      focus: "token faydası, anlatı momentumu, olay beklentileri, likidite riski, kalabalık inancı",
-      brief:
-        "Token yapısını, arz takvimini, yönetici izinlerini, lansman mekaniklerini, piyasa anlatısını ve kalabalık beklentilerini analiz et. Kalabalık inancının temellerden nerede ayrıştığını özellikle vurgula."
+    focus: {
+      en: "token utility, liquidity, crowd conviction",
+      tr: "token faydası, likidite, kalabalık inancı"
+    },
+    prompt: {
+      en: "Review the token design, liquidity setup, admin controls, and crowd expectations. Produce a short report with concrete recommendations.",
+      tr: "Token tasarımını, likidite yapısını, admin kontrollerini ve kalabalık beklentilerini incele. Somut öneriler içeren kısa bir rapor üret."
     }
   },
   identity: {
-    en: {
-      request: "Audit suspicious wallet or collection activity and map reputation-sensitive behavior, wash activity, and suspicious clusters.",
-      title: "Map identity risk in an NFT collection",
-      focus: "wash trading, wallet clustering, suspicious volume, reputation risk",
-      brief:
-        "Inspect collection or wallet activity, identify clusters that may indicate wash trading, and summarize whether the behavior appears organic, coordinated, or reputation-sensitive."
+    mode: "upgrade_risk",
+    title: {
+      en: "Identity and trust surface review",
+      tr: "Kimlik ve güven yüzeyi incelemesi"
     },
-    tr: {
-      request: "Şüpheli cüzdan veya koleksiyon hareketlerini denetle; itibar hassas davranışları, wash activity izlerini ve şüpheli kümeleri haritala.",
-      title: "Bir NFT koleksiyonunda kimlik riskini haritala",
-      focus: "wash trading, cüzdan kümelenmesi, şüpheli hacim, itibar riski",
-      brief:
-        "Koleksiyon veya cüzdan aktivitesini incele, wash trading işareti verebilecek kümeleri tespit et ve davranışın organik mi, koordineli mi yoksa itibara hassas mı göründüğünü özetle."
+    focus: {
+      en: "trust signals, permissions, suspicious behavior",
+      tr: "güven sinyalleri, izinler, şüpheli davranışlar"
+    },
+    prompt: {
+      en: "Review the trust surface, privilege structure, and suspicious behavior patterns. Produce a short report with concrete recommendations.",
+      tr: "Güven yüzeyini, yetki yapısını ve şüpheli davranış örüntülerini incele. Somut öneriler içeren kısa bir rapor üret."
     }
   }
 };
 
-const dictionary = {
+const TEXT = {
   en: {
     brandName: "AgentBond Lite",
-    brandTagline: "Etherlink AI Research Rail",
+    brandTagline: "Etherlink Accountable AI Rail",
     languageLabel: "Language",
     hackathonLink: "Hackathon",
     connectWallet: "Connect wallet",
@@ -83,10 +65,13 @@ const dictionary = {
     heroEyebrow: "Lite release // Etherlink deployed",
     heroTitle: "Ask one question. Get one clear report.",
     heroText:
-      "AgentBond Lite turns a single prompt into one accountable AI report, then lets you settle that result on Etherlink.",
-    requestLabel: "What do you want the agent to research?",
+      "AgentBond Lite turns a single prompt into one accountable AI report, then lets you anchor and settle that verdict on Etherlink.",
+    governanceTitle: "Governance intelligence",
+    marketTitle: "Token + crowd read",
+    identityTitle: "Identity graph",
+    requestLabel: "What should the agent review?",
     requestPlaceholder:
-      "Example: Create a market signals brief for MON token using token risk, sentiment, and crowd conviction.",
+      "Example: Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations.",
     generateReport: "Generate report",
     resetDemo: "Reset demo",
     viewExplorer: "View explorer",
@@ -94,522 +79,634 @@ const dictionary = {
     statusLabel: "Status",
     network: "Network",
     readyState: "Ready",
-    generatingState: "Generating",
     countdownTitle: "Report countdown",
     countdownGenerating: "Generating your report...",
     countdownSubline: "The result will appear automatically when it is ready.",
-    walletNotConnected: "Wallet not connected.",
+    walletNotConnected: "Connect a wallet to anchor and settle reports on Etherlink.",
     advancedOptions: "Advanced options",
     deliveryWindow: "Delivery window",
     reviewMode: "Review mode",
-    reward: "Reward (XTZ)",
-    agentStake: "Agent stake (XTZ)",
+    settlementAmount: "Settlement amount (XTZ)",
+    disputeTimeout: "Dispute timeout",
     resultCardTitle: "Current result",
     summaryLabel: "Summary",
+    nextStepHint: "Generate a report first. Then you can anchor its verdict on Etherlink.",
     keyFindingsLabel: "Key findings",
     recommendationLabel: "Recommendation",
     fullReportLabel: "Full report",
-    nextStepHint: "After the report is ready, you can optionally send the hash onchain.",
+    settlementTitle: "Accountable settlement",
+    settlementHeading: "Anchor the verdict. Accept or dispute it onchain.",
+    settlementExplain:
+      "Anchoring stores a compact commitment to the report on Etherlink. Funding settlement creates a transparent accept / dispute trail for this specific verdict.",
+    awaitingAnchor: "Awaiting anchor",
+    onchainRecord: "Onchain record",
+    verdictHash: "Verdict hash",
+    confidenceScore: "Confidence",
+    anchorVerdict: "Anchor verdict",
+    fundSettlement: "Fund settlement",
+    acceptReport: "Accept report",
+    disputeReport: "Dispute report",
+    refreshOnchain: "Refresh onchain",
     onchainPanelTitle: "Onchain settlement",
-    onchainSubtitle: "Turn the report into a task, lock stake, submit the hash, then accept or reject the result.",
-    taskTitle: "Task title",
+    onchainSubtitle:
+      "The AI report is generated offchain. Etherlink stores the report commitment, then tracks whether that result is accepted or disputed.",
+    taskTitle: "Report title",
     focus: "Focus",
-    taskBrief: "Task brief",
-    taskId: "Task ID",
-    submissionUri: "Submission URI",
+    taskBrief: "Prompt brief",
+    reportId: "Report ID",
+    contentUri: "Content URI",
+    disputeReasonUri: "Dispute reason URI",
+    txExplorer: "Latest explorer link",
     switchEtherlink: "Switch to Etherlink",
-    createTask: "Create task",
-    stakeClaim: "Stake + claim",
-    submitHash: "Submit hash",
-    accept: "Accept",
-    reject: "Reject",
     refresh: "Refresh",
     comingSoon: "Coming soon",
     fullAgentBondDesc:
-      "Lite is the first release. Full AgentBond expands the same primitive into a real AI labor market with applications, dispute windows, richer reputation, and multi-agent competition.",
+      "Lite is the first release. Full AgentBond expands the same primitive into richer disputes, reputation, and multi-agent competition.",
     walletModalEyebrow: "Wallet access",
     walletModalTitle: "Choose a wallet",
     walletConnectTitle: "WalletConnect",
     walletConnectDesc: "Scan a QR code or use a mobile wallet.",
-    noInjected: "No injected wallet found",
-    noInjectedDesc: "Install MetaMask or Rabby, or use WalletConnect below.",
-    injectedConnectDesc: "Connect with the installed wallet",
-    governanceTitle: "Governance intelligence",
-    marketTitle: "Token + crowd read",
-    identityTitle: "Identity graph",
-    noTaskLoaded: "No task loaded yet.",
-    resultAwaiting: "Awaiting report",
-    connectedWallet: "Connected {address} on Etherlink.",
-    walletDisconnected: "Wallet disconnected.",
-    contractLive: "Contract live at {address}. Connect a wallet if you want to settle the report onchain.",
-    loadedTemplate: "{mode} mode loaded.",
-    noWallet: "No injected wallet found. Install MetaMask, Rabby, or use WalletConnect.",
-    noWalletSwitch: "No wallet available for network switching.",
-    connectFirst: "Connect a wallet first.",
-    generateFirst: "Generate a report first.",
-    configFailed: "Failed to load app config.",
-    reportReady: "Report ready.",
-    reportReadyNow: "Ready now",
+    anchorCtaHint: "Anchor the verdict on Etherlink to create an auditable report record.",
+    settlementFundHint: "Fund settlement to enable an onchain accept / dispute trail.",
+    settlementAcceptHint: "Settlement is funded. The requester can now accept or dispute the report onchain.",
+    settlementAccepted: "Accepted onchain",
+    settlementDisputed: "Disputed onchain",
+    settlementFunded: "Settlement funded",
+    settlementRefunded: "Settlement refunded",
+    reportAnchored: "Verdict anchored on Etherlink",
+    modeGovernance: "Governance intelligence",
+    modeToken: "Token + crowd read",
+    modeIdentity: "Identity graph",
+    generatingStatus: "Generating report",
+    anchoringStatus: "Anchoring verdict",
+    fundingStatus: "Funding settlement",
+    acceptingStatus: "Accepting report",
+    disputingStatus: "Disputing report",
+    refreshingStatus: "Refreshing onchain state",
+    connectedStatus: "Wallet connected. You can anchor and settle reports on Etherlink.",
+    explorerTx: "View transaction",
+    reviewModeOwner: "Owner acceptance",
+    reviewModeOwnerPlus: "Owner + notes",
+    reviewModeChallenge: "Challenge ready",
     deliveryFast: "Fast // 15 min",
     deliveryNormal: "Normal // 1 hour",
     deliveryDeep: "Deep // 1 day",
-    reviewOwner: "Owner acceptance",
-    reviewOwnerPlus: "Owner + notes",
-    reviewChallenge: "Challenge ready",
-    creatingTask: "Creating task... {hash}",
-    taskCreated: "Task {id} created in block {block}.",
-    claimingTask: "Claiming task {id}... {hash}",
-    taskClaimed: "Task {id} claimed with bonded stake.",
-    submittingHash: "Submitting report hash... {hash}",
-    taskSubmitted: "Task {id} submitted. Hash anchored onchain.",
-    acceptingTask: "Accepting task {id}... {hash}",
-    taskAccepted: "Task {id} accepted. Reward released and stake returned.",
-    rejectingTask: "Rejecting task {id}... {hash}",
-    taskRejected: "Task {id} rejected. Reward refunded and stake slashed."
+    timeoutShort: "5 min",
+    timeoutMid: "15 min",
+    timeoutLong: "1 hour"
   },
   tr: {
     brandName: "AgentBond Lite",
-    brandTagline: "Etherlink yapay zekâ araştırma hattı",
+    brandTagline: "Etherlink Hesap Verebilir Yapay Zeka Hattı",
     languageLabel: "Dil",
     hackathonLink: "Hackathon",
     connectWallet: "Cüzdan bağla",
     disconnectWallet: "Bağlantıyı kes",
-    heroEyebrow: "Lite sürüm // Etherlink üzerinde canlı",
-    heroTitle: "Tek bir soru sor. Tek bir net rapor al.",
+    heroEyebrow: "Lite sürüm // Etherlink dağıtıldı",
+    heroTitle: "Tek soru sor. Tek net rapor al.",
     heroText:
-      "AgentBond Lite tek bir prompt'u hesap verebilir bir yapay zekâ raporuna dönüştürür, ardından istersen bu sonucu Etherlink üzerinde settlement akışına sokar.",
-    requestLabel: "Ajanın neyi araştırmasını istiyorsun?",
+      "AgentBond Lite tek bir isteği hesap verebilir bir yapay zeka raporuna dönüştürür, ardından bu kararı Etherlink üzerinde anchor edip settlement akışına sokar.",
+    governanceTitle: "Yönetişim istihbaratı",
+    marketTitle: "Token + kalabalık okuması",
+    identityTitle: "Kimlik grafiği",
+    requestLabel: "Ajan neyi incelemeli?",
     requestPlaceholder:
-      "Örnek: MON token için token riski, duygu ve kalabalık inancını kullanan bir piyasa sinyalleri özeti hazırla.",
+      "Örnek: Token tasarımını, hazine kontrollerini ve yükseltme risklerini incele. Somut öneriler içeren kısa bir rapor üret.",
     generateReport: "Rapor üret",
     resetDemo: "Demoyu sıfırla",
-    viewExplorer: "Explorer’ı aç",
+    viewExplorer: "Explorer'ı aç",
     etaLabel: "Tahmini süre",
     statusLabel: "Durum",
     network: "Ağ",
     readyState: "Hazır",
-    generatingState: "Üretiliyor",
-    countdownTitle: "Rapor geri sayımı",
+    countdownTitle: "Rapor sayacı",
     countdownGenerating: "Raporun hazırlanıyor...",
-    countdownSubline: "Hazır olduğunda sonuç otomatik olarak aşağıda görünecek.",
-    walletNotConnected: "Cüzdan bağlı değil.",
+    countdownSubline: "Sonuç hazır olduğunda otomatik olarak aşağıda görünecek.",
+    walletNotConnected: "Raporları Etherlink üzerinde anchor edip settlement akışına sokmak için cüzdan bağla.",
     advancedOptions: "Gelişmiş seçenekler",
     deliveryWindow: "Teslim süresi",
     reviewMode: "İnceleme modu",
-    reward: "Ödül (XTZ)",
-    agentStake: "Ajan stake’i (XTZ)",
+    settlementAmount: "Settlement tutarı (XTZ)",
+    disputeTimeout: "İtiraz süresi",
     resultCardTitle: "Güncel sonuç",
     summaryLabel: "Özet",
+    nextStepHint: "Önce raporu üret. Sonra verdict'i Etherlink üzerinde anchor edebilirsin.",
     keyFindingsLabel: "Temel bulgular",
     recommendationLabel: "Öneri",
     fullReportLabel: "Tam rapor",
-    nextStepHint: "Rapor hazır olduğunda istersen hash’i zincire gönderebilirsin.",
-    onchainPanelTitle: "Onchain settlement",
-    onchainSubtitle: "Raporu göreve dönüştür, stake’i kilitle, hash’i gönder ve sonucu kabul et ya da reddet.",
-    taskTitle: "Görev başlığı",
+    settlementTitle: "Hesap verebilir settlement",
+    settlementHeading: "Verdict'i anchor et. Raporu zincir üstünde kabul et veya itiraz et.",
+    settlementExplain:
+      "Anchor işlemi raporun kompakt taahhüdünü Etherlink üzerinde saklar. Settlement fonlamak ise bu verdict için şeffaf bir kabul / itiraz izi oluşturur.",
+    awaitingAnchor: "Anchor bekleniyor",
+    onchainRecord: "Zincir üstü kayıt",
+    verdictHash: "Verdict hash'i",
+    confidenceScore: "Güven",
+    anchorVerdict: "Verdict'i anchor et",
+    fundSettlement: "Settlement fonla",
+    acceptReport: "Raporu kabul et",
+    disputeReport: "Rapor itirazı aç",
+    refreshOnchain: "Zincir üstünü yenile",
+    onchainPanelTitle: "Zincir üstü settlement",
+    onchainSubtitle:
+      "Yapay zeka raporu zincir dışında üretilir. Etherlink bu raporun taahhüdünü saklar ve sonucun kabul mü itiraz mı aldığını izler.",
+    taskTitle: "Rapor başlığı",
     focus: "Odak",
-    taskBrief: "Görev özeti",
-    taskId: "Görev ID",
-    submissionUri: "Teslim URI’si",
-    switchEtherlink: "Etherlink’e geç",
-    createTask: "Görev oluştur",
-    stakeClaim: "Stake + claim",
-    submitHash: "Hash gönder",
-    accept: "Kabul et",
-    reject: "Reddet",
+    taskBrief: "Prompt özeti",
+    reportId: "Rapor ID",
+    contentUri: "İçerik URI'si",
+    disputeReasonUri: "İtiraz gerekçesi URI'si",
+    txExplorer: "Son explorer linki",
+    switchEtherlink: "Etherlink'e geç",
     refresh: "Yenile",
     comingSoon: "Çok yakında",
     fullAgentBondDesc:
-      "Lite ilk sürüm. Full AgentBond aynı primitive’i gerçek bir yapay zekâ iş gücü pazarına taşıyacak; başvurular, itiraz penceresi, daha güçlü itibar ve çoklu ajan rekabeti eklenecek.",
+      "Lite ilk sürüm. Full AgentBond aynı primitive'i daha güçlü itirazlar, itibar yapısı ve çoklu ajan rekabetiyle genişletecek.",
     walletModalEyebrow: "Cüzdan erişimi",
     walletModalTitle: "Bir cüzdan seç",
     walletConnectTitle: "WalletConnect",
-    walletConnectDesc: "QR kod okut veya mobil cüzdan ile bağlan.",
-    noInjected: "Kurulu cüzdan bulunamadı",
-    noInjectedDesc: "MetaMask veya Rabby kurabilir ya da aşağıdan WalletConnect kullanabilirsin.",
-    injectedConnectDesc: "Kurulu cüzdan ile bağlan",
-    governanceTitle: "Yönetişim istihbaratı",
-    marketTitle: "Token + kalabalık okuması",
-    identityTitle: "Kimlik grafiği",
-    noTaskLoaded: "Henüz görev yüklenmedi.",
-    resultAwaiting: "Rapor bekleniyor",
-    connectedWallet: "{address} adresi Etherlink üzerinde bağlandı.",
-    walletDisconnected: "Cüzdan bağlantısı kesildi.",
-    contractLive: "Kontrat {address} adresinde canlı. İstersen raporu onchain settlement akışına sokmak için cüzdan bağlayabilirsin.",
-    loadedTemplate: "{mode} modu yüklendi.",
-    noWallet: "Kurulu cüzdan bulunamadı. MetaMask, Rabby ya da WalletConnect kullan.",
-    noWalletSwitch: "Ağ değişimi için kullanılabilir bir cüzdan bulunamadı.",
-    connectFirst: "Önce bir cüzdan bağla.",
-    generateFirst: "Önce bir rapor üret.",
-    configFailed: "Uygulama ayarları yüklenemedi.",
-    reportReady: "Rapor hazır.",
-    reportReadyNow: "Şimdi hazır",
+    walletConnectDesc: "QR kod okut veya mobil cüzdan kullan.",
+    anchorCtaHint: "Denetlenebilir bir rapor kaydı oluşturmak için verdict'i Etherlink üzerinde anchor et.",
+    settlementFundHint: "Zincir üstü kabul / itiraz izi başlatmak için settlement fonla.",
+    settlementAcceptHint: "Settlement fonlandı. İstek sahibi artık raporu zincir üstünde kabul edebilir veya itiraz açabilir.",
+    settlementAccepted: "Zincir üstünde kabul edildi",
+    settlementDisputed: "Zincir üstünde itiraz edildi",
+    settlementFunded: "Settlement fonlandı",
+    settlementRefunded: "Settlement iade edildi",
+    reportAnchored: "Verdict Etherlink üzerinde anchor edildi",
+    modeGovernance: "Yönetişim istihbaratı",
+    modeToken: "Token + kalabalık okuması",
+    modeIdentity: "Kimlik grafiği",
+    generatingStatus: "Rapor üretiliyor",
+    anchoringStatus: "Verdict anchor ediliyor",
+    fundingStatus: "Settlement fonlanıyor",
+    acceptingStatus: "Rapor kabul ediliyor",
+    disputingStatus: "İtiraz gönderiliyor",
+    refreshingStatus: "Zincir üstü durum yenileniyor",
+    connectedStatus: "Cüzdan bağlı. Raporları Etherlink üzerinde anchor edip settlement akışına sokabilirsin.",
+    explorerTx: "İşlemi görüntüle",
+    reviewModeOwner: "Sahip onayı",
+    reviewModeOwnerPlus: "Sahip + notlar",
+    reviewModeChallenge: "İtiraza hazır",
     deliveryFast: "Hızlı // 15 dk",
     deliveryNormal: "Normal // 1 saat",
     deliveryDeep: "Derin // 1 gün",
-    reviewOwner: "Sahip onayı",
-    reviewOwnerPlus: "Sahip + notlar",
-    reviewChallenge: "İtiraza hazır",
-    creatingTask: "Görev oluşturuluyor... {hash}",
-    taskCreated: "Görev {id}, {block}. blokta oluşturuldu.",
-    claimingTask: "Görev {id} alınıyor... {hash}",
-    taskClaimed: "Görev {id} teminatlı stake ile alındı.",
-    submittingHash: "Rapor hash’i gönderiliyor... {hash}",
-    taskSubmitted: "Görev {id} gönderildi. Hash zincire sabitlendi.",
-    acceptingTask: "Görev {id} kabul ediliyor... {hash}",
-    taskAccepted: "Görev {id} kabul edildi. Ödül açıldı ve stake iade edildi.",
-    rejectingTask: "Görev {id} reddediliyor... {hash}",
-    taskRejected: "Görev {id} reddedildi. Ödül iade edildi ve stake kesildi."
+    timeoutShort: "5 dk",
+    timeoutMid: "15 dk",
+    timeoutLong: "1 saat"
   }
 };
 
-const els = {
-  languageSelect: document.getElementById("languageSelect"),
-  connectBtn: document.getElementById("connectBtn"),
-  disconnectBtn: document.getElementById("disconnectBtn"),
-  walletBadge: document.getElementById("walletBadge"),
-  explorerLink: document.getElementById("explorerLink"),
-  walletStatus: document.getElementById("walletStatus"),
-  networkLabel: document.getElementById("networkLabel"),
-  requestInput: document.getElementById("requestInput"),
-  generateReportBtn: document.getElementById("generateReportBtn"),
-  loadDemoBtn: document.getElementById("loadDemoBtn"),
-  deliveryWindowSelect: document.getElementById("deliveryWindowSelect"),
-  reviewModeSelect: document.getElementById("reviewModeSelect"),
-  rewardInput: document.getElementById("rewardInput"),
-  stakeInput: document.getElementById("stakeInput"),
-  liveStatusValue: document.getElementById("liveStatusValue"),
-  etaValue: document.getElementById("etaValue"),
-  countdownCard: document.getElementById("countdownCard"),
-  countdownHeadline: document.getElementById("countdownHeadline"),
-  countdownSubline: document.getElementById("countdownSubline"),
-  countdownTimer: document.getElementById("countdownTimer"),
-  resultPanel: document.getElementById("resultPanel"),
-  resultModeLabel: document.getElementById("resultModeLabel"),
-  resultLanguageLabel: document.getElementById("resultLanguageLabel"),
-  resultSettlementLabel: document.getElementById("resultSettlementLabel"),
-  resultSummary: document.getElementById("resultSummary"),
-  resultNextStepHint: document.getElementById("resultNextStepHint"),
-  resultFindingsList: document.getElementById("resultFindingsList"),
-  resultRecommendation: document.getElementById("resultRecommendation"),
-  reportOutput: document.getElementById("reportOutput"),
-  modeChips: Array.from(document.querySelectorAll("[data-template]")),
-  switchBtn: document.getElementById("switchBtn"),
-  titleInput: document.getElementById("titleInput"),
-  focusInput: document.getElementById("focusInput"),
-  briefInput: document.getElementById("briefInput"),
-  taskIdInput: document.getElementById("taskIdInput"),
-  submissionUriInput: document.getElementById("submissionUriInput"),
-  createTaskBtn: document.getElementById("createTaskBtn"),
-  claimTaskBtn: document.getElementById("claimTaskBtn"),
-  submitTaskBtn: document.getElementById("submitTaskBtn"),
-  acceptTaskBtn: document.getElementById("acceptTaskBtn"),
-  rejectTaskBtn: document.getElementById("rejectTaskBtn"),
-  refreshBtn: document.getElementById("refreshBtn"),
-  taskState: document.getElementById("taskState"),
-  walletModal: document.getElementById("walletModal"),
-  walletModalBackdrop: document.getElementById("walletModalBackdrop"),
-  walletModalClose: document.getElementById("walletModalClose"),
-  walletModalList: document.getElementById("walletModalList"),
-  walletConnectQrButton: document.getElementById("walletConnectQrButton")
+const state = {
+  lang: localStorage.getItem(APP_LANG_KEY) || "en",
+  modeKey: localStorage.getItem(APP_MODE_KEY) || "governance",
+  config: null,
+  currentReport: null,
+  onchainReport: null,
+  currentReportId: null,
+  settlement: null,
+  currentTxHash: null,
+  walletProvider: null,
+  rawProvider: null,
+  signer: null,
+  account: null,
+  walletconnectProvider: null,
+  injectedProviders: new Map(),
+  countdownTimer: null,
+  countdownEndsAt: 0,
+  readProvider: null
 };
 
-const STATUS_LABELS = ["Open", "Claimed", "Submitted", "Accepted", "Rejected", "Cancelled"];
+const els = {};
 
-function t(key, vars = {}) {
-  const lang = dictionary[state.language] ? state.language : "en";
-  const base = dictionary[lang][key] || dictionary.en[key] || key;
-  return Object.entries(vars).reduce((text, [name, value]) => text.replaceAll(`{${name}}`, value), base);
+function $(id) {
+  return document.getElementById(id);
 }
 
-function presetCopy(templateName, language = state.language) {
-  const preset = TASK_PRESETS[templateName];
-  if (!preset) return null;
-  return preset[language] || preset.en;
+function t(key) {
+  const langPack = TEXT[state.lang] || TEXT.en;
+  return langPack[key] || TEXT.en[key] || key;
 }
 
-function shorten(address) {
-  return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "-";
+function shortAddress(value) {
+  if (!value) return "-";
+  return `${value.slice(0, 6)}…${value.slice(-4)}`;
 }
 
-function setStatus(message) {
+function shortHash(value) {
+  if (!value) return "-";
+  return `${value.slice(0, 10)}…${value.slice(-8)}`;
+}
+
+function formatConfidence(bps) {
+  const value = Number(bps || 0) / 100;
+  return `${value.toFixed(1)}%`;
+}
+
+function formatModeLabel(modeKey) {
+  if (modeKey === "governance") return t("modeGovernance");
+  if (modeKey === "token") return t("modeToken");
+  return t("modeIdentity");
+}
+
+function setStatus(message, kind = "neutral") {
+  els.liveStatusValue.textContent = message;
   els.walletStatus.textContent = message;
+  els.walletStatus.style.color = kind === "error" ? "#ffd3dd" : "#d4e2f8";
 }
 
-function normalizeWalletName(name = "Wallet") {
-  return name.replace(/\s+extension$/i, "").trim();
+function setEta(seconds) {
+  const safe = Math.max(0, Number(seconds) || 0);
+  const mins = String(Math.floor(safe / 60)).padStart(2, "0");
+  const secs = String(safe % 60).padStart(2, "0");
+  els.etaValue.textContent = `${mins}:${secs}`;
+  els.countdownTimer.textContent = `${mins}:${secs}`;
 }
 
-function walletMarkContent(wallet) {
-  if (wallet?.icon) {
-    return `<img src="${wallet.icon}" alt="${wallet.name} icon" />`;
+function getEtaSeconds() {
+  const value = els.deliveryWindowSelect.value;
+  if (value === "fast") return 25;
+  if (value === "deep") return 65;
+  return 45;
+}
+
+function startCountdown(seconds) {
+  stopCountdown();
+  state.countdownEndsAt = Date.now() + seconds * 1000;
+  els.countdownCard.hidden = false;
+  setEta(seconds);
+  state.countdownTimer = window.setInterval(() => {
+    const remaining = Math.max(0, Math.ceil((state.countdownEndsAt - Date.now()) / 1000));
+    setEta(remaining);
+    if (remaining <= 0) {
+      stopCountdown();
+      els.countdownHeadline.textContent = t("countdownGenerating");
+      els.countdownSubline.textContent = t("countdownSubline");
+      els.countdownCard.hidden = true;
+    }
+  }, 250);
+}
+
+function stopCountdown() {
+  if (state.countdownTimer) {
+    window.clearInterval(state.countdownTimer);
+    state.countdownTimer = null;
   }
-  return normalizeWalletName(wallet?.name || "Wallet").slice(0, 2).toUpperCase();
 }
 
-function setWalletUiConnected() {
-  els.walletBadge.hidden = false;
-  els.walletBadge.textContent = shorten(state.account);
-  els.connectBtn.hidden = true;
-  els.disconnectBtn.hidden = false;
-}
-
-function setWalletUiDisconnected() {
-  els.walletBadge.hidden = true;
-  els.connectBtn.hidden = false;
-  els.connectBtn.textContent = t("connectWallet");
-  els.disconnectBtn.hidden = true;
-}
-
-function applyTranslations() {
-  document.documentElement.lang = state.language;
-  document.querySelectorAll("[data-i18n]").forEach((element) => {
-    element.textContent = t(element.dataset.i18n);
+function applyI18n() {
+  document.documentElement.lang = state.lang;
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    const key = node.dataset.i18n;
+    const value = t(key);
+    if (value) node.textContent = value;
   });
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-    element.placeholder = t(element.dataset.i18nPlaceholder);
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+    const key = node.dataset.i18nPlaceholder;
+    const value = t(key);
+    if (value) node.setAttribute("placeholder", value);
   });
 
+  els.reviewModeSelect.options[0].textContent = t("reviewModeOwner");
+  els.reviewModeSelect.options[1].textContent = t("reviewModeOwnerPlus");
+  els.reviewModeSelect.options[2].textContent = t("reviewModeChallenge");
   els.deliveryWindowSelect.options[0].textContent = t("deliveryFast");
   els.deliveryWindowSelect.options[1].textContent = t("deliveryNormal");
   els.deliveryWindowSelect.options[2].textContent = t("deliveryDeep");
-  els.reviewModeSelect.options[0].textContent = t("reviewOwner");
-  els.reviewModeSelect.options[1].textContent = t("reviewOwnerPlus");
-  els.reviewModeSelect.options[2].textContent = t("reviewChallenge");
-  els.liveStatusValue.textContent = state.lastReport ? t("reportReadyNow") : t("readyState");
-  updateEtaPreview();
-  applyTemplate(state.selectedTemplate, false);
-  if (!state.account) setWalletUiDisconnected();
-}
+  els.timeoutSelect.options[0].textContent = t("timeoutShort");
+  els.timeoutSelect.options[1].textContent = t("timeoutMid");
+  els.timeoutSelect.options[2].textContent = t("timeoutLong");
 
-function estimateSeconds() {
-  const byWindow = {
-    fast: 18,
-    normal: 42,
-    deep: 75
-  };
-  const byMode = {
-    governance: 0,
-    token: 6,
-    identity: 10
-  };
-  return (byWindow[els.deliveryWindowSelect.value] || 42) + (byMode[state.selectedTemplate] || 0);
-}
+  const selectedOption = els.languageSelect.querySelector(`option[value="${state.lang}"]`);
+  els.resultLanguageLabel.textContent = selectedOption ? selectedOption.textContent : "English";
 
-function formatCountdown(seconds) {
-  const clamped = Math.max(0, seconds);
-  const minutes = String(Math.floor(clamped / 60)).padStart(2, "0");
-  const remainder = String(clamped % 60).padStart(2, "0");
-  return `${minutes}:${remainder}`;
-}
-
-function updateEtaPreview() {
-  if (state.countdownInterval) return;
-  els.etaValue.textContent = formatCountdown(estimateSeconds());
-}
-
-function startCountdown() {
-  stopCountdown();
-  const seconds = estimateSeconds();
-  state.countdownEndAt = Date.now() + seconds * 1000;
-  els.countdownCard.hidden = false;
-  els.countdownHeadline.textContent = t("countdownGenerating");
-  els.countdownSubline.textContent = t("countdownSubline");
-  els.liveStatusValue.textContent = t("generatingState");
-  els.resultSettlementLabel.textContent = t("generatingState");
-  const tick = () => {
-    const remaining = Math.max(0, Math.ceil((state.countdownEndAt - Date.now()) / 1000));
-    const text = formatCountdown(remaining);
-    els.countdownTimer.textContent = text;
-    els.etaValue.textContent = text;
-    if (remaining <= 0) {
-      stopCountdown(false);
-    }
-  };
-  tick();
-  state.countdownInterval = window.setInterval(tick, 1000);
-}
-
-function stopCountdown(markReady = true) {
-  if (state.countdownInterval) {
-    window.clearInterval(state.countdownInterval);
-    state.countdownInterval = null;
+  if (!state.currentReport) {
+    els.resultModeLabel.textContent = formatModeLabel(state.modeKey);
+    els.resultSummary.textContent = t("nextStepHint");
+    els.resultNextStepHint.textContent = t("anchorCtaHint");
   }
-  if (markReady) {
-    els.countdownCard.hidden = true;
-    els.etaValue.textContent = t("reportReadyNow");
-    els.liveStatusValue.textContent = state.lastReport ? t("reportReadyNow") : t("readyState");
+
+  renderWalletState();
+}
+
+function bindElements() {
+  [
+    "languageSelect",
+    "walletBadge",
+    "connectBtn",
+    "disconnectBtn",
+    "requestInput",
+    "generateReportBtn",
+    "loadDemoBtn",
+    "explorerLink",
+    "etaValue",
+    "liveStatusValue",
+    "networkLabel",
+    "countdownCard",
+    "countdownHeadline",
+    "countdownSubline",
+    "countdownTimer",
+    "walletStatus",
+    "deliveryWindowSelect",
+    "reviewModeSelect",
+    "rewardInput",
+    "timeoutSelect",
+    "resultPanel",
+    "resultModeLabel",
+    "resultLanguageLabel",
+    "resultSettlementLabel",
+    "resultSummary",
+    "resultNextStepHint",
+    "resultFindingsList",
+    "resultRecommendation",
+    "reportOutput",
+    "settlementStatusBadge",
+    "reportIdValue",
+    "verdictHashValue",
+    "confidenceValue",
+    "anchorReportBtn",
+    "fundSettlementBtn",
+    "acceptSettlementBtn",
+    "disputeSettlementBtn",
+    "refreshSettlementBtn",
+    "titleInput",
+    "focusInput",
+    "briefInput",
+    "reportIdInput",
+    "contentUriInput",
+    "disputeReasonInput",
+    "txExplorerLink",
+    "switchBtn",
+    "anchorReportBtnSecondary",
+    "fundSettlementBtnSecondary",
+    "acceptSettlementBtnSecondary",
+    "disputeSettlementBtnSecondary",
+    "refreshBtn",
+    "taskState",
+    "walletModal",
+    "walletModalBackdrop",
+    "walletModalClose",
+    "walletModalList",
+    "walletConnectQrButton"
+  ].forEach((id) => {
+    els[id] = $(id);
+  });
+}
+
+function getTemplate(modeKey = state.modeKey) {
+  return TEMPLATES[modeKey] || TEMPLATES.governance;
+}
+
+function applyTemplate(modeKey, { resetPrompt = false } = {}) {
+  state.modeKey = modeKey;
+  localStorage.setItem(APP_MODE_KEY, modeKey);
+  const template = getTemplate(modeKey);
+  const localizedTitle = template.title[state.lang] || template.title.en;
+  const localizedFocus = template.focus[state.lang] || template.focus.en;
+  const localizedPrompt = template.prompt[state.lang] || template.prompt.en;
+
+  els.titleInput.value = localizedTitle;
+  els.focusInput.value = localizedFocus;
+  els.briefInput.value = localizedPrompt;
+  if (resetPrompt || !els.requestInput.value.trim()) {
+    els.requestInput.value = localizedPrompt;
+  }
+
+  document.querySelectorAll(".mode-chip").forEach((node) => {
+    node.classList.toggle("is-active", node.dataset.template === modeKey);
+  });
+
+  if (!state.currentReport) {
+    els.resultModeLabel.textContent = formatModeLabel(modeKey);
+  }
+}
+
+async function loadConfig() {
+  const response = await fetch("/api/config");
+  const payload = await response.json();
+  if (!payload.ok) throw new Error(payload.error || "Failed to load config.");
+  state.config = payload;
+  state.readProvider = new ethers.JsonRpcProvider(payload.network.rpcUrl);
+  els.networkLabel.textContent = payload.network.name;
+  els.explorerLink.href = payload.network.explorerUrl;
+  els.txExplorerLink.href = payload.network.explorerUrl;
+}
+
+function currentContracts(providerOrSigner) {
+  const registry = new ethers.Contract(
+    state.config.contracts.reportRegistry.address,
+    state.config.contracts.reportRegistry.abi,
+    providerOrSigner
+  );
+  const escrow = new ethers.Contract(
+    state.config.contracts.settlementEscrow.address,
+    state.config.contracts.settlementEscrow.abi,
+    providerOrSigner
+  );
+  return { registry, escrow };
+}
+
+function getRecommendationText(recommendation) {
+  if (!recommendation) return "-";
+  return `${recommendation} // ${formatConfidence(state.currentReport?.confidence_bps || 0)}`;
+}
+
+function setButtonsDisabled(ids, disabled) {
+  ids.forEach((id) => {
+    const button = els[id];
+    if (button) button.disabled = disabled;
+  });
+}
+
+function updateActionState() {
+  const connected = Boolean(state.signer && state.account);
+  const hasReport = Boolean(state.currentReport);
+  const hasReportId = Boolean(state.currentReportId || Number(els.reportIdInput.value));
+  const settlementStatus = Number(state.settlement?.status ?? 0);
+
+  setButtonsDisabled(["generateReportBtn"], false);
+  setButtonsDisabled(["anchorReportBtn", "anchorReportBtnSecondary"], !connected || !hasReport || hasReportId);
+  setButtonsDisabled(["fundSettlementBtn", "fundSettlementBtnSecondary"], !connected || !hasReportId || settlementStatus !== 0);
+  setButtonsDisabled(
+    ["acceptSettlementBtn", "acceptSettlementBtnSecondary", "disputeSettlementBtn", "disputeSettlementBtnSecondary"],
+    !connected || !hasReportId || settlementStatus !== 1
+  );
+  setButtonsDisabled(["refreshSettlementBtn", "refreshBtn"], !hasReportId);
+}
+
+function setExplorerTx(hash) {
+  const base = state.config?.network?.explorerUrl || "https://shadownet.explorer.etherlink.com";
+  const href = hash ? `${base}/tx/${hash}` : base;
+  els.txExplorerLink.href = href;
+  els.txExplorerLink.textContent = hash ? t("explorerTx") : t("viewExplorer");
+}
+
+function renderTaskState(extra = {}) {
+  const snapshot = {
+    reportId: state.currentReportId || null,
+    report: state.currentReport
+      ? {
+          title: state.currentReport.title,
+          recommendation: state.currentReport.recommendation,
+          confidence_bps: state.currentReport.confidence_bps,
+          verdict_hash: state.currentReport.verdict_hash,
+          content_uri: state.currentReport.content_uri
+        }
+      : null,
+    settlement: state.settlement,
+    ...extra
+  };
+  els.taskState.textContent = JSON.stringify(snapshot, null, 2);
+}
+
+function settlementStatusLabel(status) {
+  if (status === 1) return t("settlementFunded");
+  if (status === 2) return t("settlementAccepted");
+  if (status === 3) return t("settlementDisputed");
+  if (status === 4) return t("settlementRefunded");
+  if (state.currentReportId) return t("reportAnchored");
+  return t("awaitingAnchor");
+}
+
+function renderSettlementState() {
+  const status = Number(state.settlement?.status ?? 0);
+  const verdictHash = state.currentReport?.verdict_hash || state.onchainReport?.verdictHash || null;
+  const confidenceBps = state.currentReport?.confidence_bps ?? state.onchainReport?.confidenceBps ?? 0;
+  els.reportIdValue.textContent = state.currentReportId ? String(state.currentReportId) : "-";
+  els.verdictHashValue.textContent = verdictHash ? shortHash(verdictHash) : "-";
+  els.confidenceValue.textContent = confidenceBps ? formatConfidence(confidenceBps) : "-";
+  els.settlementStatusBadge.textContent = settlementStatusLabel(status);
+
+  if (status === 1) {
+    els.resultSettlementLabel.textContent = t("settlementFunded");
+    els.resultNextStepHint.textContent = t("settlementAcceptHint");
+  } else if (status === 2) {
+    els.resultSettlementLabel.textContent = t("settlementAccepted");
+    els.resultNextStepHint.textContent = t("settlementAccepted");
+  } else if (status === 3) {
+    els.resultSettlementLabel.textContent = t("settlementDisputed");
+    els.resultNextStepHint.textContent = t("settlementDisputed");
+  } else if (state.currentReportId) {
+    els.resultSettlementLabel.textContent = t("reportAnchored");
+    els.resultNextStepHint.textContent = t("settlementFundHint");
   } else {
-    els.countdownTimer.textContent = "00:00";
-  }
-}
-
-function extractSections(markdown) {
-  const lines = markdown.split("\n");
-  const findings = [];
-  let summary = "";
-  let recommendation = "";
-  let currentSection = "";
-
-  for (const rawLine of lines) {
-    const line = rawLine.trim();
-    if (!line) continue;
-    if (line.startsWith("## ")) {
-      currentSection = line.replace(/^##\s+/, "").toLowerCase();
-      continue;
-    }
-    if (line.startsWith("# ")) {
-      continue;
-    }
-    if (!summary && !line.startsWith("-") && !line.startsWith("*")) {
-      summary = line;
-    }
-    if (line.startsWith("-") || line.startsWith("*")) {
-      findings.push(line.replace(/^[-*]\s*/, ""));
-      continue;
-    }
-    if (currentSection.includes("recommendation") || currentSection.includes("öneri")) {
-      recommendation = recommendation ? `${recommendation} ${line}` : line;
-    }
+    els.resultSettlementLabel.textContent = t("awaitingAnchor");
+    els.resultNextStepHint.textContent = t("anchorCtaHint");
   }
 
-  return {
-    summary,
-    findings,
-    recommendation
-  };
+  updateActionState();
+  renderTaskState();
 }
 
-function renderReport(markdown) {
-  state.lastReport = markdown;
-  const sections = extractSections(markdown);
-  const modeLabel =
-    state.selectedTemplate === "token"
-      ? t("marketTitle")
-      : state.selectedTemplate === "identity"
-        ? t("identityTitle")
-        : t("governanceTitle");
-
+function renderReport(report) {
+  state.currentReport = report;
+  state.onchainReport = null;
+  state.settlement = null;
+  state.currentReportId = null;
   els.resultPanel.hidden = false;
-  els.resultModeLabel.textContent = modeLabel;
-  els.resultLanguageLabel.textContent =
-    els.languageSelect.options[els.languageSelect.selectedIndex]?.textContent || "English";
-  els.resultSettlementLabel.textContent = t("reportReadyNow");
-  els.resultSummary.textContent = sections.summary || t("reportReady");
-  els.resultNextStepHint.textContent = t("nextStepHint");
-  els.resultRecommendation.textContent = sections.recommendation || sections.summary || "";
+  els.resultModeLabel.textContent = formatModeLabel(state.modeKey);
+  els.resultSummary.textContent = report.short_summary;
+  els.resultRecommendation.textContent = getRecommendationText(report.recommendation);
+  els.reportOutput.textContent = report.full_report_markdown;
   els.resultFindingsList.innerHTML = "";
-  (sections.findings.length ? sections.findings : [sections.summary || t("reportReady")]).forEach((item) => {
+  report.key_findings.forEach((finding) => {
     const li = document.createElement("li");
-    li.textContent = item;
+    li.textContent = finding;
     els.resultFindingsList.appendChild(li);
   });
-  els.reportOutput.textContent = markdown;
-  stopCountdown(true);
-  setStatus(t("reportReady"));
+
+  els.titleInput.value = report.title || els.titleInput.value;
+  els.briefInput.value = report.prompt || els.briefInput.value;
+  els.contentUriInput.value = report.content_uri || `ipfs://agentbond-lite/reports/${report.request_id}`;
+  els.reportIdInput.value = "";
+  setExplorerTx(null);
+  renderSettlementState();
+  renderTaskState();
+  window.scrollTo({ top: els.resultPanel.offsetTop - 24, behavior: "smooth" });
 }
 
-function syncTaskFields() {
-  const prompt = els.requestInput.value.trim();
-  const preset = presetCopy(state.selectedTemplate);
-  els.titleInput.value = prompt.slice(0, 90) || preset.title;
-  els.focusInput.value = preset.focus;
-  els.briefInput.value = prompt || preset.brief;
-}
-
-function applyTemplate(templateName, updatePrompt = true) {
-  state.selectedTemplate = templateName;
-  const preset = presetCopy(templateName);
-  els.modeChips.forEach((chip) => {
-    chip.classList.toggle("is-active", chip.dataset.template === templateName);
+async function fetchJson(url, payload) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
   });
-  if (updatePrompt || !els.requestInput.value.trim()) {
-    els.requestInput.value = preset.request;
+  const data = await response.json();
+  if (!response.ok || !data.ok) {
+    throw new Error(data.error || `Request failed for ${url}.`);
   }
-  syncTaskFields();
-  updateEtaPreview();
-  setStatus(t("loadedTemplate", { mode: titleForTemplate(templateName) }));
+  return data;
 }
 
-function titleForTemplate(templateName) {
-  return templateName === "token" ? t("marketTitle") : templateName === "identity" ? t("identityTitle") : t("governanceTitle");
-}
-
-function isSupportedWallet(detail) {
-  const provider = detail?.provider;
-  if (!provider || typeof provider.request !== "function") return false;
-  if (provider.isMetaMask || provider.isRabby || provider.isCoinbaseWallet || provider.isTrust) return true;
-  const name = normalizeWalletName(detail?.info?.name || "");
-  return ["MetaMask", "Rabby", "Coinbase Wallet", "Trust Wallet", "Brave Wallet", "Rainbow"].includes(name);
-}
-
-function rememberInjectedWallet(detail) {
-  if (!detail?.info?.uuid || !detail?.provider) return;
-  state.discoveredWallets.set(detail.info.uuid, detail);
-}
-
-function renderWalletOptions() {
-  const wallets = Array.from(state.discoveredWallets.values())
-    .filter(isSupportedWallet)
-    .sort((a, b) => normalizeWalletName(a.info.name).localeCompare(normalizeWalletName(b.info.name)));
-
-  if (!wallets.length) {
-    els.walletModalList.innerHTML = `
-      <div class="wallet-option">
-        <span class="wallet-option-mark">--</span>
-        <span class="wallet-option-copy">
-          <strong>${t("noInjected")}</strong>
-          <small>${t("noInjectedDesc")}</small>
-        </span>
-      </div>
-    `;
+async function generateReport() {
+  const prompt = els.requestInput.value.trim();
+  if (!prompt) {
+    els.requestInput.focus();
     return;
   }
 
-  els.walletModalList.innerHTML = wallets
-    .map(
-      (wallet) => `
-      <button class="wallet-option" type="button" data-wallet-id="${wallet.info.uuid}">
-        <span class="wallet-option-mark">${walletMarkContent({ icon: wallet.info.icon, name: wallet.info.name })}</span>
-        <span class="wallet-option-copy">
-          <strong>${normalizeWalletName(wallet.info.name)}</strong>
-          <small>${t("injectedConnectDesc")}</small>
-        </span>
-      </button>
-    `
-    )
-    .join("");
+  const template = getTemplate();
+  const payload = {
+    mode: template.mode,
+    language: state.lang,
+    prompt,
+    title: els.titleInput.value.trim() || template.title[state.lang] || template.title.en,
+    brief: els.briefInput.value.trim() || prompt,
+    requester_address: state.account || null
+  };
+
+  setStatus(t("generatingStatus"));
+  els.countdownHeadline.textContent = t("countdownGenerating");
+  els.countdownSubline.textContent = t("countdownSubline");
+  startCountdown(getEtaSeconds());
+
+  try {
+    const data = await fetchJson("/api/ai/report", payload);
+    stopCountdown();
+    els.countdownCard.hidden = true;
+    setEta(getEtaSeconds());
+    renderReport(data.report);
+    setStatus(t("readyState"));
+  } catch (error) {
+    stopCountdown();
+    els.countdownCard.hidden = true;
+    setStatus(error.message, "error");
+  }
 }
 
-function discoverInjectedWallets() {
-  window.addEventListener("eip6963:announceProvider", (event) => {
-    rememberInjectedWallet(event.detail);
-    renderWalletOptions();
-  });
+function walletEntryKey(detail) {
+  return detail.info?.rdns || detail.info?.name || Math.random().toString(36).slice(2);
+}
 
+function registerInjectedProvider(detail) {
+  const key = walletEntryKey(detail);
+  if (!state.injectedProviders.has(key)) {
+    state.injectedProviders.set(key, detail);
+  }
+  renderWalletOptions();
+}
+
+function discoverInjectedProviders() {
+  window.addEventListener("eip6963:announceProvider", (event) => {
+    registerInjectedProvider(event.detail);
+  });
   window.dispatchEvent(new Event("eip6963:requestProvider"));
 
-  if (window.ethereum && state.discoveredWallets.size === 0) {
-    const providers = Array.isArray(window.ethereum.providers) && window.ethereum.providers.length
-      ? window.ethereum.providers
-      : [window.ethereum];
-    providers.forEach((provider, index) => {
-      rememberInjectedWallet({
+  if (window.ethereum) {
+    const providers = window.ethereum.providers || [window.ethereum];
+    providers.forEach((provider) => {
+      registerInjectedProvider({
         info: {
-          uuid: `fallback-${index}`,
-          name: provider.isRabby ? "Rabby" : provider.isMetaMask ? "MetaMask" : "Browser Wallet",
-          icon: ""
+          name: provider.isRabby ? "Rabby" : provider.isMetaMask ? "MetaMask" : "Injected wallet",
+          rdns: provider.isRabby ? "io.rabby" : provider.isMetaMask ? "io.metamask" : "injected"
         },
         provider
       });
     });
   }
-
-  renderWalletOptions();
 }
 
 function openWalletModal() {
-  renderWalletOptions();
   els.walletModal.hidden = false;
 }
 
@@ -617,52 +714,54 @@ function closeWalletModal() {
   els.walletModal.hidden = true;
 }
 
-async function getWalletConnectProvider() {
-  if (state.walletConnectProvider) return state.walletConnectProvider;
-  state.walletConnectProvider = await EthereumProvider.init({
-    projectId: REOWN_PROJECT_ID,
-    chains: [127823],
-    optionalChains: [127823],
-    showQrModal: true,
-    methods: [
-      "eth_requestAccounts",
-      "eth_accounts",
-      "personal_sign",
-      "wallet_switchEthereumChain",
-      "wallet_addEthereumChain",
-      "eth_chainId"
-    ],
-    events: ["accountsChanged", "chainChanged", "disconnect"],
-    metadata: {
-      name: "AgentBond Lite",
-      description: "Etherlink AI research rail",
-      url: "https://agentbond-lite.vercel.app",
-      icons: ["https://agentbond-lite.vercel.app/agentbond-mark.svg"]
-    }
+function renderWalletOptions() {
+  els.walletModalList.innerHTML = "";
+  const entries = Array.from(state.injectedProviders.values());
+  if (!entries.length) {
+    const empty = document.createElement("div");
+    empty.className = "wallet-option";
+    empty.innerHTML = `<span class="wallet-option-copy"><strong>No injected wallet found</strong><small>Install MetaMask or Rabby to connect directly.</small></span>`;
+    els.walletModalList.appendChild(empty);
+    return;
+  }
+
+  entries.forEach((entry) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "wallet-option";
+    const label = entry.info?.name || "Injected wallet";
+    const mark = label.slice(0, 2).toUpperCase();
+    button.innerHTML = `
+      <span class="wallet-option-mark">${mark}</span>
+      <span class="wallet-option-copy">
+        <strong>${label}</strong>
+        <small>${shortAddress(entry.provider?.selectedAddress || "") || "Browser wallet connection"}</small>
+      </span>
+    `;
+    button.addEventListener("click", () => connectInjectedWallet(entry));
+    els.walletModalList.appendChild(button);
   });
-  return state.walletConnectProvider;
 }
 
-async function switchToEtherlink(provider = state.provider) {
-  const wallet = provider;
-  if (!wallet || typeof wallet.request !== "function") {
-    throw new Error(t("noWalletSwitch"));
-  }
-  const chainIdHex = `0x${state.config.network.chainId.toString(16)}`;
+async function ensureEtherlink(rawProvider) {
   try {
-    await wallet.request({
+    await rawProvider.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: chainIdHex }]
+      params: [{ chainId: CHAIN_HEX }]
     });
   } catch (error) {
-    if (error.code !== 4902) throw error;
-    await wallet.request({
+    if (error?.code !== 4902) throw error;
+    await rawProvider.request({
       method: "wallet_addEthereumChain",
       params: [
         {
-          chainId: chainIdHex,
+          chainId: CHAIN_HEX,
           chainName: state.config.network.name,
-          nativeCurrency: { name: "Etherlink XTZ", symbol: "XTZ", decimals: 18 },
+          nativeCurrency: {
+            name: "Tezos",
+            symbol: state.config.network.currencySymbol,
+            decimals: 18
+          },
           rpcUrls: [state.config.network.rpcUrl],
           blockExplorerUrls: [state.config.network.explorerUrl]
         }
@@ -671,233 +770,344 @@ async function switchToEtherlink(provider = state.provider) {
   }
 }
 
-async function connectWithProvider(provider) {
-  if (!provider || typeof provider.request !== "function") {
-    throw new Error(t("noWallet"));
+async function connectInjectedWallet(entry) {
+  try {
+    const rawProvider = entry.provider;
+    await rawProvider.request({ method: "eth_requestAccounts" });
+    await ensureEtherlink(rawProvider);
+    const browserProvider = new ethers.BrowserProvider(rawProvider);
+    const signer = await browserProvider.getSigner();
+    const account = await signer.getAddress();
+
+    state.rawProvider = rawProvider;
+    state.walletProvider = browserProvider;
+    state.signer = signer;
+    state.account = account;
+    closeWalletModal();
+    renderWalletState();
+    setStatus(t("connectedStatus"));
+  } catch (error) {
+    setStatus(error.message || "Wallet connection failed.", "error");
   }
-  await switchToEtherlink(provider);
-  const accounts = await provider.request({ method: "eth_requestAccounts" });
-  const account = accounts?.[0];
-  if (!account) throw new Error(t("noWallet"));
-
-  const browserProvider = new ethers.BrowserProvider(provider);
-  const signer = await browserProvider.getSigner();
-
-  state.provider = provider;
-  state.signer = signer;
-  state.account = account;
-  state.contract = new ethers.Contract(state.config.deployment.address, state.abi, signer);
-
-  setWalletUiConnected();
-  setStatus(t("connectedWallet", { address: shorten(account) }));
-  closeWalletModal();
-}
-
-async function connectInjectedWallet(uuid) {
-  const wallet = state.discoveredWallets.get(uuid);
-  if (!wallet) throw new Error(t("noWallet"));
-  await connectWithProvider(wallet.provider);
 }
 
 async function connectWalletConnect() {
-  const provider = await getWalletConnectProvider();
-  await connectWithProvider(provider);
+  try {
+    const module = await import("https://esm.sh/@walletconnect/ethereum-provider@2.17.2");
+    const EthereumProvider = module.default;
+    const provider = await EthereumProvider.init({
+      projectId: REOWN_PROJECT_ID,
+      chains: [CHAIN_ID],
+      optionalChains: [CHAIN_ID],
+      showQrModal: true,
+      methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData_v4"],
+      rpcMap: {
+        [CHAIN_ID]: state.config.network.rpcUrl
+      }
+    });
+    await provider.connect();
+    const browserProvider = new ethers.BrowserProvider(provider);
+    const signer = await browserProvider.getSigner();
+    const account = await signer.getAddress();
+
+    state.walletconnectProvider = provider;
+    state.rawProvider = provider;
+    state.walletProvider = browserProvider;
+    state.signer = signer;
+    state.account = account;
+    closeWalletModal();
+    renderWalletState();
+    setStatus(t("connectedStatus"));
+  } catch (error) {
+    setStatus(error.message || "WalletConnect failed.", "error");
+  }
 }
 
 async function disconnectWallet() {
-  if (state.walletConnectProvider && state.provider === state.walletConnectProvider && state.provider.disconnect) {
+  if (state.walletconnectProvider) {
     try {
-      await state.provider.disconnect();
+      await state.walletconnectProvider.disconnect();
     } catch (_error) {
-      // ignore disconnect transport errors
+      // ignore close issues on demo disconnect
     }
   }
-  state.provider = null;
+  state.walletconnectProvider = null;
+  state.walletProvider = null;
+  state.rawProvider = null;
   state.signer = null;
   state.account = null;
-  state.contract = null;
-  setWalletUiDisconnected();
-  setStatus(t("walletDisconnected"));
-  closeWalletModal();
+  renderWalletState();
+  setStatus(t("walletNotConnected"));
 }
 
-async function loadConfig() {
-  const response = await fetch("/api/config");
-  const data = await response.json();
-  state.config = data;
-  state.abi = data.abi;
-  els.networkLabel.textContent = data.network.name;
-  els.explorerLink.href = data.network.explorerUrl;
-  setStatus(t("contractLive", { address: shorten(data.deployment.address) }));
+function renderWalletState() {
+  const connected = Boolean(state.account);
+  els.walletBadge.hidden = !connected;
+  els.walletBadge.textContent = connected ? shortAddress(state.account) : "";
+  els.connectBtn.hidden = connected;
+  els.disconnectBtn.hidden = !connected;
+  updateActionState();
 }
 
-async function generateReport() {
-  syncTaskFields();
-  startCountdown();
-  const response = await fetch("/api/ai/report", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      mode: state.selectedTemplate,
-      language: state.language,
-      title: els.titleInput.value.trim(),
-      brief: els.briefInput.value.trim(),
-      focus: els.focusInput.value.trim(),
-      deliveryWindow: els.deliveryWindowSelect.value,
-      reviewMode: els.reviewModeSelect.value
-    })
-  });
-  const data = await response.json();
-  if (!response.ok || !data.ok) {
-    stopCountdown(true);
-    throw new Error(data.error || t("configFailed"));
-  }
-  renderReport(data.reportMarkdown);
+function serializeSettlement(settlement) {
+  if (!settlement) return null;
+  return {
+    reportId: settlement.reportId?.toString?.() || String(settlement.reportId),
+    requester: settlement.requester,
+    operator: settlement.operator,
+    amount: settlement.amount?.toString?.() || String(settlement.amount),
+    fundedAt: settlement.fundedAt?.toString?.() || String(settlement.fundedAt),
+    resolveAfter: settlement.resolveAfter?.toString?.() || String(settlement.resolveAfter),
+    status: Number(settlement.status),
+    disputeReasonURI: settlement.disputeReasonURI
+  };
 }
 
-function formatTask(task) {
-  return JSON.stringify(
-    {
-      client: task.client,
-      agent: task.agent,
-      rewardXTZ: ethers.formatEther(task.reward),
-      stakeXTZ: ethers.formatEther(task.stakeRequired),
-      status: STATUS_LABELS[Number(task.status)] || Number(task.status),
-      title: task.title,
-      brief: task.brief,
-      submissionURI: task.submissionURI,
-      submissionHash: task.submissionHash
-    },
-    null,
-    2
-  );
-}
-
-async function createTask() {
-  if (!state.contract) throw new Error(t("connectFirst"));
-  syncTaskFields();
-  const title = els.titleInput.value.trim();
-  const brief = els.briefInput.value.trim();
-  const reward = ethers.parseEther(els.rewardInput.value || "0");
-  const stake = ethers.parseEther(els.stakeInput.value || "0");
-  const tx = await state.contract.createTask(title, brief, stake, { value: reward });
-  setStatus(t("creatingTask", { hash: tx.hash }));
-  const receipt = await tx.wait();
-  const taskId = (await state.contract.nextTaskId()) - 1n;
-  els.taskIdInput.value = taskId.toString();
-  els.submissionUriInput.value = `ipfs://agentbond-lite/${state.selectedTemplate}/task-${taskId.toString()}`;
-  setStatus(t("taskCreated", { id: taskId.toString(), block: String(receipt.blockNumber) }));
-  await refreshTask();
-}
-
-async function claimTask() {
-  if (!state.contract) throw new Error(t("connectFirst"));
-  const taskId = BigInt(els.taskIdInput.value || "0");
-  const task = await state.contract.getTask(taskId);
-  const tx = await state.contract.claimTask(taskId, { value: task.stakeRequired });
-  setStatus(t("claimingTask", { id: taskId.toString(), hash: tx.hash }));
-  await tx.wait();
-  setStatus(t("taskClaimed", { id: taskId.toString() }));
-  await refreshTask();
-}
-
-async function submitTask() {
-  if (!state.contract) throw new Error(t("connectFirst"));
-  if (!state.lastReport.trim()) throw new Error(t("generateFirst"));
-  const taskId = BigInt(els.taskIdInput.value || "0");
-  const hash = ethers.keccak256(ethers.toUtf8Bytes(state.lastReport));
-  const tx = await state.contract.submitTask(taskId, els.submissionUriInput.value.trim(), hash);
-  setStatus(t("submittingHash", { hash: tx.hash }));
-  await tx.wait();
-  setStatus(t("taskSubmitted", { id: taskId.toString() }));
-  await refreshTask();
-}
-
-async function acceptTask() {
-  if (!state.contract) throw new Error(t("connectFirst"));
-  const taskId = BigInt(els.taskIdInput.value || "0");
-  const tx = await state.contract.acceptTask(taskId);
-  setStatus(t("acceptingTask", { id: taskId.toString(), hash: tx.hash }));
-  await tx.wait();
-  setStatus(t("taskAccepted", { id: taskId.toString() }));
-  await refreshTask();
-}
-
-async function rejectTask() {
-  if (!state.contract) throw new Error(t("connectFirst"));
-  const taskId = BigInt(els.taskIdInput.value || "0");
-  const tx = await state.contract.rejectTask(taskId);
-  setStatus(t("rejectingTask", { id: taskId.toString(), hash: tx.hash }));
-  await tx.wait();
-  setStatus(t("taskRejected", { id: taskId.toString() }));
-  await refreshTask();
-}
-
-async function refreshTask() {
-  if (!state.contract) {
-    els.taskState.textContent = t("noTaskLoaded");
+async function anchorVerdict() {
+  if (!state.currentReport) {
+    setStatus(t("nextStepHint"), "error");
     return;
   }
-  const taskId = BigInt(els.taskIdInput.value || "0");
-  const task = await state.contract.getTask(taskId);
-  els.taskState.textContent = formatTask(task);
+  if (!state.signer) {
+    openWalletModal();
+    return;
+  }
+
+  try {
+    setStatus(t("anchoringStatus"));
+    const { registry } = currentContracts(state.signer);
+    const operator = state.config.deployment?.operator || state.account;
+    const payload = await fetchJson("/api/anchor-payload", {
+      report: state.currentReport,
+      requester_address: state.account,
+      operator_address: operator
+    });
+    const nextId = await registry.nextReportId();
+    const args = payload.registry_payload;
+    const tx = await registry.registerReport(
+      operator,
+      args.mode_enum,
+      args.recommendation_enum,
+      args.confidence_bps,
+      args.verdict_hash,
+      args.report_hash,
+      args.content_uri || els.contentUriInput.value,
+      args.title || els.titleInput.value
+    );
+    state.currentTxHash = tx.hash;
+    setExplorerTx(tx.hash);
+    await tx.wait();
+    state.currentReportId = Number(nextId);
+    els.reportIdInput.value = String(state.currentReportId);
+    renderSettlementState();
+    await refreshOnchainState();
+    setStatus(t("reportAnchored"));
+  } catch (error) {
+    setStatus(error.shortMessage || error.message || "Anchor failed.", "error");
+  }
 }
 
-function applyLanguage(language) {
-  state.language = dictionary[language] ? language : "en";
-  localStorage.setItem("agentbond-lite-language", state.language);
-  els.languageSelect.value = state.language;
-  applyTranslations();
+async function fundSettlement() {
+  const reportId = Number(els.reportIdInput.value || state.currentReportId || 0);
+  if (!reportId) {
+    setStatus("Anchor a report first.", "error");
+    return;
+  }
+  if (!state.signer) {
+    openWalletModal();
+    return;
+  }
+
+  try {
+    setStatus(t("fundingStatus"));
+    const { escrow } = currentContracts(state.signer);
+    const amount = ethers.parseEther(els.rewardInput.value || "0.03");
+    const timeout = BigInt(els.timeoutSelect.value || "900");
+    const tx = await escrow.fundSettlement(reportId, timeout, { value: amount });
+    state.currentTxHash = tx.hash;
+    setExplorerTx(tx.hash);
+    await tx.wait();
+    await refreshOnchainState(reportId);
+    setStatus(t("settlementFunded"));
+  } catch (error) {
+    setStatus(error.shortMessage || error.message || "Funding failed.", "error");
+  }
 }
 
-function initLanguage() {
-  const saved = localStorage.getItem("agentbond-lite-language") || "en";
-  applyLanguage(saved);
+async function acceptSettlement() {
+  const reportId = Number(els.reportIdInput.value || state.currentReportId || 0);
+  if (!reportId) return;
+  if (!state.signer) {
+    openWalletModal();
+    return;
+  }
+
+  try {
+    setStatus(t("acceptingStatus"));
+    const { escrow } = currentContracts(state.signer);
+    const tx = await escrow.acceptSettlement(reportId);
+    state.currentTxHash = tx.hash;
+    setExplorerTx(tx.hash);
+    await tx.wait();
+    await refreshOnchainState(reportId);
+    setStatus(t("settlementAccepted"));
+  } catch (error) {
+    setStatus(error.shortMessage || error.message || "Accept failed.", "error");
+  }
 }
 
-function bindEvents() {
-  els.modeChips.forEach((chip) => {
-    chip.addEventListener("click", () => applyTemplate(chip.dataset.template));
+async function disputeSettlement() {
+  const reportId = Number(els.reportIdInput.value || state.currentReportId || 0);
+  if (!reportId) return;
+  if (!state.signer) {
+    openWalletModal();
+    return;
+  }
+
+  try {
+    setStatus(t("disputingStatus"));
+    const { escrow } = currentContracts(state.signer);
+    const reason = els.disputeReasonInput.value.trim() || "ipfs://agentbond-lite/disputes/default";
+    const tx = await escrow.disputeSettlement(reportId, reason);
+    state.currentTxHash = tx.hash;
+    setExplorerTx(tx.hash);
+    await tx.wait();
+    await refreshOnchainState(reportId);
+    setStatus(t("settlementDisputed"));
+  } catch (error) {
+    setStatus(error.shortMessage || error.message || "Dispute failed.", "error");
+  }
+}
+
+async function refreshOnchainState(reportIdParam) {
+  const reportId = Number(reportIdParam || els.reportIdInput.value || state.currentReportId || 0);
+  if (!reportId) {
+    renderTaskState();
+    return;
+  }
+
+  try {
+    setStatus(t("refreshingStatus"));
+    const provider = state.signer || state.readProvider;
+    const { registry, escrow } = currentContracts(provider);
+    const report = await registry.getReport(reportId);
+    let settlement = null;
+    try {
+      settlement = await escrow.getSettlement(reportId);
+    } catch (_error) {
+      settlement = null;
+    }
+
+    state.currentReportId = reportId;
+    state.onchainReport = {
+      reportId: report.reportId?.toString?.() || String(report.reportId),
+      requester: report.requester,
+      operator: report.operator,
+      mode: Number(report.mode),
+      recommendation: Number(report.recommendation),
+      confidenceBps: report.confidenceBps?.toString?.() || String(report.confidenceBps),
+      createdAt: report.createdAt?.toString?.() || String(report.createdAt),
+      verdictHash: report.verdictHash,
+      reportHash: report.reportHash,
+      contentURI: report.contentURI,
+      title: report.title
+    };
+    state.settlement = settlement ? serializeSettlement(settlement) : null;
+    if (!state.currentReport && report) {
+      els.titleInput.value = report.title;
+      els.contentUriInput.value = report.contentURI;
+    }
+
+    renderTaskState({
+      onchainReport: state.onchainReport
+    });
+    renderSettlementState();
+    setStatus(t("readyState"));
+  } catch (error) {
+    setStatus(error.shortMessage || error.message || "Refresh failed.", "error");
+  }
+}
+
+async function switchNetwork() {
+  if (!state.rawProvider) {
+    openWalletModal();
+    return;
+  }
+  try {
+    await ensureEtherlink(state.rawProvider);
+    setStatus(t("connectedStatus"));
+  } catch (error) {
+    setStatus(error.shortMessage || error.message || "Network switch failed.", "error");
+  }
+}
+
+function resetDemo() {
+  state.currentReport = null;
+  state.onchainReport = null;
+  state.currentReportId = null;
+  state.settlement = null;
+  state.currentTxHash = null;
+  els.resultPanel.hidden = true;
+  els.reportOutput.textContent = "";
+  els.resultFindingsList.innerHTML = "";
+  els.reportIdInput.value = "";
+  els.contentUriInput.value = "ipfs://agentbond-lite/report-1";
+  els.disputeReasonInput.value = "ipfs://agentbond-lite/disputes/reason-1";
+  setExplorerTx(null);
+  renderTaskState();
+  renderSettlementState();
+  applyTemplate(state.modeKey, { resetPrompt: true });
+  setStatus(state.account ? t("connectedStatus") : t("walletNotConnected"));
+}
+
+function attachEvents() {
+  els.languageSelect.addEventListener("change", (event) => {
+    state.lang = event.target.value;
+    localStorage.setItem(APP_LANG_KEY, state.lang);
+    applyI18n();
+    applyTemplate(state.modeKey, { resetPrompt: true });
   });
-  els.languageSelect.addEventListener("change", (event) => applyLanguage(event.target.value));
-  els.deliveryWindowSelect.addEventListener("change", updateEtaPreview);
+
+  document.querySelectorAll(".mode-chip").forEach((node) => {
+    node.addEventListener("click", () => applyTemplate(node.dataset.template, { resetPrompt: true }));
+  });
+
   els.connectBtn.addEventListener("click", openWalletModal);
-  els.disconnectBtn.addEventListener("click", () => disconnectWallet().catch((error) => setStatus(error.message)));
+  els.disconnectBtn.addEventListener("click", disconnectWallet);
   els.walletModalBackdrop.addEventListener("click", closeWalletModal);
   els.walletModalClose.addEventListener("click", closeWalletModal);
-  els.walletModalList.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-wallet-id]");
-    if (!button) return;
-    connectInjectedWallet(button.dataset.walletId).catch((error) => setStatus(error.message));
-  });
-  els.walletConnectQrButton.addEventListener("click", () => connectWalletConnect().catch((error) => setStatus(error.message)));
-  els.generateReportBtn.addEventListener("click", () => generateReport().catch((error) => setStatus(error.message)));
-  els.loadDemoBtn.addEventListener("click", () => {
-    state.lastReport = "";
-    els.resultPanel.hidden = true;
-    applyTemplate(state.selectedTemplate);
-    updateEtaPreview();
-  });
-  els.requestInput.addEventListener("input", syncTaskFields);
-  els.switchBtn.addEventListener("click", () => switchToEtherlink(state.provider).catch((error) => setStatus(error.message)));
-  els.createTaskBtn.addEventListener("click", () => createTask().catch((error) => setStatus(error.message)));
-  els.claimTaskBtn.addEventListener("click", () => claimTask().catch((error) => setStatus(error.message)));
-  els.submitTaskBtn.addEventListener("click", () => submitTask().catch((error) => setStatus(error.message)));
-  els.acceptTaskBtn.addEventListener("click", () => acceptTask().catch((error) => setStatus(error.message)));
-  els.rejectTaskBtn.addEventListener("click", () => rejectTask().catch((error) => setStatus(error.message)));
-  els.refreshBtn.addEventListener("click", () => refreshTask().catch((error) => setStatus(error.message)));
+  els.walletConnectQrButton.addEventListener("click", connectWalletConnect);
+
+  els.generateReportBtn.addEventListener("click", generateReport);
+  els.loadDemoBtn.addEventListener("click", resetDemo);
+  els.anchorReportBtn.addEventListener("click", anchorVerdict);
+  els.anchorReportBtnSecondary.addEventListener("click", anchorVerdict);
+  els.fundSettlementBtn.addEventListener("click", fundSettlement);
+  els.fundSettlementBtnSecondary.addEventListener("click", fundSettlement);
+  els.acceptSettlementBtn.addEventListener("click", acceptSettlement);
+  els.acceptSettlementBtnSecondary.addEventListener("click", acceptSettlement);
+  els.disputeSettlementBtn.addEventListener("click", disputeSettlement);
+  els.disputeSettlementBtnSecondary.addEventListener("click", disputeSettlement);
+  els.refreshSettlementBtn.addEventListener("click", () => refreshOnchainState());
+  els.refreshBtn.addEventListener("click", () => refreshOnchainState());
+  els.switchBtn.addEventListener("click", switchNetwork);
 }
 
-window.addEventListener("load", async () => {
-  try {
-    initLanguage();
-    discoverInjectedWallets();
-    bindEvents();
-    await loadConfig();
-    applyTemplate("governance");
-    setWalletUiDisconnected();
-    els.taskState.textContent = t("noTaskLoaded");
-  } catch (error) {
-    setStatus(error instanceof Error ? error.message : t("configFailed"));
-  }
+async function init() {
+  bindElements();
+  els.languageSelect.value = state.lang;
+  applyI18n();
+  applyTemplate(state.modeKey, { resetPrompt: true });
+  renderTaskState();
+  renderSettlementState();
+  attachEvents();
+  await loadConfig();
+  discoverInjectedProviders();
+  setStatus(t("walletNotConnected"));
+  updateActionState();
+}
+
+init().catch((error) => {
+  console.error(error);
+  setStatus(error.message || "Initialization failed.", "error");
 });
