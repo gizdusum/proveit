@@ -135,6 +135,14 @@ The deployment metadata is written to:
 
 `deployments/etherlinkTestnet.json`
 
+## Optional web deployment
+
+The project can also be deployed to Vercel:
+
+- static UI is served from `public/`
+- API endpoints are served from `api/`
+- set `OPENAI_API_KEY` in the Vercel project if you want live AI output
+
 ## Demo flow
 
 1. Connect wallet and switch to Etherlink.
