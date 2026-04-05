@@ -4,7 +4,29 @@ const state = {
   account: null,
   contract: null,
   config: null,
-  abi: null
+  abi: null,
+  selectedTemplate: "governance"
+};
+
+const TASK_PRESETS = {
+  governance: {
+    title: "Analyze governance risk for a new Etherlink dApp launch",
+    focus: "governance, treasury controls, and upgrade risk",
+    brief:
+      "Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations."
+  },
+  token: {
+    title: "Produce a token launch risk report for an Etherlink DeFi app",
+    focus: "token utility, emissions, admin controls, and liquidity risk",
+    brief:
+      "Analyze the token structure, supply schedule, admin permissions, and launch mechanics. Return a concise risk report with a final recommendation."
+  },
+  nft: {
+    title: "Audit suspicious activity in an NFT collection",
+    focus: "wash trading, wallet clustering, and suspicious volume",
+    brief:
+      "Inspect the collection activity, identify wallet clusters that may indicate wash trading, and summarize whether the activity appears organic or manipulated."
+  }
 };
 
 const els = {
@@ -14,6 +36,7 @@ const els = {
   walletStatus: document.getElementById("walletStatus"),
   networkLabel: document.getElementById("networkLabel"),
   aiModeLabel: document.getElementById("aiModeLabel"),
+  contractAddressLabel: document.getElementById("contractAddressLabel"),
   titleInput: document.getElementById("titleInput"),
   briefInput: document.getElementById("briefInput"),
   rewardInput: document.getElementById("rewardInput"),
@@ -30,7 +53,8 @@ const els = {
   acceptTaskBtn: document.getElementById("acceptTaskBtn"),
   rejectTaskBtn: document.getElementById("rejectTaskBtn"),
   refreshBtn: document.getElementById("refreshBtn"),
-  taskState: document.getElementById("taskState")
+  taskState: document.getElementById("taskState"),
+  presetCards: Array.from(document.querySelectorAll("[data-template]"))
 };
 
 const STATUS_LABELS = ["Open", "Claimed", "Submitted", "Accepted", "Rejected", "Cancelled"];
@@ -43,6 +67,22 @@ function shorten(address) {
   return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "-";
 }
 
+function applyTemplate(templateName) {
+  const template = TASK_PRESETS[templateName];
+  if (!template) return;
+
+  state.selectedTemplate = templateName;
+  els.titleInput.value = template.title;
+  els.briefInput.value = template.brief;
+  els.focusInput.value = template.focus;
+
+  els.presetCards.forEach((card) => {
+    card.classList.toggle("is-active", card.dataset.template === templateName);
+  });
+
+  setStatus(`Loaded ${templateName} demo template.`);
+}
+
 function formatTask(task) {
   return JSON.stringify(
     {
@@ -50,9 +90,6 @@ function formatTask(task) {
       agent: task.agent,
       rewardXTZ: ethers.formatEther(task.reward),
       stakeXTZ: ethers.formatEther(task.stakeRequired),
-      createdAt: Number(task.createdAt),
-      claimedAt: Number(task.claimedAt),
-      resolvedAt: Number(task.resolvedAt),
       status: STATUS_LABELS[Number(task.status)] || Number(task.status),
       title: task.title,
       brief: task.brief,
@@ -72,10 +109,11 @@ async function loadConfig() {
 
   els.networkLabel.textContent = data.network.name;
   els.explorerLink.href = data.network.explorerUrl;
-  els.aiModeLabel.textContent = data.deployment?.address ? "Contract ready" : "Awaiting deploy";
+  els.aiModeLabel.textContent = data.deployment?.address ? "Live contract" : "Awaiting deploy";
+  els.contractAddressLabel.textContent = data.deployment?.address || "No deployment found";
 
   if (data.deployment?.address) {
-    setStatus(`Contract deployed at ${shorten(data.deployment.address)}. Connect a wallet to interact.`);
+    setStatus(`Contract live at ${shorten(data.deployment.address)}. Connect a wallet to run the demo.`);
   }
 }
 
@@ -146,7 +184,7 @@ async function connectWallet() {
 
 async function createTask() {
   if (!state.contract) {
-    throw new Error("Deploy the contract and connect a wallet first.");
+    throw new Error("Connect a wallet first.");
   }
 
   const title = els.titleInput.value.trim();
@@ -155,11 +193,13 @@ async function createTask() {
   const stake = ethers.parseEther(els.stakeInput.value || "0");
 
   const tx = await state.contract.createTask(title, brief, stake, { value: reward });
-  setStatus(`Creating task onchain... ${tx.hash}`);
+  setStatus(`Creating task... ${tx.hash}`);
   const receipt = await tx.wait();
   const taskId = await state.contract.nextTaskId() - 1n;
+
   els.taskIdInput.value = taskId.toString();
-  setStatus(`Task ${taskId} created. Tx confirmed in block ${receipt.blockNumber}.`);
+  els.submissionUriInput.value = `ipfs://agentbond-lite/${state.selectedTemplate}/task-${taskId.toString()}`;
+  setStatus(`Task ${taskId} created in block ${receipt.blockNumber}.`);
   await refreshTask();
 }
 
@@ -182,13 +222,13 @@ async function generateReport() {
   }
 
   els.reportOutput.value = data.reportMarkdown;
-  els.aiModeLabel.textContent = data.mode === "openai" ? `Live AI (${data.model})` : "Template fallback";
-  setStatus("AI report generated. You can now claim and submit.");
+  els.aiModeLabel.textContent = data.mode === "openai" ? `Live AI (${data.model})` : "Fallback report";
+  setStatus("Report ready. Anchor the hash onchain when you are ready.");
 }
 
 async function claimTask() {
   if (!state.contract) {
-    throw new Error("Deploy the contract and connect a wallet first.");
+    throw new Error("Connect a wallet first.");
   }
 
   const taskId = BigInt(els.taskIdInput.value || "0");
@@ -196,13 +236,13 @@ async function claimTask() {
   const tx = await state.contract.claimTask(taskId, { value: task.stakeRequired });
   setStatus(`Claiming task ${taskId}... ${tx.hash}`);
   await tx.wait();
-  setStatus(`Task ${taskId} claimed with stake locked.`);
+  setStatus(`Task ${taskId} claimed with bonded stake.`);
   await refreshTask();
 }
 
 async function submitTask() {
   if (!state.contract) {
-    throw new Error("Deploy the contract and connect a wallet first.");
+    throw new Error("Connect a wallet first.");
   }
 
   const taskId = BigInt(els.taskIdInput.value || "0");
@@ -210,40 +250,40 @@ async function submitTask() {
   const uri = els.submissionUriInput.value.trim();
 
   if (!report) {
-    throw new Error("Generate a report first so the submission hash can be anchored onchain.");
+    throw new Error("Generate a report first.");
   }
 
   const hash = ethers.keccak256(ethers.toUtf8Bytes(report));
   const tx = await state.contract.submitTask(taskId, uri, hash);
-  setStatus(`Submitting task ${taskId} hash... ${tx.hash}`);
+  setStatus(`Submitting report hash... ${tx.hash}`);
   await tx.wait();
-  setStatus(`Task ${taskId} submitted with hash ${hash.slice(0, 12)}...`);
+  setStatus(`Task ${taskId} submitted. Hash anchored onchain.`);
   await refreshTask();
 }
 
 async function acceptTask() {
   if (!state.contract) {
-    throw new Error("Deploy the contract and connect a wallet first.");
+    throw new Error("Connect a wallet first.");
   }
 
   const taskId = BigInt(els.taskIdInput.value || "0");
   const tx = await state.contract.acceptTask(taskId);
   setStatus(`Accepting task ${taskId}... ${tx.hash}`);
   await tx.wait();
-  setStatus(`Task ${taskId} accepted. Reward and stake released.`);
+  setStatus(`Task ${taskId} accepted. Reward released and stake returned.`);
   await refreshTask();
 }
 
 async function rejectTask() {
   if (!state.contract) {
-    throw new Error("Deploy the contract and connect a wallet first.");
+    throw new Error("Connect a wallet first.");
   }
 
   const taskId = BigInt(els.taskIdInput.value || "0");
   const tx = await state.contract.rejectTask(taskId);
   setStatus(`Rejecting task ${taskId}... ${tx.hash}`);
   await tx.wait();
-  setStatus(`Task ${taskId} rejected. Stake slashed to treasury.`);
+  setStatus(`Task ${taskId} rejected. Reward refunded and stake slashed.`);
   await refreshTask();
 }
 
@@ -259,12 +299,7 @@ async function refreshTask() {
 }
 
 async function loadDemoTask() {
-  const response = await fetch("/api/demo/task");
-  const data = await response.json();
-  els.titleInput.value = data.task.title;
-  els.briefInput.value = data.task.brief;
-  els.focusInput.value = data.task.focus;
-  setStatus("Demo task loaded.");
+  applyTemplate("governance");
 }
 
 async function runAction(action) {
@@ -274,6 +309,10 @@ async function runAction(action) {
     setStatus(error instanceof Error ? error.message : "Unknown error.");
   }
 }
+
+els.presetCards.forEach((card) => {
+  card.addEventListener("click", () => applyTemplate(card.dataset.template));
+});
 
 els.connectBtn.addEventListener("click", () => runAction(connectWallet));
 els.switchBtn.addEventListener("click", () => runAction(switchToEtherlink));
@@ -288,6 +327,7 @@ els.refreshBtn.addEventListener("click", () => runAction(refreshTask));
 
 window.addEventListener("load", async () => {
   try {
+    applyTemplate(state.selectedTemplate);
     await loadConfig();
   } catch (error) {
     setStatus(error instanceof Error ? error.message : "Failed to load app config.");
