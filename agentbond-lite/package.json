@@ -1,0 +1,22 @@
+{
+  "name": "agentbond-lite",
+  "version": "1.0.0",
+  "description": "AgentBond Lite is an Etherlink-native AI task marketplace for the Tezos EVM AI Hackathon.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "compile": "hardhat compile",
+    "deploy:etherlink:testnet": "hardhat run scripts/deploy.js --network etherlinkTestnet",
+    "export:abi": "node scripts/export-abi.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.16.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "hardhat": "^2.24.0"
+  }
+}

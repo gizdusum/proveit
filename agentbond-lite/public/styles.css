@@ -1,0 +1,226 @@
+:root {
+  --bg: #081119;
+  --bg-soft: rgba(18, 29, 42, 0.88);
+  --panel: rgba(10, 18, 29, 0.9);
+  --line: rgba(98, 138, 189, 0.2);
+  --text: #e9f2ff;
+  --muted: #97a8bf;
+  --accent: #4de2c5;
+  --accent-strong: #8ef4de;
+  --danger: #ff6d87;
+  --shadow: 0 30px 80px rgba(2, 7, 18, 0.45);
+  --mono: "SFMono-Regular", "Menlo", "Monaco", monospace;
+  --sans: "Inter", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--sans);
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(77, 226, 197, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(53, 113, 255, 0.16), transparent 24%),
+    linear-gradient(180deg, #081119 0%, #050b13 100%);
+}
+
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.04) 50%);
+  background-size: 100% 4px;
+}
+
+.shell {
+  width: min(1180px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--bg-soft);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  backdrop-filter: blur(18px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.04), transparent 45%);
+  pointer-events: none;
+}
+
+.hero h1 {
+  margin: 10px 0 12px;
+  font-size: clamp(2.8rem, 5vw, 5rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.eyebrow,
+.label,
+.section-title {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.eyebrow,
+.label {
+  color: var(--accent);
+  font-size: 0.75rem;
+}
+
+.hero-copy,
+.section-copy,
+.microcopy,
+.thesis-grid p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.hero-grid,
+.inline-grid,
+.thesis-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.hero-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 24px 0;
+}
+
+.inline-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.thesis-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cta-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.button,
+input,
+textarea {
+  border-radius: 14px;
+  border: 1px solid rgba(124, 162, 207, 0.24);
+  font: inherit;
+}
+
+.button {
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(142, 244, 222, 0.48);
+}
+
+.button.primary {
+  background: linear-gradient(135deg, rgba(77, 226, 197, 0.18), rgba(77, 226, 197, 0.08));
+  border-color: rgba(77, 226, 197, 0.38);
+}
+
+.button.ghost {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.button.danger {
+  background: rgba(255, 109, 135, 0.12);
+  border-color: rgba(255, 109, 135, 0.34);
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.94rem;
+  margin-top: 16px;
+}
+
+input,
+textarea {
+  width: 100%;
+  background: var(--panel);
+  color: var(--text);
+  padding: 14px 16px;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.section-title {
+  font-size: 0.78rem;
+  color: var(--accent);
+}
+
+.status-bar,
+.panel {
+  margin-top: 18px;
+  background: rgba(9, 16, 27, 0.84);
+  border: 1px solid rgba(100, 124, 151, 0.18);
+  border-radius: 16px;
+  padding: 14px 16px;
+  color: #c8d8eb;
+}
+
+.panel {
+  min-height: 230px;
+  white-space: pre-wrap;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 960px) {
+  .grid-two,
+  .hero-grid,
+  .inline-grid,
+  .thesis-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shell {
+    width: min(100vw - 20px, 1180px);
+    padding-top: 20px;
+  }
+
+  .card {
+    padding: 20px;
+    border-radius: 20px;
+  }
+}

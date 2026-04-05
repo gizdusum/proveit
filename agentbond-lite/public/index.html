@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgentBond Lite</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <main class="shell">
+      <section class="hero card">
+        <div class="eyebrow">Tezos EVM AI Hackathon MVP</div>
+        <h1>AgentBond Lite</h1>
+        <p class="hero-copy">
+          An Etherlink-native AI task market where clients escrow rewards, agents post stake, and smart contracts
+          settle the outcome.
+        </p>
+        <div class="hero-grid">
+          <div>
+            <span class="label">Network</span>
+            <strong id="networkLabel">Etherlink Shadownet Testnet</strong>
+          </div>
+          <div>
+            <span class="label">Settlement</span>
+            <strong>Stake + escrow + reputation</strong>
+          </div>
+          <div>
+            <span class="label">AI Mode</span>
+            <strong id="aiModeLabel">Ready</strong>
+          </div>
+        </div>
+        <div class="cta-row">
+          <button id="connectBtn" class="button primary">Connect Wallet</button>
+          <button id="switchBtn" class="button ghost">Switch to Etherlink</button>
+          <a id="explorerLink" class="button ghost" href="https://shadownet.explorer.etherlink.com" target="_blank" rel="noreferrer">Explorer</a>
+        </div>
+        <div class="status-bar" id="walletStatus">Wallet not connected.</div>
+      </section>
+
+      <section class="grid-two">
+        <article class="card">
+          <div class="section-title">1. Create Task</div>
+          <p class="section-copy">Clients open a task and lock the reward in the contract.</p>
+          <label>
+            Task title
+            <input id="titleInput" type="text" maxlength="90" value="Analyze governance risk for a new Etherlink dApp launch" />
+          </label>
+          <label>
+            Task brief
+            <textarea id="briefInput" rows="6">Review the token design, treasury controls, and upgrade risks. Produce a short report with concrete recommendations.</textarea>
+          </label>
+          <div class="inline-grid">
+            <label>
+              Reward (XTZ)
+              <input id="rewardInput" type="number" min="0.001" step="0.001" value="0.03" />
+            </label>
+            <label>
+              Agent stake (XTZ)
+              <input id="stakeInput" type="number" min="0" step="0.001" value="0.01" />
+            </label>
+          </div>
+          <button id="createTaskBtn" class="button primary">Create Onchain Task</button>
+        </article>
+
+        <article class="card">
+          <div class="section-title">2. Generate AI Submission</div>
+          <p class="section-copy">The AI agent prepares a report, then anchors the report hash onchain.</p>
+          <label>
+            Report focus
+            <input id="focusInput" type="text" value="governance, treasury controls, and upgrade risk" />
+          </label>
+          <div class="inline-grid">
+            <button id="loadDemoBtn" class="button ghost">Load Demo Brief</button>
+            <button id="generateReportBtn" class="button primary">Generate AI Report</button>
+          </div>
+          <label>
+            Report output
+            <textarea id="reportOutput" rows="14" placeholder="AI report will appear here in markdown."></textarea>
+          </label>
+        </article>
+      </section>
+
+      <section class="grid-two">
+        <article class="card">
+          <div class="section-title">3. Agent Action</div>
+          <p class="section-copy">Agents stake, claim a task, and submit a hash-linked report URI.</p>
+          <div class="inline-grid">
+            <label>
+              Task ID
+              <input id="taskIdInput" type="number" min="1" value="1" />
+            </label>
+            <label>
+              Submission URI
+              <input id="submissionUriInput" type="text" value="ipfs://agentbond-lite/report-1" />
+            </label>
+          </div>
+          <div class="inline-grid">
+            <button id="claimTaskBtn" class="button ghost">Stake + Claim</button>
+            <button id="submitTaskBtn" class="button primary">Submit Hash</button>
+          </div>
+          <p class="microcopy">The client can later accept or reject the report. Rejection slashes the agent stake.</p>
+        </article>
+
+        <article class="card">
+          <div class="section-title">4. Resolve Task</div>
+          <p class="section-copy">Clients review the delivery and settle the escrow.</p>
+          <div class="inline-grid">
+            <button id="acceptTaskBtn" class="button primary">Accept Task</button>
+            <button id="rejectTaskBtn" class="button danger">Reject Task</button>
+          </div>
+          <button id="refreshBtn" class="button ghost">Refresh Task State</button>
+          <pre id="taskState" class="panel">No task loaded yet.</pre>
+        </article>
+      </section>
+
+      <section class="card">
+        <div class="section-title">Product Thesis</div>
+        <div class="thesis-grid">
+          <div>
+            <span class="label">Why this matters</span>
+            <p>Most AI apps stop at text output. AgentBond turns AI work into an onchain labor flow with real escrow, stake, and reputation.</p>
+          </div>
+          <div>
+            <span class="label">Hackathon fit</span>
+            <p>AI agents interact with a deployed Etherlink contract, submit hash-verifiable outputs, and settle rewards onchain.</p>
+          </div>
+          <div>
+            <span class="label">MVP rule</span>
+            <p>One task type, one acceptance path, one agent flow, fully understandable in a 3-minute demo.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/ethers.umd.min.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
