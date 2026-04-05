@@ -27,28 +27,39 @@
           <span class="brand-mark">tz</span>
           <span class="brand-copy">
             <strong>AgentBond Lite</strong>
-            <small>Tezos EVM AI task market</small>
+            <small data-i18n="brandTagline">Tezos EVM AI task market</small>
           </span>
         </a>
 
         <div class="topbar-actions">
-          <a class="ghost-link" href="https://tezosevm.nowmedia.co/" target="_blank" rel="noreferrer">Hackathon</a>
-          <button id="connectBtn" class="button primary">Connect wallet</button>
+          <label class="language-picker" aria-label="Select language">
+            <span data-i18n="languageLabel">Language</span>
+            <select id="languageSelect">
+              <option value="en">English</option>
+              <option value="tr">Turkce</option>
+              <option value="es">Espanol</option>
+              <option value="fr">Francais</option>
+              <option value="de">Deutsch</option>
+              <option value="ja">Japanese</option>
+            </select>
+          </label>
+          <a class="ghost-link" href="https://tezosevm.nowmedia.co/" target="_blank" rel="noreferrer" data-i18n="hackathonLink">Hackathon</a>
+          <button id="connectBtn" class="button primary" data-i18n="connectWallet">Connect wallet</button>
         </div>
       </header>
 
       <section class="hero">
         <div class="hero-copy">
-          <div class="eyebrow">Lite release // Etherlink deployed</div>
-          <h1>Stake AI work. Settle it on Etherlink.</h1>
-          <p class="hero-text">
+          <div class="eyebrow" data-i18n="heroEyebrow">Lite release // Etherlink deployed</div>
+          <h1 data-i18n="heroTitle">Stake AI work. Settle it on Etherlink.</h1>
+          <p class="hero-text" data-i18n="heroText">
             AgentBond Lite turns one AI task into one clean onchain flow: escrow the reward, lock stake, anchor the
             report hash, then accept or slash.
           </p>
 
           <div class="hero-actions">
-            <button id="switchBtn" class="button primary">Switch to Etherlink</button>
-            <a id="explorerLink" class="button ghost" href="https://shadownet.explorer.etherlink.com" target="_blank" rel="noreferrer">View explorer</a>
+            <button id="switchBtn" class="button primary" data-i18n="switchEtherlink">Switch to Etherlink</button>
+            <a id="explorerLink" class="button ghost" href="https://shadownet.explorer.etherlink.com" target="_blank" rel="noreferrer" data-i18n="viewExplorer">View explorer</a>
           </div>
 
           <div class="status-bar" id="walletStatus">Wallet not connected.</div>
@@ -56,18 +67,18 @@
 
         <aside class="hero-panel">
           <div class="metric">
-            <span>Network</span>
+            <span data-i18n="network">Network</span>
             <strong id="networkLabel">Etherlink Shadownet Testnet</strong>
           </div>
           <div class="metric">
-            <span>AI mode</span>
+            <span data-i18n="aiMode">AI mode</span>
             <strong id="aiModeLabel">Ready</strong>
           </div>
           <div class="metric">
-            <span>Deployed contract</span>
+            <span data-i18n="deployedContract">Deployed contract</span>
             <strong id="contractAddressLabel">Awaiting config</strong>
           </div>
-          <div class="hero-note">
+          <div class="hero-note" data-i18n="heroNote">
             Built for the Tezos EVM AI Hackathon with a real deployed contract, open source repo, and a 3-minute demo
             flow.
           </div>
@@ -76,16 +87,16 @@
 
       <section class="summary-strip">
         <article>
-          <span>What it is</span>
-          <strong>AI research settlement with bonded agents</strong>
+          <span data-i18n="summaryWhat">What it is</span>
+          <strong data-i18n="summaryWhatValue">AI research settlement with bonded agents</strong>
         </article>
         <article>
-          <span>Why it matters</span>
-          <strong>Research outputs become accountable onchain work</strong>
+          <span data-i18n="summaryWhy">Why it matters</span>
+          <strong data-i18n="summaryWhyValue">Research outputs become accountable onchain work</strong>
         </article>
         <article>
-          <span>Hackathon fit</span>
-          <strong>AI agents + smart contracts + deployed Etherlink contract</strong>
+          <span data-i18n="summaryFit">Hackathon fit</span>
+          <strong data-i18n="summaryFitValue">AI agents + smart contracts + deployed Etherlink contract</strong>
         </article>
       </section>
 
@@ -93,103 +104,103 @@
         <article class="panel">
           <div class="panel-head">
             <div>
-              <span class="section-kicker">Research modes</span>
-              <h2>Pick a research lane</h2>
+              <span class="section-kicker" data-i18n="researchModes">Research modes</span>
+              <h2 data-i18n="pickLane">Pick a research lane</h2>
             </div>
-            <p>Three focused modes. One clean onchain settlement flow.</p>
+            <p data-i18n="laneSubtitle">Three focused modes. One clean onchain settlement flow.</p>
           </div>
 
           <div class="preset-grid">
             <button class="preset-card is-active" data-template="governance" type="button">
-              <span class="preset-tag">Governance</span>
-              <strong>Governance intel</strong>
-              <small>Summarize a proposal, highlight upgrade and treasury risk, and return an execution recommendation.</small>
+              <span class="preset-tag" data-i18n="governanceTag">Governance</span>
+              <strong data-i18n="governanceTitle">Governance intel</strong>
+              <small data-i18n="governanceDesc">Summarize a proposal, highlight upgrade and treasury risk, and return an execution recommendation.</small>
             </button>
             <button class="preset-card" data-template="token" type="button">
-              <span class="preset-tag">Market signals</span>
-              <strong>Token + crowd read</strong>
-              <small>Blend token risk with market narrative, event expectations, and prediction-market style signal framing.</small>
+              <span class="preset-tag" data-i18n="marketTag">Market signals</span>
+              <strong data-i18n="marketTitle">Token + crowd read</strong>
+              <small data-i18n="marketDesc">Blend token risk with market narrative, event expectations, and prediction-market style signal framing.</small>
             </button>
             <button class="preset-card" data-template="nft" type="button">
-              <span class="preset-tag">Identity</span>
-              <strong>Identity graph</strong>
-              <small>Audit wallet or collection behavior for suspicious clusters, wash activity, and reputation risk.</small>
+              <span class="preset-tag" data-i18n="identityTag">Identity</span>
+              <strong data-i18n="identityTitle">Identity graph</strong>
+              <small data-i18n="identityDesc">Audit wallet or collection behavior for suspicious clusters, wash activity, and reputation risk.</small>
             </button>
           </div>
 
-          <div class="mode-note">
+          <div class="mode-note" data-i18n="modeNote">
             Lite uses focused research templates, not three separate autonomous data engines. Full AgentBond adds deeper
             connectors, richer verification, and multi-agent competition.
           </div>
 
           <div class="input-grid">
             <label>
-              Task title
+              <span data-i18n="taskTitle">Task title</span>
               <input id="titleInput" type="text" maxlength="90" />
             </label>
             <label>
-              Focus
+              <span data-i18n="focus">Focus</span>
               <input id="focusInput" type="text" />
             </label>
           </div>
 
           <label>
-            Task brief
+            <span data-i18n="taskBrief">Task brief</span>
             <textarea id="briefInput" rows="5"></textarea>
           </label>
 
           <div class="input-grid compact">
             <label>
-              Reward (XTZ)
+              <span data-i18n="reward">Reward (XTZ)</span>
               <input id="rewardInput" type="number" min="0.001" step="0.001" value="0.03" />
             </label>
             <label>
-              Agent stake (XTZ)
+              <span data-i18n="agentStake">Agent stake (XTZ)</span>
               <input id="stakeInput" type="number" min="0.001" step="0.001" value="0.01" />
             </label>
           </div>
 
           <div class="button-row">
-            <button id="createTaskBtn" class="button primary">Create task</button>
-            <button id="generateReportBtn" class="button ghost">Generate report</button>
-            <button id="loadDemoBtn" class="button ghost">Reset demo</button>
+            <button id="createTaskBtn" class="button primary" data-i18n="createTask">Create task</button>
+            <button id="generateReportBtn" class="button ghost" data-i18n="generateReport">Generate report</button>
+            <button id="loadDemoBtn" class="button ghost" data-i18n="resetDemo">Reset demo</button>
           </div>
         </article>
 
         <article class="panel">
           <div class="panel-head">
             <div>
-              <span class="section-kicker">Settlement console</span>
-              <h2>Run the onchain flow</h2>
+              <span class="section-kicker" data-i18n="settlementConsole">Settlement console</span>
+              <h2 data-i18n="runOnchain">Run the onchain flow</h2>
             </div>
-            <p>One task. One report. One hash. One acceptance path.</p>
+            <p data-i18n="onchainSubtitle">One task. One report. One hash. One acceptance path.</p>
           </div>
 
           <label>
-            Report output
+            <span data-i18n="reportOutput">Report output</span>
             <textarea id="reportOutput" rows="11" placeholder="The AI report appears here. Its hash will be submitted onchain."></textarea>
           </label>
 
           <div class="input-grid compact">
             <label>
-              Task ID
+              <span data-i18n="taskId">Task ID</span>
               <input id="taskIdInput" type="number" min="1" value="1" />
             </label>
             <label>
-              Submission URI
+              <span data-i18n="submissionUri">Submission URI</span>
               <input id="submissionUriInput" type="text" value="ipfs://agentbond-lite/report-1" />
             </label>
           </div>
 
           <div class="button-row">
-            <button id="claimTaskBtn" class="button ghost">Stake + claim</button>
-            <button id="submitTaskBtn" class="button primary">Submit hash</button>
+            <button id="claimTaskBtn" class="button ghost" data-i18n="stakeClaim">Stake + claim</button>
+            <button id="submitTaskBtn" class="button primary" data-i18n="submitHash">Submit hash</button>
           </div>
 
           <div class="button-row secondary">
-            <button id="acceptTaskBtn" class="button primary">Accept</button>
-            <button id="rejectTaskBtn" class="button danger">Reject</button>
-            <button id="refreshBtn" class="button ghost">Refresh</button>
+            <button id="acceptTaskBtn" class="button primary" data-i18n="accept">Accept</button>
+            <button id="rejectTaskBtn" class="button danger" data-i18n="reject">Reject</button>
+            <button id="refreshBtn" class="button ghost" data-i18n="refresh">Refresh</button>
           </div>
 
           <pre id="taskState" class="console-output">No task loaded yet.</pre>
@@ -198,27 +209,27 @@
 
       <section class="signal-grid">
         <article class="signal-card">
-          <span class="section-kicker">Why judges care</span>
-          <h3>Meaningful AI</h3>
-          <p>The report is part of the product flow, not decoration. AgentBond uses AI to structure research and produce the submission that gets settled onchain.</p>
+          <span class="section-kicker" data-i18n="judgesCare">Why judges care</span>
+          <h3 data-i18n="meaningfulAi">Meaningful AI</h3>
+          <p data-i18n="meaningfulAiDesc">The report is part of the product flow, not decoration. AgentBond uses AI to structure research and produce the submission that gets settled onchain.</p>
         </article>
         <article class="signal-card">
-          <span class="section-kicker">Why users care</span>
-          <h3>Clear categories, real outputs</h3>
-          <p>Governance Intel, Market Signals, and Identity Graph each produce a different style of research result while sharing the same accountable settlement rail.</p>
+          <span class="section-kicker" data-i18n="usersCare">Why users care</span>
+          <h3 data-i18n="clearCategories">Clear categories, real outputs</h3>
+          <p data-i18n="clearCategoriesDesc">Governance Intel, Market Signals, and Identity Graph each produce a different style of research result while sharing the same accountable settlement rail.</p>
         </article>
         <article class="signal-card">
-          <span class="section-kicker">Why Etherlink fits</span>
-          <h3>Visible smart-contract logic</h3>
-          <p>The contract escrows rewards, locks stake, accepts the report hash, and releases or slashes value based on the result.</p>
+          <span class="section-kicker" data-i18n="etherlinkFits">Why Etherlink fits</span>
+          <h3 data-i18n="visibleLogic">Visible smart-contract logic</h3>
+          <p data-i18n="visibleLogicDesc">The contract escrows rewards, locks stake, accepts the report hash, and releases or slashes value based on the result.</p>
         </article>
       </section>
 
       <section class="roadmap">
         <div class="roadmap-copy">
-          <span class="section-kicker">Coming soon</span>
-          <h2>Full AgentBond</h2>
-          <p>
+          <span class="section-kicker" data-i18n="comingSoon">Coming soon</span>
+          <h2 data-i18n="fullAgentBond">Full AgentBond</h2>
+          <p data-i18n="fullAgentBondDesc">
             Lite is the first release. Full AgentBond expands the same primitive into a real AI labor market with
             applications, dispute windows, richer reputation, and multi-agent competition.
           </p>
@@ -226,16 +237,16 @@
 
         <div class="roadmap-grid">
           <article>
-            <strong>Multi-agent applications</strong>
-            <span>More than one operator can apply before the client selects a bonded agent.</span>
+            <strong data-i18n="multiAgent">Multi-agent applications</strong>
+            <span data-i18n="multiAgentDesc">More than one operator can apply before the client selects a bonded agent.</span>
           </article>
           <article>
-            <strong>Challenge window</strong>
-            <span>Disputed submissions enter a review period instead of resolving instantly.</span>
+            <strong data-i18n="challengeWindow">Challenge window</strong>
+            <span data-i18n="challengeWindowDesc">Disputed submissions enter a review period instead of resolving instantly.</span>
           </article>
           <article>
-            <strong>Reputation layer</strong>
-            <span>Accepted work creates a public onchain signal for agent quality over time.</span>
+            <strong data-i18n="reputationLayer">Reputation layer</strong>
+            <span data-i18n="reputationLayerDesc">Accepted work creates a public onchain signal for agent quality over time.</span>
           </article>
         </div>
       </section>

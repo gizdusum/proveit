@@ -64,40 +64,89 @@ function buildFallbackReport(payload = {}) {
   const brief = String(payload.brief || "").trim();
   const focus = String(payload.focus || "risk, execution, and recommendation").trim();
   const mode = String(payload.mode || "governance").trim();
+  const language = String(payload.language || "en").trim();
+
+  const localized = {
+    en: {
+      summary: `AgentBond prepared a structured AI task report for "${taskTitle}".`,
+      briefHeading: "Brief",
+      findingsHeading: "Key Findings",
+      recommendationHeading: "Recommendation"
+    },
+    tr: {
+      summary: `AgentBond "${taskTitle}" icin yapilandirilmis bir AI gorev raporu hazirladi.`,
+      briefHeading: "Ozet",
+      findingsHeading: "Temel Bulgular",
+      recommendationHeading: "Oneri"
+    }
+  };
 
   const modeSections = {
     governance: {
-      findings: [
+      findings: {
+        en: [
         "The proposal should be evaluated for treasury authority, upgrade permissions, and concentration of operational power.",
         "The most useful output is a recommendation that explains whether execution risk is acceptable at launch.",
         "This task is a strong fit for onchain settlement because the client can review the final governance recommendation."
-      ],
-      recommendation: `Deliver governance intel focused on ${focus}. End with a recommendation of proceed, revise, or avoid.`,
-      heading: "Governance Read"
+        ],
+        tr: [
+          "Teklif treasury yetkisi, upgrade izinleri ve operasyonel gucun yogunlasmasi acisindan degerlendirilmelidir.",
+          "En yararli cikti, uygulama riskinin kabul edilebilir olup olmadigini aciklayan net bir tavsiyedir.",
+          "Musteri nihai governance tavsiyesini gozden gecirebildigi icin bu gorev onchain settlement icin uygundur."
+        ]
+      },
+      recommendation: {
+        en: `Deliver governance intel focused on ${focus}. End with a recommendation of proceed, revise, or avoid.`,
+        tr: `${focus} odakli bir governance intel raporu uret. Sonunda devam et, revize et veya kacin tavsiyesi ver.`
+      },
+      heading: { en: "Governance Read", tr: "Governance Ozeti" }
     },
     token: {
-      findings: [
+      findings: {
+        en: [
         "The market-signals view should separate token fundamentals from crowd conviction and event-driven narrative.",
         "Prediction-market style framing is useful when it is treated as sentiment input, not a source of truth.",
         "The final output should highlight where crowd expectations may diverge from structural token risk."
-      ],
-      recommendation: `Deliver a market signals brief focused on ${focus}. Include one section on crowd expectations versus fundamentals.`,
-      heading: "Market Signals"
+        ],
+        tr: [
+          "Market signals bakisi token temellerini kalabalik inanci ve event kaynakli anlati dinamiklerinden ayirmalidir.",
+          "Prediction-market benzeri cerceve, dogrudan gercek kabul edilmeden sentiment girdisi olarak kullanildiginda faydalidir.",
+          "Nihai cikti, kalabalik beklentilerinin yapisal token riskinden nerede ayrildigini gostermelidir."
+        ]
+      },
+      recommendation: {
+        en: `Deliver a market signals brief focused on ${focus}. Include one section on crowd expectations versus fundamentals.`,
+        tr: `${focus} odakli bir market signals ozeti uret. Kalabalik beklentileri ile temeller arasindaki farklara ayri bir bolum ekle.`
+      },
+      heading: { en: "Market Signals", tr: "Piyasa Sinyalleri" }
     },
     nft: {
-      findings: [
+      findings: {
+        en: [
         "The identity graph should focus on suspicious wallet clustering, artificial volume, and reputation-sensitive behavior.",
         "The best output distinguishes organic collector activity from coordinated or manipulative flow.",
         "A short identity risk summary is well suited for hash-anchored onchain settlement."
-      ],
-      recommendation: `Deliver an identity graph summary focused on ${focus}. End with a trust assessment for the collection or wallet cluster.`,
-      heading: "Identity Graph"
+        ],
+        tr: [
+          "Identity graph supheli wallet cluster'lari, yapay hacim ve itibar hassas davranislara odaklanmalidir.",
+          "En iyi cikti organik koleksiyoncu aktivitesi ile koordineli veya manipule akis arasindaki farki gosterir.",
+          "Kisa bir kimlik riski ozeti hash-anchored onchain settlement icin uygundur."
+        ]
+      },
+      recommendation: {
+        en: `Deliver an identity graph summary focused on ${focus}. End with a trust assessment for the collection or wallet cluster.`,
+        tr: `${focus} odakli bir identity graph ozeti uret. Sonunda koleksiyon veya wallet cluster icin bir guven degerlendirmesi ver.`
+      },
+      heading: { en: "Identity Graph", tr: "Kimlik Grafigi" }
     }
   };
 
   const selected = modeSections[mode] || modeSections.governance;
-
-  const summary = `AgentBond prepared a structured AI task report for "${taskTitle}".`;
+  const lang = localized[language] ? language : "en";
+  const selectedHeading = selected.heading[lang] || selected.heading.en;
+  const selectedFindings = selected.findings[lang] || selected.findings.en;
+  const selectedRecommendation = selected.recommendation[lang] || selected.recommendation.en;
+  const copy = localized[lang];
 
   return {
     mode: "fallback",
@@ -105,17 +154,17 @@ function buildFallbackReport(payload = {}) {
     reportMarkdown: [
       `# ${taskTitle}`,
       "",
-      `## ${selected.heading}`,
-      summary,
+      `## ${selectedHeading}`,
+      copy.summary,
       "",
-      "## Brief",
+      `## ${copy.briefHeading}`,
       brief || "No extra brief provided.",
       "",
-      "## Key Findings",
-      ...selected.findings.map((item) => `- ${item}`),
+      `## ${copy.findingsHeading}`,
+      ...selectedFindings.map((item) => `- ${item}`),
       "",
-      "## Recommendation",
-      selected.recommendation
+      `## ${copy.recommendationHeading}`,
+      selectedRecommendation
     ].join("\n")
   };
 }
@@ -131,6 +180,7 @@ async function buildOpenAIReport(payload = {}) {
   const brief = String(payload.brief || "").trim();
   const focus = String(payload.focus || "risk, execution, and recommendation").trim();
   const mode = String(payload.mode || "governance").trim();
+  const language = String(payload.language || "en").trim();
 
   const modeInstruction =
     mode === "token"
@@ -138,6 +188,18 @@ async function buildOpenAIReport(payload = {}) {
       : mode === "nft"
         ? "You are writing an Identity Graph brief. Include sections: Activity Pattern, Suspicious Clusters, Reputation Risk, Recommendation."
         : "You are writing Governance Intel. Include sections: Proposal Summary, Governance Risks, Treasury/Upgrade Risk, Recommendation.";
+  const languageInstruction =
+    language === "tr"
+      ? "Write the report in Turkish."
+      : language === "es"
+        ? "Write the report in Spanish."
+        : language === "fr"
+          ? "Write the report in French."
+          : language === "de"
+            ? "Write the report in German."
+            : language === "ja"
+              ? "Write the report in Japanese."
+              : "Write the report in English.";
 
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -164,7 +226,7 @@ async function buildOpenAIReport(payload = {}) {
             content: [
               {
                 type: "input_text",
-                text: `Task mode: ${mode}\nTask title: ${title}\nTask brief: ${brief}\nFocus: ${focus}\n\n${modeInstruction}`
+                text: `Task mode: ${mode}\nTask title: ${title}\nTask brief: ${brief}\nFocus: ${focus}\n\n${modeInstruction}\n${languageInstruction}`
               }
             ]
           }

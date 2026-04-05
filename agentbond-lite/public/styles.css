@@ -146,6 +146,26 @@ body {
   gap: 12px;
 }
 
+.language-picker {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.language-picker select {
+  min-width: 138px;
+  border: 1px solid rgba(116, 151, 217, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 10px 12px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
 .ghost-link {
   color: var(--muted);
   text-decoration: none;
@@ -537,6 +557,10 @@ textarea {
 
   .topbar-actions {
     display: grid;
+  }
+
+  .language-picker select {
+    width: 100%;
   }
 
   .hero h1 {
