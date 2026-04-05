@@ -1,47 +1,686 @@
 {
-  "contractName": "AgentBondLite",
-  "address": "0x58b501c68cB9CaAd8b458EBe160298bF253425Aa",
+  "contractName": "AgentBondLitePhase2",
+  "address": "0x93763CA47CEF242F1f64C942e5ebeDC503f7438c",
   "chainId": 127823,
   "network": "etherlinkTestnet",
   "rpcUrl": "https://node.shadownet.etherlink.com",
-  "treasury": "0xb61C1007506d31620895dfd118fa2b12CF3A2484",
+  "operator": "0xb61C1007506d31620895dfd118fa2b12CF3A2484",
   "deployer": "0xb61C1007506d31620895dfd118fa2b12CF3A2484",
-  "deployedAt": "2026-04-05T21:20:56.888Z",
+  "deployedAt": "2026-04-05T23:11:55.450Z",
+  "contracts": {
+    "reportRegistry": {
+      "contractName": "ReportRegistry",
+      "address": "0x93763CA47CEF242F1f64C942e5ebeDC503f7438c",
+      "abi": [
+        {
+          "inputs": [],
+          "name": "EmptyTitle",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidConfidence",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidHash",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidReport",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "requester",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum ReportRegistry.ReportMode",
+              "name": "mode",
+              "type": "uint8"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum ReportRegistry.Recommendation",
+              "name": "recommendation",
+              "type": "uint8"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint16",
+              "name": "confidenceBps",
+              "type": "uint16"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "verdictHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "reportHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "contentURI",
+              "type": "string"
+            }
+          ],
+          "name": "ReportRegistered",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            }
+          ],
+          "name": "getReport",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "reportId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "requester",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "operator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "enum ReportRegistry.ReportMode",
+                  "name": "mode",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "enum ReportRegistry.Recommendation",
+                  "name": "recommendation",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "confidenceBps",
+                  "type": "uint16"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "createdAt",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "verdictHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "reportHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "string",
+                  "name": "contentURI",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "title",
+                  "type": "string"
+                }
+              ],
+              "internalType": "struct ReportRegistry.ReportRecord",
+              "name": "",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "nextReportId",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            }
+          ],
+          "name": "operatorOf",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "operatorReportCount",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "internalType": "enum ReportRegistry.ReportMode",
+              "name": "mode",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum ReportRegistry.Recommendation",
+              "name": "recommendation",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint16",
+              "name": "confidenceBps",
+              "type": "uint16"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "verdictHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "reportHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "string",
+              "name": "contentURI",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "title",
+              "type": "string"
+            }
+          ],
+          "name": "registerReport",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            }
+          ],
+          "name": "requesterOf",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "requesterReportCount",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "settlementEscrow": {
+      "contractName": "SettlementEscrow",
+      "address": "0x8DD158865844bBd9c0Fb066F7837F0B0611Feb71",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "reportRegistryAddress",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "EmptyReason",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidAmount",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidReport",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidStatus",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidTimeout",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "Unauthorized",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "requester",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            }
+          ],
+          "name": "SettlementAccepted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "requester",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "reasonURI",
+              "type": "string"
+            }
+          ],
+          "name": "SettlementDisputed",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "requester",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "resolveAfter",
+              "type": "uint64"
+            }
+          ],
+          "name": "SettlementFunded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "requester",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "SettlementRefunded",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "MIN_TIMEOUT",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            }
+          ],
+          "name": "acceptSettlement",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "reasonURI",
+              "type": "string"
+            }
+          ],
+          "name": "disputeSettlement",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint64",
+              "name": "timeoutSeconds",
+              "type": "uint64"
+            }
+          ],
+          "name": "fundSettlement",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            }
+          ],
+          "name": "getSettlement",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "reportId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "requester",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "operator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint128",
+                  "name": "amount",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "fundedAt",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "resolveAfter",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "enum SettlementEscrow.SettlementStatus",
+                  "name": "status",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "string",
+                  "name": "disputeReasonURI",
+                  "type": "string"
+                }
+              ],
+              "internalType": "struct SettlementEscrow.Settlement",
+              "name": "",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "operatorStats",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "acceptedReports",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "disputedReports",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint128",
+              "name": "totalEarned",
+              "type": "uint128"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            }
+          ],
+          "name": "refundExpired",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reportRegistry",
+          "outputs": [
+            {
+              "internalType": "contract IReportRegistry",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    }
+  },
   "abi": [
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "treasuryAddress",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
       "inputs": [],
-      "name": "EmptyText",
+      "name": "EmptyTitle",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "InvalidAmount",
+      "name": "InvalidAddress",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "InvalidStatus",
+      "name": "InvalidConfidence",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "InvalidTask",
+      "name": "InvalidHash",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "Unauthorized",
+      "name": "InvalidReport",
       "type": "error"
     },
     {
@@ -50,319 +689,102 @@
         {
           "indexed": true,
           "internalType": "uint256",
-          "name": "taskId",
+          "name": "reportId",
           "type": "uint256"
         },
         {
           "indexed": true,
           "internalType": "address",
-          "name": "client",
+          "name": "requester",
           "type": "address"
         },
         {
           "indexed": true,
           "internalType": "address",
-          "name": "agent",
+          "name": "operator",
           "type": "address"
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "payout",
-          "type": "uint256"
-        }
-      ],
-      "name": "TaskAccepted",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "client",
-          "type": "address"
+          "internalType": "enum ReportRegistry.ReportMode",
+          "name": "mode",
+          "type": "uint8"
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "rewardRefund",
-          "type": "uint256"
-        }
-      ],
-      "name": "TaskCancelled",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "agent",
-          "type": "address"
+          "internalType": "enum ReportRegistry.Recommendation",
+          "name": "recommendation",
+          "type": "uint8"
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "stakeLocked",
-          "type": "uint256"
-        }
-      ],
-      "name": "TaskClaimed",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "client",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "reward",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "stakeRequired",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        }
-      ],
-      "name": "TaskCreated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "client",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "agent",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "rewardRefund",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "stakeSlashed",
-          "type": "uint256"
-        }
-      ],
-      "name": "TaskRejected",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "agent",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "submissionURI",
-          "type": "string"
+          "internalType": "uint16",
+          "name": "confidenceBps",
+          "type": "uint16"
         },
         {
           "indexed": false,
           "internalType": "bytes32",
-          "name": "submissionHash",
+          "name": "verdictHash",
           "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "reportHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "contentURI",
+          "type": "string"
         }
       ],
-      "name": "TaskSubmitted",
+      "name": "ReportRegistered",
       "type": "event"
     },
     {
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "taskId",
+          "name": "reportId",
           "type": "uint256"
         }
       ],
-      "name": "acceptTask",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "agentProfiles",
-      "outputs": [
-        {
-          "internalType": "uint128",
-          "name": "activeStake",
-          "type": "uint128"
-        },
-        {
-          "internalType": "uint64",
-          "name": "acceptedCount",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint64",
-          "name": "rejectedCount",
-          "type": "uint64"
-        },
-        {
-          "internalType": "uint128",
-          "name": "rewardsEarned",
-          "type": "uint128"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        }
-      ],
-      "name": "cancelOpenTask",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        }
-      ],
-      "name": "claimTask",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "brief",
-          "type": "string"
-        },
-        {
-          "internalType": "uint128",
-          "name": "stakeRequired",
-          "type": "uint128"
-        }
-      ],
-      "name": "createTask",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getTask",
+      "name": "getReport",
       "outputs": [
         {
           "components": [
             {
-              "internalType": "address payable",
-              "name": "client",
+              "internalType": "uint256",
+              "name": "reportId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "requester",
               "type": "address"
             },
             {
-              "internalType": "address payable",
-              "name": "agent",
+              "internalType": "address",
+              "name": "operator",
               "type": "address"
             },
             {
-              "internalType": "uint128",
-              "name": "reward",
-              "type": "uint128"
+              "internalType": "enum ReportRegistry.ReportMode",
+              "name": "mode",
+              "type": "uint8"
             },
             {
-              "internalType": "uint128",
-              "name": "stakeRequired",
-              "type": "uint128"
+              "internalType": "enum ReportRegistry.Recommendation",
+              "name": "recommendation",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint16",
+              "name": "confidenceBps",
+              "type": "uint16"
             },
             {
               "internalType": "uint64",
@@ -370,42 +792,27 @@
               "type": "uint64"
             },
             {
-              "internalType": "uint64",
-              "name": "claimedAt",
-              "type": "uint64"
+              "internalType": "bytes32",
+              "name": "verdictHash",
+              "type": "bytes32"
             },
             {
-              "internalType": "uint64",
-              "name": "resolvedAt",
-              "type": "uint64"
+              "internalType": "bytes32",
+              "name": "reportHash",
+              "type": "bytes32"
             },
             {
-              "internalType": "enum AgentBondLite.TaskStatus",
-              "name": "status",
-              "type": "uint8"
+              "internalType": "string",
+              "name": "contentURI",
+              "type": "string"
             },
             {
               "internalType": "string",
               "name": "title",
               "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "brief",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "submissionURI",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes32",
-              "name": "submissionHash",
-              "type": "bytes32"
             }
           ],
-          "internalType": "struct AgentBondLite.Task",
+          "internalType": "struct ReportRegistry.ReportRecord",
           "name": "",
           "type": "tuple"
         }
@@ -414,94 +821,8 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "fromTaskId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "limit",
-          "type": "uint256"
-        }
-      ],
-      "name": "getTasks",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "address payable",
-              "name": "client",
-              "type": "address"
-            },
-            {
-              "internalType": "address payable",
-              "name": "agent",
-              "type": "address"
-            },
-            {
-              "internalType": "uint128",
-              "name": "reward",
-              "type": "uint128"
-            },
-            {
-              "internalType": "uint128",
-              "name": "stakeRequired",
-              "type": "uint128"
-            },
-            {
-              "internalType": "uint64",
-              "name": "createdAt",
-              "type": "uint64"
-            },
-            {
-              "internalType": "uint64",
-              "name": "claimedAt",
-              "type": "uint64"
-            },
-            {
-              "internalType": "uint64",
-              "name": "resolvedAt",
-              "type": "uint64"
-            },
-            {
-              "internalType": "enum AgentBondLite.TaskStatus",
-              "name": "status",
-              "type": "uint8"
-            },
-            {
-              "internalType": "string",
-              "name": "title",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "brief",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "submissionURI",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes32",
-              "name": "submissionHash",
-              "type": "bytes32"
-            }
-          ],
-          "internalType": "struct AgentBondLite.Task[]",
-          "name": "items",
-          "type": "tuple[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [],
-      "name": "nextTaskId",
+      "name": "nextReportId",
       "outputs": [
         {
           "internalType": "uint256",
@@ -516,46 +837,127 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "taskId",
+          "name": "reportId",
           "type": "uint256"
         }
       ],
-      "name": "rejectTask",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "submissionURI",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "submissionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "submitTask",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "treasury",
+      "name": "operatorOf",
       "outputs": [
         {
           "internalType": "address",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "operatorReportCount",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "internalType": "enum ReportRegistry.ReportMode",
+          "name": "mode",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ReportRegistry.Recommendation",
+          "name": "recommendation",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint16",
+          "name": "confidenceBps",
+          "type": "uint16"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "verdictHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "reportHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "contentURI",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        }
+      ],
+      "name": "registerReport",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "reportId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "reportId",
+          "type": "uint256"
+        }
+      ],
+      "name": "requesterOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "requesterReportCount",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
         }
       ],
       "stateMutability": "view",

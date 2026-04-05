@@ -4,29 +4,49 @@ const hre = require("hardhat");
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
-  const treasury = process.env.TREASURY_ADDRESS || deployer.address;
+  const operator = process.env.REPORT_OPERATOR_ADDRESS || deployer.address;
 
-  console.log("Deploying AgentBondLite with:", deployer.address);
-  console.log("Treasury:", treasury);
+  console.log("Deploying Phase 2 contracts with deployer:", deployer.address);
+  console.log("Report operator:", operator);
 
-  const Factory = await hre.ethers.getContractFactory("AgentBondLite");
-  const contract = await Factory.deploy(treasury);
-  await contract.waitForDeployment();
+  const ReportRegistry = await hre.ethers.getContractFactory("ReportRegistry");
+  const reportRegistry = await ReportRegistry.deploy();
+  await reportRegistry.waitForDeployment();
 
-  const address = await contract.getAddress();
-  console.log("AgentBondLite deployed to:", address);
+  const SettlementEscrow = await hre.ethers.getContractFactory("SettlementEscrow");
+  const settlementEscrow = await SettlementEscrow.deploy(await reportRegistry.getAddress());
+  await settlementEscrow.waitForDeployment();
 
-  const artifact = await hre.artifacts.readArtifact("AgentBondLite");
+  const reportRegistryAddress = await reportRegistry.getAddress();
+  const settlementEscrowAddress = await settlementEscrow.getAddress();
+
+  console.log("ReportRegistry deployed to:", reportRegistryAddress);
+  console.log("SettlementEscrow deployed to:", settlementEscrowAddress);
+
+  const reportRegistryArtifact = await hre.artifacts.readArtifact("ReportRegistry");
+  const settlementEscrowArtifact = await hre.artifacts.readArtifact("SettlementEscrow");
   const output = {
-    contractName: "AgentBondLite",
-    address,
+    contractName: "AgentBondLitePhase2",
+    address: reportRegistryAddress,
     chainId: hre.network.config.chainId,
     network: hre.network.name,
     rpcUrl: hre.network.config.url || null,
-    treasury,
+    operator,
     deployer: deployer.address,
     deployedAt: new Date().toISOString(),
-    abi: artifact.abi
+    contracts: {
+      reportRegistry: {
+        contractName: "ReportRegistry",
+        address: reportRegistryAddress,
+        abi: reportRegistryArtifact.abi
+      },
+      settlementEscrow: {
+        contractName: "SettlementEscrow",
+        address: settlementEscrowAddress,
+        abi: settlementEscrowArtifact.abi
+      }
+    },
+    abi: reportRegistryArtifact.abi
   };
 
   const deploymentsDir = path.join(__dirname, "..", "deployments");
