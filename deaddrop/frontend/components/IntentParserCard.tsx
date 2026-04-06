@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { useAccount, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { parseEther } from "viem";
@@ -8,241 +7,117 @@ import { etherlinkTestnet } from "@/lib/wagmi-config";
 import BeneficiaryPreview from "./BeneficiaryPreview";
 import TransactionToast from "./TransactionToast";
 
-interface Beneficiary {
-  address: string;
-  percentage: number;
-  label: string;
-}
+interface Beneficiary { address: string; percentage: number; label: string; }
 
-type Step = "input" | "preview";
-
-const EXAMPLE_PROMPTS = [
+const EXAMPLES = [
   "If I'm unreachable for 300 days, send 70% to my family at 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 and 30% to my foundation at 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
   "If I do not check in for 300 days, send everything to my son at 0x90F79bf6EB2c4f870365E785982E1f101E93b906",
-  "If my continuity window expires, split everything equally between 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65 and 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
+  "Split equally between 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65 and 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
 ];
 
 export default function InheritanceForm({ address }: { address: string }) {
-  const [step, setStep] = useState<Step>("input");
-  const [naturalLanguage, setNaturalLanguage] = useState("");
+  const [step, setStep] = useState<"input" | "preview">("input");
+  const [text, setText] = useState("");
   const [email, setEmail] = useState("");
-  const [depositAmount, setDepositAmount] = useState("0.01");
+  const [amount, setAmount] = useState("0.01");
   const [parsed, setParsed] = useState<Beneficiary[]>([]);
   const [parsing, setParsing] = useState(false);
-  const [parseError, setParseError] = useState("");
+  const [parseErr, setParseErr] = useState("");
 
-  const {
-    writeContract,
-    data: txHash,
-    isPending,
-    error: writeError,
-    reset: resetWrite,
-  } = useWriteContract();
   const { chain } = useAccount();
   const { switchChainAsync } = useSwitchChain();
-
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash: txHash,
-  });
+  const { writeContract, data: txHash, isPending, error: txError, reset } = useWriteContract();
+  const { isLoading: confirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
   const handleParse = async () => {
-    if (!naturalLanguage.trim() || !email.trim()) return;
-    setParsing(true);
-    setParseError("");
-
+    if (!text.trim() || !email.trim()) return;
+    setParsing(true); setParseErr("");
     try {
-      const res = await fetch("/api/parse-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: naturalLanguage }),
-      });
-      const data = await res.json();
-
-      if (data.success && data.beneficiaries?.length > 0) {
-        setParsed(data.beneficiaries);
-        setStep("preview");
-      } else {
-        setParseError(
-          data.error || "Could not parse your plan. Please include wallet addresses (0x...)"
-        );
-      }
-    } catch {
-      setParseError("Network error. Please try again.");
-    } finally {
-      setParsing(false);
-    }
+      const r = await fetch("/api/parse-intent", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ input: text }) });
+      const d = await r.json();
+      if (d.success && d.beneficiaries?.length > 0) { setParsed(d.beneficiaries); setStep("preview"); }
+      else setParseErr(d.error || "Adres bulunamadı. Lütfen 0x... formatında adres ekleyin.");
+    } catch { setParseErr("Ağ hatası. Tekrar deneyin."); }
+    finally { setParsing(false); }
   };
 
   const handleCreateVault = async () => {
     if (parsed.length === 0) return;
-
     if (chain?.id !== etherlinkTestnet.id) {
-      try {
-        await switchChainAsync({ chainId: etherlinkTestnet.id });
-      } catch {
-        return;
-      }
+      try { await switchChainAsync({ chainId: etherlinkTestnet.id }); }
+      catch { return; }
     }
-
+    console.log("[LastKey] createVault called", { address: DEADDROP_ADDRESS, parsed, amount });
     writeContract({
       address: DEADDROP_ADDRESS,
       abi: DEADDROP_ABI,
       functionName: "createVault",
       chainId: etherlinkTestnet.id,
-      args: [
-        email,
-        parsed.map((b) => b.address as `0x${string}`),
-        parsed.map((b) => BigInt(b.percentage)),
-        parsed.map((b) => b.label),
-        naturalLanguage,
-        BigInt(300),
-      ],
-      value: parseEther(depositAmount || "0"),
+      args: [email, parsed.map(b => b.address as `0x${string}`), parsed.map(b => BigInt(b.percentage)), parsed.map(b => b.label), text, BigInt(300)],
+      value: parseEther(amount || "0"),
     });
   };
 
   return (
     <div className="space-y-4">
-      {isSuccess || txHash ? (
+      {(isSuccess || txHash) && (
         <TransactionToast
-          title={isSuccess ? "Continuity Plan Anchored" : "Confirming on Etherlink..."}
-          message={
-            isSuccess
-              ? `Your continuity plan for ${address.slice(0, 6)}...${address.slice(-4)} is now anchored on Etherlink.`
-              : "Your transaction is being recorded on the blockchain."
-          }
-          txHash={txHash}
-          tone={isSuccess ? "success" : "info"}
-        />
-      ) : null}
+          title={isSuccess ? "Plan Etherlink'e Kaydedildi" : "Etherlink'te Onaylanıyor..."}
+          message={isSuccess ? `${address.slice(0,6)}...${address.slice(-4)} için planınız kaydedildi.` : "İşlem blok zincirine işleniyor."}
+          txHash={txHash} tone={isSuccess ? "success" : "info"} />
+      )}
 
       {step === "input" ? (
         <div className="animate-fade-in rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h3 className="mb-1 text-lg font-black">Set Your Continuity Plan</h3>
-          <p className="mb-5 text-xs text-gray-500">
-            Describe your continuity plan in plain English. AI will structure wallet addresses and percentages.
-          </p>
+          <h3 className="mb-1 text-lg font-black">Devam Planını Yaz</h3>
+          <p className="mb-5 text-xs text-gray-500">AI, wallet adreslerini ve yüzdeleri otomatik yapılandırır.</p>
 
           <div className="mb-4 flex flex-wrap gap-2">
-            {EXAMPLE_PROMPTS.map((prompt, i) => (
-              <button
-                key={i}
-                onClick={() => setNaturalLanguage(prompt)}
-                className="max-w-[220px] truncate rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[10px] text-gray-500 transition-all hover:border-white/30"
-              >
-                Example {i + 1}
+            {EXAMPLES.map((ex, i) => (
+              <button key={i} onClick={() => setText(ex)}
+                className="max-w-[220px] truncate rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[10px] text-gray-500 hover:border-white/30">
+                Örnek {i + 1}
               </button>
             ))}
           </div>
 
-          <textarea
-            value={naturalLanguage}
-            onChange={(e) => setNaturalLanguage(e.target.value)}
-            placeholder="e.g. If I'm unreachable for 300 days, send 70% to my family at 0xABC... and 30% to my foundation at 0xDEF..."
-            className="min-h-[100px] w-full resize-none rounded-xl border border-white/20 bg-black/40 p-4 text-sm text-white placeholder-gray-600 transition-colors focus:border-amber-500/50 focus:outline-none"
-          />
+          <textarea value={text} onChange={e => setText(e.target.value)} rows={4}
+            placeholder="Örn: 300 gün hareketsiz kalırsam, %70'i 0xABC... adresine ve %30'unu 0xDEF... adresine gönder"
+            className="w-full resize-none rounded-xl border border-white/20 bg-black/40 p-4 text-sm placeholder-gray-600 focus:border-amber-500/50 focus:outline-none" />
 
-          <div className="mt-3">
-            <label className="mb-1.5 block text-[10px] tracking-[0.3em] text-gray-500">
-              ALERT EMAIL
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-xl border border-white/20 bg-black/40 p-3 text-sm text-white placeholder-gray-600 transition-colors focus:border-amber-500/50 focus:outline-none"
-            />
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="uyari@email.com"
+            className="mt-3 w-full rounded-xl border border-white/20 bg-black/40 p-3 text-sm placeholder-gray-600 focus:border-amber-500/50 focus:outline-none" />
+
+          <div className="mt-3 flex gap-2">
+            <input type="number" value={amount} onChange={e => setAmount(e.target.value)} step="0.01" min="0"
+              className="flex-1 rounded-xl border border-white/20 bg-black/40 p-3 text-sm focus:border-amber-500/50 focus:outline-none" />
+            {["0.01","0.1","1.0"].map(v => (
+              <button key={v} onClick={() => setAmount(v)}
+                className={`rounded-xl px-3 text-xs ${amount === v ? "border border-amber-500/40 bg-amber-500/20 text-amber-300" : "border border-white/10 bg-white/5 text-gray-400 hover:border-white/30"}`}>
+                {v}
+              </button>
+            ))}
           </div>
 
-          <div className="mt-3">
-            <label className="mb-1.5 block text-[10px] tracking-[0.3em] text-gray-500">
-              INITIAL BALANCE (XTZ)
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                step="0.01"
-                min="0"
-                className="flex-1 rounded-xl border border-white/20 bg-black/40 p-3 text-sm text-white transition-colors focus:border-amber-500/50 focus:outline-none"
-              />
-              <div className="flex gap-1">
-                {["0.01", "0.1", "1.0"].map((value) => (
-                  <button
-                    key={value}
-                    onClick={() => setDepositAmount(value)}
-                    className={`rounded-xl px-3 text-xs transition-all ${
-                      depositAmount === value
-                        ? "border border-amber-500/40 bg-amber-500/20 text-amber-300"
-                        : "border border-white/10 bg-white/5 text-gray-400 hover:border-white/30"
-                    }`}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          {parseErr && <div className="mt-3 rounded-xl border border-red-500/30 bg-red-900/20 p-3"><p className="text-xs text-red-400">{parseErr}</p></div>}
 
-          {parseError ? (
-            <div className="mt-3 rounded-xl border border-red-500/30 bg-red-900/20 p-3">
-              <p className="text-xs text-red-400">{parseError}</p>
-            </div>
-          ) : null}
-
-          {writeError ? (
-            <div className="mt-3 rounded-xl border border-red-500/30 bg-red-900/20 p-4">
-              <p className="text-sm font-bold text-red-400">Transaction failed</p>
-              <p className="mt-1 break-words text-xs text-gray-500">
-                {writeError.message?.slice(0, 200)}
-              </p>
-            </div>
-          ) : null}
-
-          <button
-            onClick={handleParse}
-            disabled={parsing || !naturalLanguage.trim() || !email.trim()}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 py-4 font-black text-black transition-all hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {parsing ? (
-              <>
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/40 border-t-black" />
-                AI is structuring your plan...
-              </>
-            ) : (
-              "✨ Structure with AI →"
-            )}
+          <button onClick={handleParse} disabled={parsing || !text.trim() || !email.trim()}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 py-4 font-black text-black hover:bg-amber-400 disabled:opacity-50">
+            {parsing ? (<><span className="h-4 w-4 animate-spin rounded-full border-2 border-black/40 border-t-black" />AI Yapılandırıyor...</>) : "✨ AI ile Yapılandır →"}
           </button>
         </div>
       ) : (
         <>
-          <BeneficiaryPreview
-            beneficiaries={parsed}
-            depositAmount={depositAmount}
-            onEdit={() => {
-              setStep("input");
-              setParseError("");
-              resetWrite();
-            }}
-            onConfirm={handleCreateVault}
-            isLoading={isPending || isConfirming}
-          />
-          {writeError ? (
+          <BeneficiaryPreview beneficiaries={parsed} depositAmount={amount}
+            onEdit={() => { setStep("input"); setParseErr(""); reset(); }}
+            onConfirm={handleCreateVault} isLoading={isPending || confirming} />
+          {txError && (
             <div className="mt-3 rounded-xl border border-red-500/30 bg-red-900/20 p-4">
-              <p className="text-sm font-bold text-red-400">Transaction failed</p>
-              <p className="mt-1 break-words text-xs text-gray-500">
-                {writeError.message?.slice(0, 200)}
-              </p>
-              <button
-                onClick={resetWrite}
-                className="mt-2 text-xs text-gray-500 transition-colors hover:text-white"
-              >
-                Try again
-              </button>
+              <p className="text-sm font-bold text-red-400">İşlem Başarısız</p>
+              <p className="mt-1 text-xs text-gray-500 break-words">{txError.message.slice(0,200)}</p>
+              <button onClick={reset} className="mt-2 text-xs text-gray-500 hover:text-white">Tekrar dene</button>
             </div>
-          ) : null}
+          )}
         </>
       )}
     </div>
