@@ -1,39 +1,57 @@
 "use client";
 
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
-import { injected } from "wagmi/connectors";
 import { etherlinkTestnet } from "@/lib/wagmi-config";
 
 interface ConnectWalletProps {
   large?: boolean;
 }
 
-export default function ConnectWallet({
-  large = false,
-}: ConnectWalletProps) {
+export default function ConnectWallet({ large = false }: ConnectWalletProps) {
   const { address, chain, isConnected } = useAccount();
-  const { connectAsync, isPending } = useConnect();
+  const { connectAsync, connectors, isPending, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChainAsync, isPending: isSwitching } = useSwitchChain();
 
   const baseClass = large ? "px-10 py-5 text-lg" : "px-5 py-2.5 text-sm";
 
+  const handleConnect = async () => {
+    const connector = connectors[0];
+    if (!connector) {
+      alert("No wallet detected. Please install MetaMask.");
+      return;
+    }
+    try {
+      await connectAsync({ connector });
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes("rejected")) return;
+      console.error("Connect failed:", err);
+    }
+  };
+
   if (!isConnected) {
     return (
-      <button
-        onClick={() => connectAsync({ connector: injected() })}
-        disabled={isPending}
-        className={`rounded-xl bg-amber-500 font-bold text-black transition-all duration-200 hover:bg-amber-400 disabled:opacity-60 ${baseClass}`}
-      >
-        {isPending ? "Connecting..." : "Connect Wallet"}
-      </button>
+      <div className="flex flex-col items-center gap-2">
+        <button
+          onClick={handleConnect}
+          disabled={isPending}
+          className={`rounded-xl bg-amber-500 font-bold text-black transition-all duration-200 hover:bg-amber-400 disabled:opacity-60 ${baseClass}`}
+        >
+          {isPending ? "Connecting..." : "Connect Wallet"}
+        </button>
+        {connectError ? (
+          <p className="text-xs text-red-400">{connectError.message?.slice(0, 80)}</p>
+        ) : null}
+      </div>
     );
   }
 
   if (chain?.id !== etherlinkTestnet.id) {
     return (
       <button
-        onClick={() => switchChainAsync({ chainId: etherlinkTestnet.id })}
+        onClick={() =>
+          switchChainAsync({ chainId: etherlinkTestnet.id }).catch(console.error)
+        }
         disabled={isSwitching}
         className="rounded-xl bg-red-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-red-400 disabled:opacity-60"
       >
@@ -51,9 +69,7 @@ export default function ConnectWallet({
         onClick={() => disconnect()}
         className="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-mono transition-all hover:bg-white/20"
       >
-        {address
-          ? `${address.slice(0, 6)}...${address.slice(-4)}`
-          : "Disconnect"}
+        {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Disconnect"}
       </button>
     </div>
   );

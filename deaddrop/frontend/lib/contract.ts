@@ -1,5 +1,6 @@
 export const DEADDROP_ADDRESS = (
-  process.env.NEXT_PUBLIC_DEADDROP_ADDRESS || ""
+  process.env.NEXT_PUBLIC_DEADDROP_ADDRESS ||
+  "0xe86D9e5029ca5fb68c133AaB98673bc370D5e04e"
 ) as `0x${string}`;
 
 export const DEADDROP_ABI = [

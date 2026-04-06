@@ -118,3 +118,22 @@ a {
   -webkit-text-fill-color: transparent;
   animation: shimmer 3s linear infinite;
 }
+
+@keyframes key-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.15); }
+}
+
+@keyframes shimmer {
+  0% { color: #f0f0ff; }
+  50% { color: #d4a853; }
+  100% { color: #f0f0ff; }
+}
+
+.animate-key-pulse {
+  animation: key-pulse 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
