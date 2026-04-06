@@ -23,7 +23,7 @@ export default function ConnectWallet({
       <button
         onClick={() => connectAsync({ connector: injected() })}
         disabled={isPending}
-        className={`rounded-xl bg-cyan-500 font-bold text-black transition-all duration-200 hover:bg-cyan-400 disabled:opacity-60 ${baseClass}`}
+        className={`rounded-xl bg-amber-500 font-bold text-black transition-all duration-200 hover:bg-amber-400 disabled:opacity-60 ${baseClass}`}
       >
         {isPending ? "Connecting..." : "Connect Wallet"}
       </button>

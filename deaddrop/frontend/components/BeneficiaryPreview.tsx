@@ -28,7 +28,7 @@ export default function BeneficiaryPreview({
     <div className="animate-fade-in rounded-2xl border border-white/10 bg-white/5 p-6">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold">AI Parsed Your Plan</h3>
+          <h3 className="text-sm font-bold">AI Structured Your Plan</h3>
           <p className="mt-0.5 text-xs text-gray-500">
             Review before anchoring on Etherlink
           </p>
@@ -57,7 +57,7 @@ export default function BeneficiaryPreview({
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-black text-cyan-400">
+              <p className="text-xl font-black text-amber-400">
                 {beneficiary.percentage / 100}%
               </p>
               <p className="text-[10px] text-gray-500">
@@ -75,7 +75,7 @@ export default function BeneficiaryPreview({
 
       <div className="mb-5 space-y-2 rounded-xl border border-white/10 bg-black/40 p-4">
         <div className="flex justify-between text-xs">
-          <span className="text-gray-400">Initial deposit</span>
+          <span className="text-gray-400">Initial balance</span>
           <span className="font-bold text-white">{depositAmount} XTZ</span>
         </div>
         <div className="flex justify-between text-xs">
@@ -107,7 +107,7 @@ export default function BeneficiaryPreview({
         <button
           onClick={onConfirm}
           disabled={isLoading || !isValid}
-          className="flex-[2] rounded-xl bg-red-500 py-3 text-sm font-bold text-white transition-all hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex-[2] rounded-xl bg-amber-500 py-3 text-sm font-bold text-black transition-all hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
@@ -115,7 +115,7 @@ export default function BeneficiaryPreview({
               Anchoring on Etherlink...
             </span>
           ) : (
-            "⚰️ Create DeadDrop Vault"
+            "🔑 Anchor on Etherlink"
           )}
         </button>
       </div>

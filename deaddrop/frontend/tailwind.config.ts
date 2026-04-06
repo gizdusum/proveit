@@ -22,6 +22,8 @@ const config: Config = {
         },
       },
       colors: {
+        lastkey: "#d4a853",
+        "lastkey-dim": "#a07830",
         etherlink: "#00bfff",
       },
     },

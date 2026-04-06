@@ -3,13 +3,13 @@ import Providers from "@/components/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DeadDrop — Etherlink Inheritance Protocol",
+  title: "LastKey — Access Continuity on Etherlink",
   description:
-    "AI-powered onchain inheritance. Your crypto, even after you're gone.",
-  keywords: ["web3", "inheritance", "etherlink", "tezos", "blockchain", "defi"],
+    "AI-powered crypto access continuity. Your keys, even when you can't hold them.",
+  keywords: ["web3", "crypto", "access continuity", "etherlink", "tezos", "inheritance", "lastkey"],
   openGraph: {
-    title: "DeadDrop",
-    description: "AI-powered onchain inheritance protocol on Etherlink",
+    title: "LastKey",
+    description: "AI-powered access continuity protocol on Etherlink",
     type: "website",
   },
 };
@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-[#050510] font-mono text-white antialiased">
+      <body className="bg-[#06070f] font-mono text-white antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

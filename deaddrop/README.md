@@ -1,6 +1,6 @@
-# ⚰️ DeadDrop
+# 🔑 LastKey
 
-> AI-powered onchain inheritance protocol on Etherlink (Tezos EVM)
+> AI-powered access continuity on Etherlink (Tezos EVM)
 
 **Built for the [Tezos EVM AI Hackathon](https://tezosevm.nowmedia.co) · April 2026**
 
@@ -8,17 +8,17 @@
 
 ## The Problem
 
-Over **$140 billion** in crypto is permanently inaccessible because wallet owners pass away without a recovery plan. Web3 gives people self-custody, but it still has no native inheritance rail.
+Over **$140 billion** in crypto is effectively inaccessible because self-custodied wallets have no native continuity rail. Death is one case, but not the only one. Lost devices, long absences, forgotten recovery flows, and unexpected life events can all lock assets away permanently.
 
 ## The Solution
 
-DeadDrop lets a user write an inheritance plan in plain English. AI parses that plan into structured beneficiary data, the plan is registered on Etherlink, and a monitoring agent checks for long-term inactivity. If the wallet remains inactive for **300 days**, the smart contract can execute the distribution exactly as defined.
+LastKey lets a user describe an access continuity plan in plain English. AI structures that plan into validated beneficiary data, the plan is anchored on Etherlink, and a monitoring agent tracks long-term inactivity. If the wallet remains unchecked for **300 days**, the smart contract can execute the distribution exactly as defined.
 
-This makes inheritance:
+This makes continuity:
 
 - understandable for normal users
 - enforceable onchain
-- independent from trusted custodians
+- independent from intermediaries
 
 ---
 
@@ -26,18 +26,19 @@ This makes inheritance:
 
 1. **Connect wallet** on Etherlink Shadownet
 2. **Write your plan** in natural language:
-   `Send 70% to my wife and 30% to charity`
-3. **AI parses it** into structured beneficiaries using OpenAI GPT-4o-mini
-4. **Create vault** onchain with Etherlink smart contract rules + initial XTZ deposit
+   `If I'm unreachable for 300 days, send 70% to my family and 30% to my foundation`
+3. **AI structures it** into validated beneficiaries using OpenAI GPT-4o-mini
+4. **Create vault** onchain with Etherlink smart contract rules + initial XTZ balance
 5. **Agent monitors** all vaults every 24 hours
-6. **Day 293** — warning email is sent and recorded onchain through `markWarningIssued()`
+6. **Day 293** — alert email is sent and recorded onchain through `markWarningIssued()`
 7. **Day 300** — `executeInheritance()` can distribute vault funds automatically
-8. **Owner can ping activity** at any time using `pingActivity()` to reset the timer
+8. **Owner can check in** at any time using `pingActivity()` to reset the timer
 
 ---
 
 ## Live Deployment
 
+- **Demo URL:** [lastkey.xyz](https://lastkey.xyz)
 - **Contract Address:** `0xe86D9e5029ca5fb68c133AaB98673bc370D5e04e`
 - **Explorer:** [shadownet.explorer.etherlink.com/address/0xe86D9e5029ca5fb68c133AaB98673bc370D5e04e](https://shadownet.explorer.etherlink.com/address/0xe86D9e5029ca5fb68c133AaB98673bc370D5e04e)
 - **Network:** Etherlink Shadownet
@@ -57,7 +58,7 @@ Verified onchain transactions:
 |-------|-----------|
 | Blockchain | Etherlink (Tezos EVM), Chain ID `127823` |
 | Smart Contract | Solidity `^0.8.20` |
-| AI Parsing | OpenAI GPT-4o-mini |
+| AI Structuring | OpenAI GPT-4o-mini |
 | Monitoring Agent | Node.js + `node-cron` + `ethers` |
 | Frontend | Next.js 15 + TypeScript + Tailwind CSS |
 | Wallet Connection | wagmi v2 + injected wallets (MetaMask / Rabby) |
@@ -93,28 +94,28 @@ deaddrop/
 
 ## Smart Contract
 
-**DeadDrop.sol** manages vault creation, inactivity tracking, beneficiary distribution, and AI-agent execution.
+**DeadDrop.sol** is the deployed Solidity contract behind LastKey. It manages vault creation, inactivity tracking, beneficiary distribution, and agent execution.
 
 ### Core Functions
 
 | Function | Access | Purpose |
 |----------|--------|---------|
-| `createVault()` | public | Store inheritance rules + deposit XTZ |
-| `pingActivity()` | vault owner | Reset the 300-day inactivity counter |
+| `createVault()` | public | Store continuity rules + deposit XTZ |
+| `pingActivity()` | vault owner | Reset the 300-day continuity counter |
 | `depositToVault()` | vault owner | Add more XTZ to an existing vault |
-| `markWarningIssued()` | authorized AI agent | Record day-293 warning onchain |
+| `markWarningIssued()` | authorized AI agent | Record day-293 alert onchain |
 | `executeInheritance()` | authorized AI agent | Distribute funds after threshold |
 | `getVaultStatus()` | public view | Read vault health, balance, countdown |
 | `getBeneficiaries()` | public view | Read vault beneficiary configuration |
 
 ### Key Design Choice
 
-DeadDrop does **not** claim to detect literal death.  
-It implements a **dead man’s switch**:
+LastKey does **not** claim to detect literal death.  
+It implements an **access continuity switch**:
 
 - long inactivity
-- warning grace period
-- automated execution if there is no response
+- alert grace period
+- automated execution if there is no check-in
 
 That keeps the product honest, demoable, and enforceable onchain.
 
@@ -122,18 +123,18 @@ That keeps the product honest, demoable, and enforceable onchain.
 
 ## AI Agent
 
-The DeadDrop agent runs as a Node.js service and performs four jobs:
+The LastKey agent runs as a Node.js service and performs four jobs:
 
 1. Poll all registered vaults every 24 hours
-2. Check inactivity thresholds
-3. Trigger `markWarningIssued()` when warning threshold is reached
+2. Check continuity thresholds
+3. Trigger `markWarningIssued()` when the alert threshold is reached
 4. Trigger `executeInheritance()` after the final threshold
 
-### NLP Parser
+### NLP Structuring
 
-The same agent stack also exposes natural-language parsing logic:
+The same agent stack also exposes natural-language structuring logic:
 
-- input: plain-English inheritance plan
+- input: plain-English continuity plan
 - output: structured JSON beneficiaries
 - validation: addresses, percentages, total sum = `10000` basis points
 
@@ -147,18 +148,18 @@ The frontend provides two clear states:
 
 ### Landing
 
-- explains the problem
+- explains the continuity problem
 - explains the Etherlink deployment
-- explains the 300-day inactivity model
+- explains the 300-day continuity model
 
 ### Dashboard
 
 - wallet connection
-- natural-language inheritance form
-- AI parsed preview
+- natural-language continuity form
+- AI-structured preview
 - vault creation flow
 - live vault status from chain
-- `I’m Alive` ping action
+- `I'm Still Here` check-in action
 
 ---
 
@@ -169,7 +170,7 @@ The frontend provides two clear states:
 - Node.js 18+
 - funded Etherlink Shadownet wallet
 - OpenAI API key
-- Gmail App Password for warning emails
+- Gmail App Password for alert emails
 
 ### Root Install
 
@@ -232,14 +233,14 @@ FRONTEND_URL=http://localhost:3000
 
 ## Hackathon Fit
 
-DeadDrop maps directly to the Tezos EVM AI Hackathon criteria:
+LastKey maps directly to the Tezos EVM AI Hackathon criteria:
 
 - ✅ **AI agents interacting with smart contracts**
-  - AI parses natural language into contract-ready inputs
+  - AI structures natural language into contract-ready inputs
   - AI monitoring agent calls contract functions autonomously
 
 - ✅ **Creative application**
-  - onchain inheritance is a real, painful, unsolved Web3 problem
+  - access continuity is a real, emotional, financially meaningful Web3 problem
 
 - ✅ **Ecosystem impact**
   - proves Etherlink can host long-lived, low-cost AI-triggered automation
@@ -251,45 +252,16 @@ DeadDrop maps directly to the Tezos EVM AI Hackathon criteria:
 
 ## Why Etherlink?
 
-DeadDrop depends on low-cost, frequent agent monitoring.
+LastKey depends on low-cost, frequent agent monitoring.
 
 Etherlink matters because it gives us:
 
 - **low gas fees** for repeated monitoring actions
-- **fast finality** for reliable warning and execution transactions
+- **fast finality** for reliable alert and execution transactions
 - **full EVM compatibility** so Solidity and standard tooling work immediately
-
-This type of always-on AI + contract workflow is much harder to justify economically on Ethereum mainnet.
-
----
-
-## Demo Notes
-
-The complete demo script is in [DEMO_SCRIPT.md](/Users/denizalagoz/Documents/New%20project/deaddrop/DEMO_SCRIPT.md).
-
-Recommended live demo sequence:
-
-1. Open landing page
-2. Connect wallet
-3. Parse natural-language inheritance plan
-4. Show beneficiary preview
-5. Create vault
-6. Show onchain vault status
-7. Trigger `I’m Alive` ping
-8. Show explorer transaction
-9. Show monitoring agent terminal output
-
----
-
-## GitHub
-
-Repository path for this hackathon branch:
-
-- [github.com/gizdusum/proveit/tree/codex/deaddrop/deaddrop](https://github.com/gizdusum/proveit/tree/codex/deaddrop/deaddrop)
 
 ---
 
 ## Disclaimer
 
-This is a hackathon prototype built for Etherlink Shadownet.  
-Do **not** use with real mainnet funds.
+This is a hackathon prototype. Do not use with real mainnet funds.

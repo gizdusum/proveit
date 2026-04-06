@@ -46,9 +46,7 @@ export default function VaultStatus({ address }: VaultStatusProps) {
     return (
       <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
         <p className="text-sm text-gray-400">No vault found for this wallet.</p>
-        <p className="mt-1 text-xs text-gray-600">
-          Create your inheritance plan below ↓
-        </p>
+        <p className="mt-1 text-xs text-gray-600">Set your continuity plan below ↓</p>
       </div>
     );
   }
@@ -73,11 +71,11 @@ export default function VaultStatus({ address }: VaultStatusProps) {
 
   const urgencyStyle = {
     safe: {
-      border: "border-green-500/20",
-      bg: "bg-green-900/10",
-      color: "text-green-400",
-      bar: "bg-green-400",
-      badge: "bg-green-900/40 text-green-400 border-green-500/30",
+      border: "border-amber-500/20",
+      bg: "bg-amber-900/10",
+      color: "text-amber-400",
+      bar: "bg-amber-400",
+      badge: "bg-amber-900/40 text-amber-300 border-amber-500/30",
     },
     warning: {
       border: "border-yellow-500/20",
@@ -105,17 +103,17 @@ export default function VaultStatus({ address }: VaultStatusProps) {
     >
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h3 className="font-bold">Vault Status</h3>
-          <p className="mt-0.5 text-xs text-gray-500">{balance} XTZ locked</p>
+          <h3 className="font-bold">LastKey Status</h3>
+          <p className="mt-0.5 text-xs text-gray-500">Locked balance: {balance} XTZ</p>
         </div>
         <div className="flex items-center gap-2">
           {warningIssued ? (
             <span className="rounded-full border border-yellow-500/30 bg-yellow-900/40 px-2 py-1 text-xs text-yellow-400">
-              ⚠️ Warning Issued
+              ⚠️ Check-in Overdue
             </span>
           ) : null}
           <span className={`rounded-full border px-3 py-1 font-mono text-xs ${urgencyStyle.badge}`}>
-            {executed ? "EXECUTED" : "ACTIVE"}
+            {executed ? "EXECUTED" : "PROTECTED"}
           </span>
         </div>
       </div>
@@ -123,13 +121,13 @@ export default function VaultStatus({ address }: VaultStatusProps) {
       <div className="mb-5 grid grid-cols-3 gap-3">
         <div className="rounded-xl bg-black/30 p-4 text-center">
           <p className={`text-3xl font-black ${urgencyStyle.color}`}>{days}</p>
-          <p className="mt-1 text-[10px] text-gray-500">DAYS INACTIVE</p>
+          <p className="mt-1 text-[10px] text-gray-500">DAYS SINCE CHECK-IN</p>
         </div>
         <div className="rounded-xl bg-black/30 p-4 text-center">
           <p className={`text-3xl font-black ${remaining <= 30 ? "text-red-400" : "text-white"}`}>
             {remaining}
           </p>
-          <p className="mt-1 text-[10px] text-gray-500">DAYS UNTIL EXEC</p>
+          <p className="mt-1 text-[10px] text-gray-500">DAYS REMAINING</p>
         </div>
         <div className="rounded-xl bg-black/30 p-4 text-center">
           <p className="text-3xl font-black text-gray-400">{Number(beneficiaryCount)}</p>

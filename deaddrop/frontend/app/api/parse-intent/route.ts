@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const SYSTEM_PROMPT = `
-You are a Web3 inheritance parser for the DeadDrop protocol on Etherlink (Tezos EVM).
-Your job is to parse natural language inheritance instructions into structured beneficiary data.
+You are a Web3 access continuity parser for the LastKey protocol on Etherlink (Tezos EVM).
+Your job is to parse natural language continuity instructions into structured beneficiary data.
 
 STRICT RULES:
 1. percentage must be in BASIS POINTS: 100% = 10000, 70% = 7000, 30% = 3000

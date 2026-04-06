@@ -10,14 +10,14 @@ export default function HomeClient() {
   const { address, isConnected } = useAccount();
 
   return (
-    <main className="min-h-screen bg-[#050510]">
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-[#050510]/80 px-6 py-5 backdrop-blur-sm">
+    <main className="min-h-screen bg-[#06070f]">
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-[#06070f]/80 px-6 py-5 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">⚰️</span>
+          <span className="animate-key-pulse text-2xl text-amber-400">🔑</span>
           <div>
-            <h1 className="text-base font-bold leading-none tracking-tight">DeadDrop</h1>
+            <h1 className="text-base font-bold leading-none tracking-tight">LastKey</h1>
             <p className="text-[10px] tracking-[0.3em] text-gray-500">
-              ETHERLINK INHERITANCE PROTOCOL
+              ETHERLINK ACCESS CONTINUITY
             </p>
           </div>
         </div>
@@ -33,25 +33,28 @@ export default function HomeClient() {
       {!isConnected ? (
         <section className="flex min-h-[calc(100vh-73px)] flex-col items-center justify-center px-4 text-center">
           <div className="mb-8 flex items-center gap-2">
-            <span className="rounded-full border border-cyan-400/30 px-4 py-1.5 text-xs tracking-[0.3em] text-cyan-400">
+            <span className="rounded-full border border-amber-400/30 px-4 py-1.5 text-xs tracking-[0.3em] text-amber-300">
               LITE RELEASE // ETHERLINK DEPLOYED // TEZOS EVM
             </span>
           </div>
 
-          <h2 className="text-5xl font-black leading-[0.9] tracking-tight sm:text-7xl">
-            Your crypto.
+          <h2 className="mb-6 text-5xl font-black leading-[0.9] tracking-tight sm:text-7xl">
+            Your keys.
             <br />
-            <span className="bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
-              Even after
+            <span className="animate-shimmer">
+              Even when you
               <br />
-              you&apos;re gone.
+              can&apos;t hold them.
             </span>
           </h2>
 
-          <p className="mb-10 mt-6 max-w-lg text-lg leading-relaxed text-gray-400">
-            DeadDrop turns your natural language into an onchain inheritance plan.
-            If your wallet goes silent for <strong className="text-white">300 days</strong>,
-            your assets go exactly where you said.
+          <p className="mb-4 max-w-xl text-lg leading-relaxed text-gray-400">
+            AI-powered access continuity on Etherlink. Set it once. It lasts forever.
+          </p>
+          <p className="mb-10 max-w-2xl text-base leading-relaxed text-gray-500">
+            Set your continuity plan once. If you go offline for{" "}
+            <strong className="text-white">300 days</strong> — lost device, extended
+            absence, or the unexpected — your assets reach exactly who you intended.
           </p>
 
           <ConnectWallet large />
@@ -62,28 +65,16 @@ export default function HomeClient() {
 
           <div className="mt-16 grid w-full max-w-lg grid-cols-3 gap-4 text-center sm:gap-8">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-2xl font-black text-red-400 sm:text-3xl">$140B+</p>
-              <p className="mt-1 text-xs text-gray-500">
-                Lost crypto
-                <br />
-                globally
-              </p>
+              <p className="text-2xl font-black text-amber-400 sm:text-3xl">$140B+</p>
+              <p className="mt-1 text-xs text-gray-500">Assets at risk</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-2xl font-black text-cyan-400 sm:text-3xl">300</p>
-              <p className="mt-1 text-xs text-gray-500">
-                Day inactivity
-                <br />
-                threshold
-              </p>
+              <p className="text-2xl font-black text-amber-300 sm:text-3xl">300</p>
+              <p className="mt-1 text-xs text-gray-500">Day window</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <p className="text-2xl font-black text-green-400 sm:text-3xl">0</p>
-              <p className="mt-1 text-xs text-gray-500">
-                Trusted third
-                <br />
-                parties needed
-              </p>
+              <p className="mt-1 text-xs text-gray-500">Intermediaries</p>
             </div>
           </div>
 
@@ -96,22 +87,26 @@ export default function HomeClient() {
                 {
                   step: "01",
                   title: "Write your plan",
-                  desc: 'Type your inheritance in plain English. "Send 70% to my wife and 30% to charity."',
+                  desc:
+                    "Describe in plain English who should receive your assets and under what conditions. No legal language needed.",
                 },
                 {
                   step: "02",
-                  title: "AI parses it",
-                  desc: "Our AI converts your words into a structured onchain inheritance contract on Etherlink.",
+                  title: "AI structures it",
+                  desc:
+                    "Our AI converts your words into a verified onchain continuity contract — wallet addresses, percentages, all confirmed.",
                 },
                 {
                   step: "03",
-                  title: "Vault monitors you",
-                  desc: "AI agent checks your wallet every 24 hours. At day 293, you get a warning email.",
+                  title: "Stay checked in",
+                  desc:
+                    "Tap 'I'm Still Here' whenever you like. Each tap resets your 300-day continuity window. One transaction, done.",
                 },
                 {
                   step: "04",
                   title: "Automatic execution",
-                  desc: "At day 300, if no response, the smart contract executes your plan. Trustless. Permanent.",
+                  desc:
+                    "If your window expires without a check-in, LastKey executes your plan on Etherlink. Trustless. Permanent. Exact.",
                 },
               ].map((item) => (
                 <div
@@ -133,7 +128,7 @@ export default function HomeClient() {
       ) : (
         <section className="mx-auto max-w-2xl px-4 py-10">
           <div className="mb-8">
-            <h2 className="text-2xl font-black">Your DeadDrop Vault</h2>
+            <h2 className="text-2xl font-black">Your LastKey Vault</h2>
             <p className="mt-1 text-sm text-gray-400">
               {address?.slice(0, 6)}...{address?.slice(-4)}
             </p>

@@ -28,8 +28,8 @@ export default function ActivityPing() {
   if (isSuccess) {
     return (
       <div className="animate-fade-in rounded-xl border border-green-500/30 bg-green-900/20 p-4 text-center">
-        <p className="text-sm font-bold text-green-400">✅ Activity confirmed onchain</p>
-        <p className="mt-1 text-xs text-gray-500">Your 300-day timer has been reset</p>
+        <p className="text-sm font-bold text-green-400">✅ Check-in confirmed onchain</p>
+        <p className="mt-1 text-xs text-gray-500">Your continuity window has been reset</p>
         {txHash ? (
           <div className="mt-2">
             <ExplorerLink type="tx" hash={txHash} label="View on Etherlink Explorer →" />
@@ -76,8 +76,8 @@ export default function ActivityPing() {
         </>
       ) : (
         <>
-          <span className="text-green-400 transition-transform group-hover:scale-110">💚</span>
-          I&apos;m Alive — Reset 300-Day Timer
+          <span className="text-amber-400 transition-transform group-hover:scale-110">🔑</span>
+          I&apos;m Still Here — Reset Timer
         </>
       )}
     </button>
