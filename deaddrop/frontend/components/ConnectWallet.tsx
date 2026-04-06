@@ -19,7 +19,7 @@ export default function ConnectWallet({ large = false }: { large?: boolean }) {
   if (!isConnected) return (
     <div className="flex flex-col items-center gap-1">
       <button onClick={handleConnect} disabled={isPending}
-        className={`rounded-xl bg-amber-500 font-bold text-black hover:bg-amber-400 disabled:opacity-60 ${cls}`}>
+        className={`btn-gold disabled:opacity-60 ${cls}`}>
         {isPending ? "Bağlanıyor..." : "Connect Wallet"}
       </button>
       {error && <p className="text-xs text-red-400">{error.message.slice(0,80)}</p>}
@@ -29,18 +29,18 @@ export default function ConnectWallet({ large = false }: { large?: boolean }) {
   if (chain?.id !== etherlinkTestnet.id) return (
     <button onClick={() => switchChainAsync({ chainId: etherlinkTestnet.id }).catch(console.error)}
       disabled={switching}
-      className="rounded-xl bg-red-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-red-400 disabled:opacity-60">
+      className="rounded-xl border border-red-400/30 bg-red-500 px-5 py-2.5 text-sm font-bold text-white shadow-[0_4px_20px_rgba(224,85,85,0.25)] transition-all hover:-translate-y-0.5 hover:bg-red-400 disabled:opacity-60">
       {switching ? "Değiştiriliyor..." : "⚠️ Etherlink'e Geç"}
     </button>
   );
 
   return (
     <div className="flex items-center gap-2">
-      <span className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs text-gray-300">
+      <span className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs text-[var(--text-secondary)]">
         {chain.name}
       </span>
       <button onClick={() => disconnect()}
-        className="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-mono hover:bg-white/20">
+        className="font-mono rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm text-[var(--text-primary)] transition-all hover:bg-white/20">
         {address?.slice(0,6)}...{address?.slice(-4)}
       </button>
     </div>

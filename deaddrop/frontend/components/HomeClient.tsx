@@ -6,136 +6,169 @@ import InheritanceForm from "@/components/IntentParserCard";
 import VaultStatus from "@/components/VaultStatusCard";
 import Footer from "@/components/Footer";
 
+const STEPS = [
+  {
+    step: "01",
+    title: "Describe your plan",
+    desc: "Type in plain English who gets what. No legal language.",
+  },
+  {
+    step: "02",
+    title: "AI structures it",
+    desc: "GPT-4o converts your words into verified onchain beneficiary data.",
+  },
+  {
+    step: "03",
+    title: "Stay checked in",
+    desc: "Tap once every 300 days. Each tap resets your continuity window.",
+  },
+  {
+    step: "04",
+    title: "Automatic execution",
+    desc: "If your window expires, LastKey executes your plan on Etherlink. Exact. Permanent.",
+  },
+];
+
+const STATS = [
+  { value: "$140B+", tone: "text-[#4a8fe8]", label: "Assets lost annually" },
+  { value: "300", tone: "text-[#c8a96e]", label: "Day protection window" },
+  { value: "0", tone: "text-[#3fb07a]", label: "Intermediaries" },
+];
+
 export default function HomeClient() {
   const { address, isConnected } = useAccount();
 
   return (
-    <main className="min-h-screen bg-[#06070f]">
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-[#06070f]/80 px-6 py-5 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <span className="animate-key-pulse text-2xl text-amber-400">🔑</span>
-          <div>
-            <h1 className="text-base font-bold leading-none tracking-tight">LastKey</h1>
-            <p className="text-[10px] tracking-[0.3em] text-gray-500">
-              ETHERLINK ACCESS CONTINUITY
-            </p>
+    <main className="min-h-screen bg-transparent">
+      <nav className="sticky top-0 z-50 h-[72px] border-b border-[rgba(74,143,232,0.1)] bg-[rgba(4,6,15,0.85)] backdrop-blur-[20px]">
+        <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-4">
+            <img src="/lastkey-logo.png" alt="LastKey" className="h-9 w-auto sm:h-10" />
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="hidden items-center gap-1.5 rounded-full border border-green-400/20 bg-green-400/10 px-3 py-1 text-xs text-green-400 sm:flex">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
-            Etherlink Deployed
-          </span>
-          <ConnectWallet />
+
+          <div className="flex items-center gap-3">
+            <span className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300 sm:flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Etherlink Deployed
+            </span>
+            <ConnectWallet />
+          </div>
         </div>
       </nav>
 
       {!isConnected ? (
-        <section className="flex min-h-[calc(100vh-73px)] flex-col items-center justify-center px-4 text-center">
-          <div className="mb-8 flex items-center gap-2">
-            <span className="rounded-full border border-amber-400/30 px-4 py-1.5 text-xs tracking-[0.3em] text-amber-300">
-              LITE RELEASE // ETHERLINK DEPLOYED // TEZOS EVM
-            </span>
-          </div>
-
-          <h2 className="mb-6 text-5xl font-black leading-[0.9] tracking-tight sm:text-7xl">
-            Your keys.
-            <br />
-            <span className="animate-shimmer">
-              Even when you
-              <br />
-              can&apos;t hold them.
-            </span>
-          </h2>
-
-          <p className="mb-4 max-w-xl text-lg leading-relaxed text-gray-400">
-            AI-powered access continuity on Etherlink. Set it once. It lasts forever.
-          </p>
-          <p className="mb-10 max-w-2xl text-base leading-relaxed text-gray-500">
-            Set your continuity plan once. If you go offline for{" "}
-            <strong className="text-white">300 days</strong> — lost device, extended
-            absence, or the unexpected — your assets reach exactly who you intended.
-          </p>
-
-          <ConnectWallet large />
-
-          <p className="mt-4 text-xs text-gray-600">
-            Powered by Etherlink (Tezos EVM) · Low gas · Fast finality
-          </p>
-
-          <div className="mt-16 grid w-full max-w-lg grid-cols-3 gap-4 text-center sm:gap-8">
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-2xl font-black text-amber-400 sm:text-3xl">$140B+</p>
-              <p className="mt-1 text-xs text-gray-500">Assets at risk</p>
+        <section className="px-6 pb-24 pt-20 sm:px-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center">
+            <div className="animate-fade-up">
+              <span className="inline-flex items-center rounded-full border border-[rgba(74,143,232,0.3)] bg-[rgba(74,143,232,0.08)] px-5 py-2 text-[11px] font-semibold tracking-[0.25em] text-[var(--blue-primary)]">
+                ✦ TEZOS EVM HACKATHON 2026 ✦
+              </span>
             </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-2xl font-black text-amber-300 sm:text-3xl">300</p>
-              <p className="mt-1 text-xs text-gray-500">Day window</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-2xl font-black text-green-400 sm:text-3xl">0</p>
-              <p className="mt-1 text-xs text-gray-500">Intermediaries</p>
-            </div>
-          </div>
 
-          <div className="mt-20 w-full max-w-2xl text-left">
-            <h3 className="mb-6 text-center text-xs tracking-[0.3em] text-gray-500">
-              HOW IT WORKS
-            </h3>
-            <div className="space-y-4">
-              {[
-                {
-                  step: "01",
-                  title: "Write your plan",
-                  desc:
-                    "Describe in plain English who should receive your assets and under what conditions. No legal language needed.",
-                },
-                {
-                  step: "02",
-                  title: "AI structures it",
-                  desc:
-                    "Our AI converts your words into a verified onchain continuity contract — wallet addresses, percentages, all confirmed.",
-                },
-                {
-                  step: "03",
-                  title: "Stay checked in",
-                  desc:
-                    "Tap 'I'm Still Here' whenever you like. Each tap resets your 300-day continuity window. One transaction, done.",
-                },
-                {
-                  step: "04",
-                  title: "Automatic execution",
-                  desc:
-                    "If your window expires without a check-in, LastKey executes your plan on Etherlink. Trustless. Permanent. Exact.",
-                },
-              ].map((item) => (
+            <div className="mt-10 max-w-5xl text-center">
+              <h1
+                className="animate-fade-up font-black tracking-[-0.05em] text-[var(--text-primary)]"
+                style={{ fontSize: "clamp(48px, 8vw, 96px)", lineHeight: 0.9 }}
+              >
+                <span className="block">Your keys.</span>
+                <span className="animate-shimmer-text block">Even when you</span>
+                <span className="animate-shimmer-text block">can&apos;t hold them.</span>
+              </h1>
+
+              <div className="mt-10 flex items-center justify-center gap-4 sm:gap-6">
+                <span className="h-px w-20 bg-gradient-to-r from-transparent via-[rgba(74,143,232,0.8)] to-[rgba(74,143,232,0.15)] sm:w-40" />
+                <span className="animate-reach text-xl text-[var(--gold-bright)]">✦</span>
+                <span className="h-px w-20 bg-gradient-to-r from-[rgba(200,169,110,0.15)] via-[rgba(200,169,110,0.8)] to-transparent sm:w-40" />
+              </div>
+
+              <div className="mx-auto mt-10 max-w-[520px] space-y-1 text-center text-[17px] leading-7 text-[var(--text-secondary)]">
+                <p>AI-powered access continuity protocol on Etherlink.</p>
+                <p>Set your plan once. Your assets are protected forever.</p>
+              </div>
+
+              <div className="mt-10 flex flex-col items-center gap-4">
+                <ConnectWallet large />
+                <p className="text-sm text-[var(--text-secondary)]">
+                  Powered by Etherlink (Tezos EVM) · Zero intermediaries
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-16 grid w-full max-w-[520px] grid-cols-1 gap-4 sm:grid-cols-3">
+              {STATS.map((item, index) => (
                 <div
-                  key={item.step}
-                  className="flex gap-4 rounded-xl border border-white/10 bg-white/5 p-4"
+                  key={item.label}
+                  className="glass-card animate-fade-up rounded-2xl p-5 text-center"
+                  style={{ animationDelay: `${index * 80}ms` }}
                 >
-                  <span className="shrink-0 text-2xl font-black text-gray-700">
-                    {item.step}
-                  </span>
-                  <div>
-                    <p className="text-sm font-bold">{item.title}</p>
-                    <p className="mt-1 text-xs text-gray-400">{item.desc}</p>
-                  </div>
+                  <p className={`text-4xl font-black ${item.tone}`}>{item.value}</p>
+                  <p className="mt-2 text-sm text-[var(--text-muted)]">{item.label}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-24 w-full max-w-5xl">
+              <p className="text-center text-xs tracking-[0.3em] text-[var(--text-muted)]">
+                HOW IT WORKS
+              </p>
+
+              <div className="relative mt-12">
+                <div className="absolute left-6 top-3 hidden h-[calc(100%-2rem)] border-l border-dashed border-[var(--blue-border)] md:block" />
+
+                <div className="space-y-6">
+                  {STEPS.map((item, index) => {
+                    const reverse = index % 2 === 1;
+
+                    return (
+                      <div
+                        key={item.step}
+                        className={`grid items-start gap-6 md:grid-cols-[88px_minmax(0,1fr)] ${
+                          reverse ? "md:grid-cols-[minmax(0,1fr)_88px]" : ""
+                        }`}
+                      >
+                        <div className={`flex justify-center ${reverse ? "md:order-2" : ""}`}>
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--blue-border)] bg-[rgba(74,143,232,0.06)] font-mono text-sm font-bold text-[var(--blue-primary)]">
+                            {item.step}
+                          </div>
+                        </div>
+
+                        <div
+                          className={`glass-card rounded-3xl p-6 ${reverse ? "md:order-1 md:text-right" : ""}`}
+                        >
+                          <h3 className="text-xl font-bold text-[var(--text-primary)]">{item.title}</h3>
+                          <p className="mt-3 max-w-xl text-sm leading-7 text-[var(--text-secondary)]">
+                            {item.desc}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </section>
       ) : (
-        <section className="mx-auto max-w-2xl px-4 py-10">
-          <div className="mb-8">
-            <h2 className="text-2xl font-black">Your LastKey Vault</h2>
-            <p className="mt-1 text-sm text-gray-400">
-              {address?.slice(0, 6)}...{address?.slice(-4)}
-            </p>
-          </div>
+        <section className="px-6 pb-20 pt-14 sm:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-8 flex flex-col gap-4 rounded-3xl border border-[var(--border-subtle)] bg-[rgba(255,255,255,0.02)] px-6 py-6 sm:flex-row sm:items-end sm:justify-between sm:px-8">
+              <div>
+                <h2 className="text-[28px] font-bold tracking-[-0.03em] text-[var(--text-primary)]">
+                  Your LastKey Vault
+                </h2>
+                <p className="font-mono text-sm text-[var(--text-muted)]">
+                  {address?.slice(0, 6)}...{address?.slice(-4)}
+                </p>
+              </div>
 
-          <VaultStatus address={address!} />
-          <InheritanceForm address={address!} />
+              <span className="inline-flex w-fit items-center rounded-full border border-[rgba(74,143,232,0.2)] bg-[rgba(74,143,232,0.08)] px-4 py-2 text-xs font-semibold text-[var(--blue-primary)]">
+                Protected by Etherlink
+              </span>
+            </div>
+
+            <VaultStatus address={address!} />
+            <InheritanceForm address={address!} />
+          </div>
         </section>
       )}
 

@@ -31,11 +31,11 @@ export default function VaultStatus({ address }: VaultStatusProps) {
 
   if (isLoading) {
     return (
-      <div className="mb-6 animate-pulse rounded-2xl border border-white/10 bg-white/5 p-6">
+      <div className="blue-glow-card mb-6 animate-pulse rounded-3xl p-7">
         <div className="mb-4 h-4 w-1/3 rounded bg-white/10" />
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((item) => (
-            <div key={item} className="h-16 rounded-xl bg-white/10" />
+            <div key={item} className="h-20 rounded-2xl bg-white/10" />
           ))}
         </div>
       </div>
@@ -44,9 +44,11 @@ export default function VaultStatus({ address }: VaultStatusProps) {
 
   if (!status || !status[0]) {
     return (
-      <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
-        <p className="text-sm text-gray-400">No vault found for this wallet.</p>
-        <p className="mt-1 text-xs text-gray-600">Set your continuity plan below ↓</p>
+      <div className="blue-glow-card mb-6 rounded-3xl p-7 text-center">
+        <p className="text-sm text-[var(--text-secondary)]">No vault found for this wallet.</p>
+        <p className="mt-2 text-xs uppercase tracking-[0.25em] text-[var(--text-muted)]">
+          Set your continuity plan below
+        </p>
       </div>
     );
   }
@@ -98,52 +100,62 @@ export default function VaultStatus({ address }: VaultStatusProps) {
   const beneLabels = beneficiaries?.[2] ?? [];
 
   return (
-    <div
-      className={`mb-6 rounded-2xl border p-6 transition-all ${urgencyStyle.border} ${urgencyStyle.bg}`}
-    >
+    <div className={`blue-glow-card mb-6 rounded-3xl p-7 transition-all ${urgencyStyle.bg}`}>
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h3 className="font-bold">LastKey Status</h3>
-          <p className="mt-0.5 text-xs text-gray-500">Locked balance: {balance} XTZ</p>
+          <h3 className="text-xl font-bold tracking-[-0.03em]">LastKey Status</h3>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Locked balance: {balance} XTZ</p>
         </div>
         <div className="flex items-center gap-2">
           {warningIssued ? (
-            <span className="rounded-full border border-yellow-500/30 bg-yellow-900/40 px-2 py-1 text-xs text-yellow-400">
+            <span className="rounded-full border border-yellow-500/30 bg-yellow-900/40 px-3 py-1 text-xs font-medium text-yellow-300">
               ⚠️ Check-in Overdue
             </span>
           ) : null}
-          <span className={`rounded-full border px-3 py-1 font-mono text-xs ${urgencyStyle.badge}`}>
+          <span
+            className={`rounded-full border px-3 py-1 font-mono text-xs ${
+              executed
+                ? "border-[rgba(200,169,110,0.35)] bg-[rgba(200,169,110,0.12)] text-[var(--gold-bright)]"
+                : "border-[rgba(74,143,232,0.35)] bg-[rgba(74,143,232,0.12)] text-[var(--blue-primary)]"
+            }`}
+          >
             {executed ? "EXECUTED" : "PROTECTED"}
           </span>
         </div>
       </div>
 
       <div className="mb-5 grid grid-cols-3 gap-3">
-        <div className="rounded-xl bg-black/30 p-4 text-center">
-          <p className={`text-3xl font-black ${urgencyStyle.color}`}>{days}</p>
-          <p className="mt-1 text-[10px] text-gray-500">DAYS SINCE CHECK-IN</p>
+        <div className="rounded-2xl bg-black/40 p-5 text-center">
+          <p className={`text-4xl font-black ${urgencyStyle.color}`}>{days}</p>
+          <p className="font-mono mt-2 text-[9px] uppercase tracking-[0.25em] text-[var(--text-muted)]">
+            Days Since Check-In
+          </p>
         </div>
-        <div className="rounded-xl bg-black/30 p-4 text-center">
-          <p className={`text-3xl font-black ${remaining <= 30 ? "text-red-400" : "text-white"}`}>
+        <div className="rounded-2xl bg-black/40 p-5 text-center">
+          <p className={`text-4xl font-black ${remaining <= 30 ? "text-red-400" : "text-white"}`}>
             {remaining}
           </p>
-          <p className="mt-1 text-[10px] text-gray-500">DAYS REMAINING</p>
+          <p className="font-mono mt-2 text-[9px] uppercase tracking-[0.25em] text-[var(--text-muted)]">
+            Days Remaining
+          </p>
         </div>
-        <div className="rounded-xl bg-black/30 p-4 text-center">
-          <p className="text-3xl font-black text-gray-400">{Number(beneficiaryCount)}</p>
-          <p className="mt-1 text-[10px] text-gray-500">BENEFICIARIES</p>
+        <div className="rounded-2xl bg-black/40 p-5 text-center">
+          <p className="text-4xl font-black text-white">{Number(beneficiaryCount)}</p>
+          <p className="font-mono mt-2 text-[9px] uppercase tracking-[0.25em] text-[var(--text-muted)]">
+            Beneficiaries
+          </p>
         </div>
       </div>
 
       <div className="mb-5">
-        <div className="mb-1.5 flex justify-between text-[10px] text-gray-600">
+        <div className="mb-2 flex justify-between text-[10px] text-[var(--text-muted)]">
           <span>Last activity</span>
           <span>{progress.toFixed(1)}% to execution</span>
           <span>300 days</span>
         </div>
-        <div className="h-2 w-full rounded-full bg-black/50">
+        <div className="h-2.5 w-full rounded-full bg-black/60">
           <div
-            className={`h-2 rounded-full transition-all duration-700 ${urgencyStyle.bar}`}
+            className="h-2.5 rounded-full bg-gradient-to-r from-[#4a8fe8] to-[#c8a96e] transition-all duration-1000"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -151,24 +163,26 @@ export default function VaultStatus({ address }: VaultStatusProps) {
 
       {beneWallets.length > 0 ? (
         <div className="mb-5">
-          <p className="mb-2 text-[10px] tracking-[0.3em] text-gray-500">BENEFICIARIES</p>
+          <p className="font-mono mb-3 text-[9px] tracking-[0.3em] text-[var(--text-muted)]">
+            BENEFICIARIES
+          </p>
           <div className="space-y-1.5">
             {beneWallets.map((wallet, i) => {
               const walletString = String(wallet);
               return (
                 <div
                   key={`${walletString}-${i}`}
-                  className="flex items-center justify-between rounded-lg bg-black/30 px-3 py-2"
+                  className="flex items-center justify-between rounded-xl bg-black/30 px-4 py-3"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-xs capitalize text-gray-400">
+                    <span className="text-sm capitalize text-[var(--text-secondary)]">
                       {String(beneLabels[i] ?? "")}
                     </span>
-                    <span className="font-mono text-[10px] text-gray-600">
+                    <span className="font-mono text-[10px] text-[var(--text-muted)]">
                       {walletString.slice(0, 6)}...{walletString.slice(-4)}
                     </span>
                   </div>
-                  <span className={`text-sm font-bold ${urgencyStyle.color}`}>
+                  <span className="text-gradient-gold text-lg font-black">
                     {Number(benePercentages[i]) / 100}%
                   </span>
                 </div>
