@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAccount, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useAccount, useReadContract, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { parseEther } from "viem";
 import { DEADDROP_ABI, DEADDROP_ADDRESS } from "@/lib/contract";
 import { etherlinkTestnet } from "@/lib/wagmi-config";
@@ -28,6 +28,14 @@ export default function InheritanceForm({ address }: { address: string }) {
   const { switchChainAsync } = useSwitchChain();
   const { writeContract, data: txHash, isPending, error: txError, reset } = useWriteContract();
   const { isLoading: confirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const { data: vaultStatus, isLoading: vaultStatusLoading } = useReadContract({
+    address: DEADDROP_ADDRESS,
+    abi: DEADDROP_ABI,
+    functionName: "getVaultStatus",
+    args: [address as `0x${string}`],
+    query: { enabled: Boolean(address) },
+  });
+  const hasActiveVault = Boolean(vaultStatus?.[0]) && !Boolean(vaultStatus?.[1]);
 
   const handleParse = async () => {
     if (!text.trim() || !email.trim()) return;
@@ -43,6 +51,11 @@ export default function InheritanceForm({ address }: { address: string }) {
 
   const handleCreateVault = async () => {
     if (parsed.length === 0) return;
+    if (hasActiveVault) {
+      setStep("input");
+      setParseErr("This wallet already has an active vault. Use the existing vault panel above or connect a fresh test wallet.");
+      return;
+    }
     if (chain?.id !== etherlinkTestnet.id) {
       try { await switchChainAsync({ chainId: etherlinkTestnet.id }); }
       catch { return; }
@@ -67,7 +80,23 @@ export default function InheritanceForm({ address }: { address: string }) {
           txHash={txHash} tone={isSuccess ? "success" : "info"} />
       )}
 
-      {step === "input" ? (
+      {vaultStatusLoading ? (
+        <div className="animate-fade-in rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-gray-400">
+          Checking wallet vault status...
+        </div>
+      ) : hasActiveVault ? (
+        <div className="animate-fade-in rounded-2xl border border-amber-500/20 bg-amber-500/10 p-6">
+          <h3 className="mb-2 text-lg font-black text-white">This wallet already has a vault</h3>
+          <p className="text-sm leading-relaxed text-gray-300">
+            The current contract allows one active vault per wallet. That means
+            <span className="font-semibold text-white"> Anchor on Etherlink </span>
+            will not create a second vault for this same address.
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-gray-400">
+            Use the protected vault panel above to check in, or connect a fresh test wallet if you want to create a new vault flow from scratch.
+          </p>
+        </div>
+      ) : step === "input" ? (
         <div className="animate-fade-in rounded-2xl border border-white/10 bg-white/5 p-6">
           <h3 className="mb-1 text-lg font-black">Devam Planını Yaz</h3>
           <p className="mb-5 text-xs text-gray-500">AI, wallet adreslerini ve yüzdeleri otomatik yapılandırır.</p>
