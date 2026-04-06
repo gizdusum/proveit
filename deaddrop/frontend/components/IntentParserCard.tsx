@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useAccount, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { parseEther } from "viem";
 import { DEADDROP_ABI, DEADDROP_ADDRESS } from "@/lib/contract";
+import { etherlinkTestnet } from "@/lib/wagmi-config";
 import BeneficiaryPreview from "./BeneficiaryPreview";
 import TransactionToast from "./TransactionToast";
 
@@ -37,6 +38,8 @@ export default function InheritanceForm({ address }: { address: string }) {
     error: writeError,
     reset: resetWrite,
   } = useWriteContract();
+  const { chain } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
 
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
@@ -70,13 +73,22 @@ export default function InheritanceForm({ address }: { address: string }) {
     }
   };
 
-  const handleCreateVault = () => {
+  const handleCreateVault = async () => {
     if (parsed.length === 0) return;
+
+    if (chain?.id !== etherlinkTestnet.id) {
+      try {
+        await switchChainAsync({ chainId: etherlinkTestnet.id });
+      } catch {
+        return;
+      }
+    }
 
     writeContract({
       address: DEADDROP_ADDRESS,
       abi: DEADDROP_ABI,
       functionName: "createVault",
+      chainId: etherlinkTestnet.id,
       args: [
         email,
         parsed.map((b) => b.address as `0x${string}`),
@@ -205,17 +217,33 @@ export default function InheritanceForm({ address }: { address: string }) {
           </button>
         </div>
       ) : (
-        <BeneficiaryPreview
-          beneficiaries={parsed}
-          depositAmount={depositAmount}
-          onEdit={() => {
-            setStep("input");
-            setParseError("");
-            resetWrite();
-          }}
-          onConfirm={handleCreateVault}
-          isLoading={isPending || isConfirming}
-        />
+        <>
+          <BeneficiaryPreview
+            beneficiaries={parsed}
+            depositAmount={depositAmount}
+            onEdit={() => {
+              setStep("input");
+              setParseError("");
+              resetWrite();
+            }}
+            onConfirm={handleCreateVault}
+            isLoading={isPending || isConfirming}
+          />
+          {writeError ? (
+            <div className="mt-3 rounded-xl border border-red-500/30 bg-red-900/20 p-4">
+              <p className="text-sm font-bold text-red-400">Transaction failed</p>
+              <p className="mt-1 break-words text-xs text-gray-500">
+                {writeError.message?.slice(0, 200)}
+              </p>
+              <button
+                onClick={resetWrite}
+                className="mt-2 text-xs text-gray-500 transition-colors hover:text-white"
+              >
+                Try again
+              </button>
+            </div>
+          ) : null}
+        </>
       )}
     </div>
   );

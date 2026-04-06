@@ -22,6 +22,7 @@ export default function ActivityPing() {
       address: DEADDROP_ADDRESS,
       abi: DEADDROP_ABI,
       functionName: "pingActivity",
+      chainId: 127823,
     });
   };
 
