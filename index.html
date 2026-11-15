@@ -371,6 +371,9 @@ var feeHints = null;
 
 var BASE_CHAIN_ID = '0x2105';
 var CONTRACT_ADDRESS = '0xC0ae0e982D62556d8dB7672185899d2eF30F8bc8';
+// Base builder code (ERC-8021). Paste the "Encoded String" from dashboard.base.org
+// (Settings > Project Settings > Builder Code). Empty means no attribution is added.
+var BUILDER_CODE_SUFFIX = '';
 
 var MILESTONES = [
   {id:'first',icon:'🌱',name:'First proof',req:'First check-in on Base',days:1},
@@ -541,7 +544,10 @@ function updateDailyBaseUI() {
 async function getCheckinData(commitment) {
   if (!window.ethers) throw new Error('ethers.js could not be loaded.');
   var iface = new ethers.Interface(['function checkIn(string)']);
-  return iface.encodeFunctionData('checkIn', [commitment]);
+  var data = iface.encodeFunctionData('checkIn', [commitment]);
+  // The suffix goes after the call data; the contract ignores it and Base reads it for attribution.
+  var suffix = BUILDER_CODE_SUFFIX.replace(/^0x/, '');
+  return /^([0-9a-fA-F]{2})+80218021802180218021802180218021$/.test(suffix) ? data + suffix : data;
 }
 
 async function getChainId() {
